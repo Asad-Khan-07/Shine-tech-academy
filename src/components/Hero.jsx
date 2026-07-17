@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import { Rocket, BookOpen, Award } from 'lucide-react'
-
+import classroomImage from '/public/classroom.png'
 export default function Hero() {
   return (
     <section
@@ -88,7 +88,7 @@ export default function Hero() {
           >
             <div className="relative rounded-2xl overflow-hidden shadow-2xl border-4 border-white w-full max-w-lg aspect-[4/3]">
               <img
-                src="/public/classroom.png"
+                src={classroomImage}
                 alt="Shine Tech Academy students in classroom"
                 className="w-full h-full object-cover"
                 loading="eager"
