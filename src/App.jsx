@@ -4,6 +4,8 @@ import Hero from './components/Hero'
 import Stats from './components/Stats'
 import Courses from './components/Courses'
 import WhySTA from './components/WhySTA'
+import Admission from './components/Admission'
+import Instructors from './components/Instructors'
 import LearningJourney from './components/LearningJourney'
 import Internship from './components/Internship'
 import Testimonials from './components/Testimonials'
@@ -30,6 +32,8 @@ function App() {
         <Stats />
         <Courses />
         <WhySTA />
+        <Admission />
+        <Instructors />
         <LearningJourney />
         <Internship />
         <Testimonials />

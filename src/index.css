@@ -192,3 +192,18 @@ body {
   50% { transform: translateY(-10px); }
 }
 .animate-float { animation: float 4s ease-in-out infinite; }
+
+/* Glowing bulb dot */
+@keyframes glow-bulb {
+  0%, 100% {
+    box-shadow: 0 0 4px #fbbf24, 0 0 8px #f59e0b, 0 0 12px #f59e0b;
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 6px #fde68a, 0 0 14px #fbbf24, 0 0 20px #f59e0b;
+    transform: scale(1.15);
+  }
+}
+.animate-glow-bulb {
+  animation: glow-bulb 1.8s ease-in-out infinite;
+}

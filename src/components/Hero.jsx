@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
-import { Rocket, BookOpen, Award } from 'lucide-react'
+import { Rocket, Sparkles, Award } from 'lucide-react'
 import classroomImage from '/public/classroom.png'
+
 export default function Hero() {
   return (
     <section
@@ -22,17 +23,18 @@ export default function Hero() {
             transition={{ duration: 0.6 }}
             className="flex flex-col gap-6"
           >
-            <span className="section-tag">Welcome to Shine Tech Academy</span>
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 bg-blue-600 rounded-full animate-pulse" />
+              <span className="section-tag">Shine Tech Academy</span>
+            </div>
 
             <h1 className="font-space font-extrabold text-slate-900 text-4xl sm:text-5xl md:text-[56px] leading-[1.1]">
-              Learn Future Skills.
-              <br />
-              Build Your{' '}
-              <span className="text-blue-600">Career.</span>
+              Build Your Future with{' '}
+              <span className="text-blue-600">AI & Technology</span>
             </h1>
 
             <p className="text-slate-600 text-base sm:text-lg leading-relaxed max-w-lg">
-              Join Shine Tech Academy and gain practical skills in AI, Web Development, Graphic Design, Digital Marketing, and more.
+              Professional Certificate & Diploma Programs with Practical Learning.
             </p>
 
             <div className="flex flex-wrap gap-4 mt-2">
@@ -42,17 +44,17 @@ export default function Hero() {
                 href="https://forms.google.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-primary px-8 py-3.5 rounded-full text-sm sm:text-base shadow-lg shadow-blue-500/25"
+                className="btn-primary px-8 py-3.5 rounded-full text-sm sm:text-base shadow-lg shadow-blue-500/25 flex items-center gap-2"
               >
-                <Rocket className="w-4 h-4" /> Apply Now
+                <Rocket className="w-4 h-4" /> Enroll Now
               </motion.a>
               <motion.button
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
-                onClick={() => document.querySelector('#courses')?.scrollIntoView({ behavior: 'smooth' })}
+                onClick={() => document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })}
                 className="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold px-8 py-3.5 rounded-full text-sm sm:text-base transition-all flex items-center gap-2"
               >
-                <BookOpen className="w-4 h-4" /> Explore Courses
+                <Sparkles className="w-4 h-4" /> Book FREE Demo
               </motion.button>
             </div>
 

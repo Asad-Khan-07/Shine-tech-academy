@@ -2,12 +2,12 @@ import { useState, useEffect } from 'react'
 import { Menu, X, Rocket } from 'lucide-react'
 
 const NAV_LINKS = [
-  { label: 'Home',    href: '#hero' },
-  { label: 'Courses', href: '#courses' },
-  { label: 'About',   href: '#why-sta' },
-  { label: 'Events',  href: '#events' },
-  { label: 'Gallery', href: '#gallery' },
-  { label: 'Contact', href: '#contact' },
+  { label: 'Home',       href: '#hero' },
+  { label: 'About',      href: '#why-sta' },
+  { label: 'Courses',    href: '#courses' },
+  { label: 'Admissions', href: '#admission' },
+  { label: 'Instructors', href: '#instructors' },
+  { label: 'Contact',    href: '#contact' },
 ]
 
 export default function Navbar() {
@@ -101,7 +101,7 @@ export default function Navbar() {
             href="https://forms.google.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-blue-600 text-white text-center text-sm font-bold py-3.5 rounded-full mt-2 hover:bg-blue-700 transition-colors"
+            className="bg-blue-600 text-white text-center text-sm font-bold py-3.5 rounded-full mt-2 hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
           >
             <Rocket className="w-4 h-4" /> Apply Now
           </a>
