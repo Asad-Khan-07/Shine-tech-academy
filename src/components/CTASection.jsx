@@ -58,9 +58,7 @@ export default function CTASection() {
             <motion.a
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.97 }}
-              href="https://forms.google.com"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="#apply"
               className="btn-primary px-9 py-4 rounded-full text-base shadow-xl shadow-blue-500/20 font-bold flex items-center gap-2"
             >
               <Rocket className="w-4 h-4" /> Apply Now <ArrowRight className="w-4 h-4" />

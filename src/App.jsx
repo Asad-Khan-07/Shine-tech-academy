@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import TopBanner from './components/TopBanner'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
@@ -15,20 +16,39 @@ import FAQ from './components/FAQ'
 import CTASection from './components/CTASection'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
+import AdmissionForm from './components/AdmissionForm'
 
 function App() {
+  const [showForm, setShowForm] = useState(false)
+
+  useEffect(() => {
+    const checkHash = () => setShowForm(window.location.hash === '#apply')
+    checkHash()
+    window.addEventListener('hashchange', checkHash)
+    return () => window.removeEventListener('hashchange', checkHash)
+  }, [])
+
+  const openForm = () => {
+    window.location.hash = '#apply'
+    setShowForm(true)
+  }
+
+  const closeForm = () => {
+    window.location.hash = ''
+    setShowForm(false)
+  }
+
+  if (showForm) {
+    return <AdmissionForm onBack={closeForm} />
+  }
+
   return (
     <div className="min-h-screen">
-      {/* Top banner is static/sticky at very top */}
-      <div className="relative z-50">
-        <TopBanner />
-      </div>
-
-      {/* Navbar offset below banner */}
-      <Navbar />
+      <Navbar onApply={openForm} />
+      <TopBanner />
 
       <main>
-        <Hero />
+        <Hero onApply={openForm} />
         <Stats />
         <Courses />
         <WhySTA />

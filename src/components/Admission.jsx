@@ -147,9 +147,7 @@ export default function Admission() {
           className="text-center mt-12"
         >
           <a
-            href="https://forms.google.com"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="#apply"
             id="admission-apply-btn"
             className="btn-primary px-10 py-4 rounded-2xl text-base font-bold inline-flex items-center gap-2"
           >

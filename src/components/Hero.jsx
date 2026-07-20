@@ -6,7 +6,7 @@ export default function Hero() {
   return (
     <section
       id="hero"
-      className="relative min-h-screen flex items-center bg-white pt-24 overflow-hidden"
+      className="relative min-h-screen flex items-center bg-white pt-8 sm:pt-0 overflow-hidden"
     >
       {/* Subtle right blue panel */}
       <div className="absolute right-0 top-0 bottom-0 w-[45%] bg-blue-600 transform skew-x-[-8deg] translate-x-16 origin-top pointer-events-none hidden lg:block" />
@@ -41,9 +41,7 @@ export default function Hero() {
               <motion.a
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
-                href="https://forms.google.com"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="#apply"
                 className="btn-primary px-8 py-3.5 rounded-full text-sm sm:text-base shadow-lg shadow-blue-500/25 flex items-center gap-2"
               >
                 <Rocket className="w-4 h-4" /> Enroll Now
@@ -86,7 +84,7 @@ export default function Hero() {
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.15 }}
-            className="relative hidden lg:flex items-center justify-center"
+            className="relative lg:flex items-center justify-center"
           >
             <div className="relative rounded-2xl overflow-hidden shadow-2xl border-4 border-white w-full max-w-lg aspect-[4/3]">
               <img

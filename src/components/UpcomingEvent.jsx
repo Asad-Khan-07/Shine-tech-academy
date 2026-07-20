@@ -49,9 +49,7 @@ export default function UpcomingEvent() {
 
             <div>
               <a
-                href="https://forms.google.com"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="#apply"
                 className="inline-flex items-center gap-2 bg-white text-blue-700 font-bold text-sm px-7 py-3.5 rounded-full hover:bg-blue-50 transition-all hover:-translate-y-0.5 hover:shadow-lg shadow-md"
               >
                 Register Free <ArrowRight className="w-4 h-4" />

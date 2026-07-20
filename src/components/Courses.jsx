@@ -296,9 +296,7 @@ function CourseCard({ course, live, onViewCurriculum }) {
           </button>
           {live ? (
             <a
-              href="https://forms.google.com"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="#apply"
               className="flex-1 flex items-center justify-center gap-1.5 bg-blue-600 text-white font-bold text-xs py-2.5 rounded-xl hover:bg-blue-700 transition-all"
             >
               Enroll Now <ArrowRight className="w-3.5 h-3.5" />

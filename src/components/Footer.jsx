@@ -29,22 +29,20 @@ export default function Footer() {
   const scrollTo = (href) => document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' })
 
   return (
-    <footer className="dark-section border-t border-white/10 pt-16 pb-8 px-4 sm:px-6 lg:px-8">
+    <footer className="bg-white border-t border-slate-100 pt-16 pb-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
 
           {/* Brand */}
           <div className="flex flex-col gap-5">
             <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center shadow-lg">
-                <span className="text-white font-black text-sm">STA</span>
-              </div>
-              <div>
-                <p className="text-white font-space font-bold text-base leading-tight">Shine Tech Academy</p>
-                <p className="text-blue-400 text-[10px] font-semibold tracking-widest uppercase">Learn. Build. Earn.</p>
-              </div>
+              <img src="/SHINE-website-logo-.gif" alt="Shine Tech Academy" className="h-11 w-auto" />
+              {/* <div>
+                <p className="text-slate-900 font-space font-bold text-base leading-tight">Shine Tech Academy</p>
+                <p className="text-blue-600 text-[10px] font-semibold tracking-widest uppercase">Learn. Build. Earn.</p>
+              </div> */}
             </div>
-            <p className="text-gray-400 text-sm leading-relaxed">
+            <p className="text-slate-500 text-sm leading-relaxed">
               Empowering youth with in-demand skills and preparing them for a successful future in tech.
             </p>
             {/* Socials */}
@@ -57,7 +55,7 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={s.label}
-                  className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-blue-600 hover:border-blue-600 transition-all duration-300"
+                  className="w-9 h-9 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 hover:text-white hover:bg-blue-600 hover:border-blue-600 transition-all duration-300"
                 >
                   {s.icon}
                 </a>
@@ -67,11 +65,11 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-space font-bold text-white mb-5 text-sm tracking-widest uppercase">Quick Links</h4>
+            <h4 className="font-space font-bold text-slate-900 mb-5 text-sm tracking-widest uppercase">Quick Links</h4>
             <ul className="flex flex-col gap-3">
               {QUICK_LINKS.map((link) => (
                 <li key={link.label}>
-                  <button onClick={() => scrollTo(link.href)} className="text-gray-400 hover:text-white text-sm transition-colors flex items-center gap-2 group">
+                  <button onClick={() => scrollTo(link.href)} className="text-slate-500 hover:text-blue-600 text-sm transition-colors flex items-center gap-2 group">
                     <ArrowRight className="w-3 h-3 text-blue-600 group-hover:text-blue-400 flex-shrink-0" />
                     {link.label}
                   </button>
@@ -82,11 +80,11 @@ export default function Footer() {
 
           {/* Courses */}
           <div>
-            <h4 className="font-space font-bold text-white mb-5 text-sm tracking-widest uppercase">Courses</h4>
+            <h4 className="font-space font-bold text-slate-900 mb-5 text-sm tracking-widest uppercase">Courses</h4>
             <ul className="flex flex-col gap-3">
               {COURSES_LIST.map((c) => (
                 <li key={c}>
-                  <button onClick={() => scrollTo('#courses')} className="text-gray-400 hover:text-white text-sm transition-colors flex items-center gap-2 group text-left">
+                  <button onClick={() => scrollTo('#courses')} className="text-slate-500 hover:text-blue-600 text-sm transition-colors flex items-center gap-2 group text-left">
                     <ArrowRight className="w-3 h-3 text-blue-600 group-hover:text-blue-400 flex-shrink-0" />
                     {c}
                   </button>
@@ -97,27 +95,27 @@ export default function Footer() {
 
           {/* Contact */}
           <div>
-            <h4 className="font-space font-bold text-white mb-5 text-sm tracking-widest uppercase">Contact</h4>
+            <h4 className="font-space font-bold text-slate-900 mb-5 text-sm tracking-widest uppercase">Contact</h4>
             <ul className="flex flex-col gap-4">
               <li>
-                <a href="https://wa.me/923000000000" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-gray-400 hover:text-white text-sm transition-colors">
-                  <MessageCircle className="w-4 h-4 text-blue-400 flex-shrink-0" />
+                <a href="https://wa.me/923000000000" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-slate-500 hover:text-blue-600 text-sm transition-colors">
+                  <MessageCircle className="w-4 h-4 text-blue-600 flex-shrink-0" />
                   +92 300 0000000
                 </a>
               </li>
               <li>
-                <a href="mailto:info@shinetechacademy.com" className="flex items-center gap-3 text-gray-400 hover:text-white text-sm transition-colors">
-                  <Mail className="w-4 h-4 text-blue-400 flex-shrink-0" />
+                <a href="mailto:info@shinetechacademy.com" className="flex items-center gap-3 text-slate-500 hover:text-blue-600 text-sm transition-colors">
+                  <Mail className="w-4 h-4 text-blue-600 flex-shrink-0" />
                   info@shinetechacademy.com
                 </a>
               </li>
-              <li className="flex items-start gap-3 text-gray-400 text-sm">
-                <MapPin className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" />
+              <li className="flex items-start gap-3 text-slate-500 text-sm">
+                <MapPin className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
                 Hyderabad, Sindh, Pakistan
               </li>
             </ul>
             <div className="mt-6">
-              <a href="https://forms.google.com" target="_blank" rel="noopener noreferrer" id="footer-apply-btn" className="btn-primary px-5 py-2.5 rounded-xl text-sm">
+              <a href="#apply" id="footer-apply-btn" className="btn-primary px-5 py-2.5 rounded-xl text-sm">
                 Apply Now <ArrowRight className="w-4 h-4" />
               </a>
             </div>
@@ -125,13 +123,13 @@ export default function Footer() {
         </div>
 
         {/* Bottom */}
-        <div className="border-t border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-gray-500 text-xs text-center sm:text-left">
+        <div className="border-t border-slate-200 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-slate-500 text-xs text-center sm:text-left">
             © {new Date().getFullYear()} Shine Tech Academy (STA). All rights reserved.
           </p>
-          <div className="flex gap-4 text-gray-600 text-xs">
-            <button className="hover:text-gray-400 transition-colors">Privacy Policy</button>
-            <button className="hover:text-gray-400 transition-colors">Terms & Conditions</button>
+          <div className="flex gap-4 text-slate-600 text-xs">
+            <button className="hover:text-slate-400 transition-colors">Privacy Policy</button>
+            <button className="hover:text-slate-400 transition-colors">Terms & Conditions</button>
           </div>
         </div>
       </div>

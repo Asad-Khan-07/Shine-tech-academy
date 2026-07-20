@@ -1,6 +1,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
+@theme {
+  --color-blue-50: #edf2ff;
+  --color-blue-100: #d1e0ff;
+  --color-blue-200: #a8c5ff;
+  --color-blue-300: #75a2ff;
+  --color-blue-400: #3d7cff;
+  --color-blue-500: #1863fe;
+  --color-blue-600: #0956fc;
+  --color-blue-700: #0045d6;
+  --color-blue-800: #0038b0;
+  --color-blue-900: #002f94;
+}
+
 /* ─── Base ──────────────────────────────────────────────── */
 html {
   scroll-behavior: smooth;
@@ -23,7 +36,7 @@ body {
 
 /* ─── Gradient Text ──────────────────────────────────────── */
 .text-gradient-blue {
-  background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+  background: linear-gradient(135deg, #0956fc 0%, #3d7cff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -31,7 +44,7 @@ body {
 
 /* ─── Buttons ────────────────────────────────────────────── */
 .btn-primary {
-  background: #2563eb;
+  background: #0956fc;
   color: #ffffff;
   font-weight: 700;
   transition: all 0.25s ease;
@@ -44,9 +57,9 @@ body {
 }
 
 .btn-primary:hover {
-  background: #1d4ed8;
+  background: #0045d6;
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.35);
+  box-shadow: 0 8px 25px rgba(9, 86, 252, 0.35);
 }
 
 .btn-outline-white {
@@ -71,21 +84,21 @@ body {
 /* ─── Section Tags ───────────────────────────────────────── */
 .section-tag {
   display: inline-block;
-  background: #eff6ff;
-  color: #2563eb;
+  background: #edf2ff;
+  color: #0956fc;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   padding: 5px 14px;
   border-radius: 100px;
-  border: 1px solid #bfdbfe;
+  border: 1px solid #a8c5ff;
 }
 
 .section-tag-white {
   display: inline-block;
   background: rgba(255,255,255,0.1);
-  color: #93c5fd;
+  color: #75a2ff;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -108,12 +121,12 @@ body {
 }
 .card-hover:hover {
   transform: translateY(-6px);
-  box-shadow: 0 20px 50px rgba(37, 99, 235, 0.12);
+  box-shadow: 0 20px 50px rgba(9, 86, 252, 0.12);
 }
 
 /* ─── Dark sections ──────────────────────────────────────── */
 .dark-section {
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #172554 100%);
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #002f94 100%);
 }
 
 .dark-navy {
@@ -121,14 +134,14 @@ body {
 }
 
 .event-bg {
-  background: linear-gradient(135deg, #1e3a8a 0%, #1e293b 60%, #0f172a 100%);
+  background: linear-gradient(135deg, #002f94 0%, #1e293b 60%, #0f172a 100%);
 }
 
 /* ─── Step connector ─────────────────────────────────────── */
 .step-line {
   flex: 1;
   height: 2px;
-  background: linear-gradient(90deg, #2563eb, #93c5fd);
+  background: linear-gradient(90deg, #0956fc, #75a2ff);
 }
 
 /* ─── Gallery ────────────────────────────────────────────── */
@@ -152,8 +165,8 @@ body {
   position: relative;
 }
 .testimonial-card:hover {
-  border-color: #bfdbfe;
-  box-shadow: 0 20px 50px rgba(37, 99, 235, 0.1);
+  border-color: #a8c5ff;
+  box-shadow: 0 20px 50px rgba(9, 86, 252, 0.1);
 }
 
 /* ─── Form Inputs ────────────────────────────────────────── */
@@ -166,8 +179,8 @@ body {
 }
 .form-input:focus {
   outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  border-color: #0956fc;
+  box-shadow: 0 0 0 3px rgba(9, 86, 252, 0.1);
   background: #ffffff;
 }
 .form-input option {
@@ -184,7 +197,7 @@ body {
 /* ─── Scrollbar ──────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: #f1f5f9; }
-::-webkit-scrollbar-thumb { background: #2563eb; border-radius: 3px; }
+::-webkit-scrollbar-thumb { background: #0956fc; border-radius: 3px; }
 
 /* ─── Animations ─────────────────────────────────────────── */
 @keyframes float {
