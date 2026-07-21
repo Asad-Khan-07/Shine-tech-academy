@@ -11,7 +11,7 @@ const NAV_LINKS = [
   { label: 'Contact',    href: '#contact' },
 ]
 
-export default function Navbar() {
+export default function Navbar({ onApply }) {
   const [scrolled,  setScrolled]  = useState(false)
   const [menuOpen,  setMenuOpen]  = useState(false)
 
@@ -64,6 +64,7 @@ export default function Navbar() {
           <div className="hidden md:block self-center">
             <motion.a
               href="#apply"
+              onClick={onApply}
               whileHover={{ scale: 1.04, y: -2 }}
               whileTap={{ scale: 0.96 }}
               className="btn-primary px-6 py-2.5 rounded-full text-sm shadow-lg shadow-blue-500/25 flex items-center gap-2 relative overflow-hidden"

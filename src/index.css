@@ -28,8 +28,13 @@ body {
   overflow-x: hidden;
 }
 
-
 * { box-sizing: border-box; }
+
+/* Hero icons visibility wrapper for Light Mode */
+#hero .bg-blue-50 {
+  background-color: rgba(9, 86, 252, 0.06);
+  color: #0956fc;
+}
 
 /* ─── Typography ─────────────────────────────────────────── */
 .font-inter { font-family: 'Inter', sans-serif; }

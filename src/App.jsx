@@ -20,8 +20,7 @@ import AdmissionForm from './components/AdmissionForm'
 
 /* ─── Interactive Constellation Background ──────────────────
    Highly optimized vanilla JS Canvas Constellation.
-   Placed on top with pointer-events: none so it is 100% visible
-   and interacts perfectly with mouse movements across the screen.
+   Beautiful royal blue nodes & connecting lines for Light Mode.
 ────────────────────────────────────────────────────────── */
 function ConstellationBackground() {
   const canvasRef = useRef(null)
@@ -34,11 +33,10 @@ function ConstellationBackground() {
     let particles = []
     let animId
     
-    // Mouse coordinates tracking
     const mouse = {
       x: null,
       y: null,
-      radius: 180 // Connection range around mouse
+      radius: 180
     }
 
     const resize = () => {
@@ -48,7 +46,6 @@ function ConstellationBackground() {
     resize()
     window.addEventListener('resize', resize)
 
-    // Capture mouse moves globally across the entire screen
     const handleMouseMove = (e) => {
       mouse.x = e.clientX
       mouse.y = e.clientY
@@ -61,7 +58,6 @@ function ConstellationBackground() {
     window.addEventListener('mousemove', handleMouseMove)
     document.addEventListener('mouseleave', handleMouseLeave)
 
-    // Setup initial particles (adjusted count & size for great visibility)
     const setupParticles = () => {
       const particleCount = Math.min(60, Math.floor((window.innerWidth * window.innerHeight) / 20000))
       particles = []
@@ -69,10 +65,10 @@ function ConstellationBackground() {
         particles.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          r: Math.random() * 2 + 1, // Nodes are 1px to 3px
+          r: Math.random() * 2 + 1,
           vx: (Math.random() - 0.5) * 0.4,
           vy: (Math.random() - 0.5) * 0.4,
-          alpha: Math.random() * 0.5 + 0.2, // Slightly brighter nodes
+          alpha: Math.random() * 0.5 + 0.2,
         })
       }
     }
@@ -80,12 +76,12 @@ function ConstellationBackground() {
 
     const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
+      const lineColor = '9, 86, 252' // Classic Blue
 
       // 1. Draw connections
       for (let i = 0; i < particles.length; i++) {
         const p1 = particles[i]
 
-        // Lines between nearby particles
         for (let j = i + 1; j < particles.length; j++) {
           const p2 = particles[j]
           const dx = p1.x - p2.x
@@ -93,10 +89,9 @@ function ConstellationBackground() {
           const dist = Math.sqrt(dx * dx + dy * dy)
 
           if (dist < 130) {
-            // Make lines slightly more visible
             const opacity = (1 - dist / 130) * 0.12
             ctx.beginPath()
-            ctx.strokeStyle = `rgba(9, 86, 252, ${opacity})`
+            ctx.strokeStyle = `rgba(${lineColor}, ${opacity})`
             ctx.lineWidth = 0.8
             ctx.moveTo(p1.x, p1.y)
             ctx.lineTo(p2.x, p2.y)
@@ -104,17 +99,15 @@ function ConstellationBackground() {
           }
         }
 
-        // Lines from particles to mouse cursor
         if (mouse.x !== null && mouse.y !== null) {
           const dxMouse = p1.x - mouse.x
           const dyMouse = p1.y - mouse.y
           const distMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse)
 
           if (distMouse < mouse.radius) {
-            // Mouse connection is prominent and clean
             const opacity = (1 - distMouse / mouse.radius) * 0.25
             ctx.beginPath()
-            ctx.strokeStyle = `rgba(9, 86, 252, ${opacity})`
+            ctx.strokeStyle = `rgba(${lineColor}, ${opacity})`
             ctx.lineWidth = 1.0
             ctx.moveTo(p1.x, p1.y)
             ctx.lineTo(mouse.x, mouse.y)
@@ -127,13 +120,12 @@ function ConstellationBackground() {
       particles.forEach((p) => {
         ctx.beginPath()
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(9, 86, 252, ${p.alpha})`
+        ctx.fillStyle = `rgba(${lineColor}, ${p.alpha})`
         ctx.fill()
 
         p.x += p.vx
         p.y += p.vy
 
-        // Wrap boundaries
         if (p.x < -10) p.x = canvas.width + 10
         if (p.x > canvas.width + 10) p.x = -10
         if (p.y < -10) p.y = canvas.height + 10
@@ -161,14 +153,14 @@ function ConstellationBackground() {
         inset: 0,
         width: '100vw',
         height: '100vh',
-        zIndex: 999, // Overlay on top of all section backgrounds
-        pointerEvents: 'none', // Allows clicks to pass through to buttons/text
+        zIndex: 999,
+        pointerEvents: 'none',
       }}
     />
   )
 }
 
-/* ─── Ambient Glow Background (Stays behind content) ────────── */
+/* ─── Ambient Glow Background ───────────────────────────────── */
 function AmbientBackground() {
   return (
     <div
@@ -181,7 +173,7 @@ function AmbientBackground() {
       }}
     >
       <div className="bg-orb bg-orb-1" />
-      <div className="bg-orb bg-orb-2" />
+      <div className="bg-orb bg-orb-2 animate-pulse" />
       <div className="bg-orb bg-orb-3" />
     </div>
   )
@@ -212,12 +204,14 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen" style={{ position: 'relative' }}>
+    <div className="min-h-screen bg-white text-slate-900 transition-colors duration-500 relative">
+      {/* Remove html dark class on mount to ensure light mode only */}
+      <ThemeLightModeEnforcer />
 
-      {/* ── Constellation canvas overlay (Always visible on top, passes clicks) ── */}
+      {/* ── Constellation overlay ── */}
       <ConstellationBackground />
 
-      {/* ── Soft colorful orbs (Stays in background) ── */}
+      {/* ── Ambient background orbs ── */}
       <AmbientBackground />
 
       {/* ── Page content ── */}
@@ -246,6 +240,15 @@ function App() {
       </div>
     </div>
   )
+}
+
+// Small helper component to ensure html has no 'dark' class
+function ThemeLightModeEnforcer() {
+  useEffect(() => {
+    document.documentElement.classList.remove('dark')
+    localStorage.removeItem('theme')
+  }, [])
+  return null
 }
 
 export default App

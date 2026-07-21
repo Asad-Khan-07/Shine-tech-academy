@@ -4,7 +4,7 @@ import {
   User, Calendar, Mail, Phone, MapPin, Home, GraduationCap, BookOpen,
   Award, Briefcase, Code, Smartphone, Palette, PenTool, Megaphone, DollarSign,
   Globe, CheckCircle, ArrowLeft, ArrowRight, Loader, Camera, FileText, CreditCard, Hash,
-  Clock, Star, Target
+  Clock, Star, Target, ChevronDown
 } from 'lucide-react'
 
 const COURSES = [
@@ -27,29 +27,52 @@ function generateAppId() {
   return `${prefix}-${d}${m}${y}-${rand}`
 }
 
-function FloatingInput({ label, icon: Icon, error, ...props }) {
+/* ─── Premium Custom Floating Input ────────────────────────── */
+function FloatingInput({ label, icon: Icon, error, type = 'text', ...props }) {
   const [focused, setFocused] = useState(false)
   const hasValue = props.value && props.value.length > 0
   const float = focused || hasValue
+
+  // Specific check to avoid overlapping on Date Input
+  const isDate = type === 'date'
+
   return (
     <div className="relative">
       <div className="relative">
-        {Icon && <Icon className={`absolute left-3 w-4 h-4 text-slate-400 pointer-events-none transition-all duration-200 ${float ? 'top-3' : 'top-1/2 -translate-y-1/2'}`} />}
+        {Icon && (
+          <Icon
+            className={`absolute left-3 w-4 h-4 text-slate-400 pointer-events-none transition-all duration-200 ${
+              isDate || float ? 'top-3.5' : 'top-1/2 -translate-y-1/2'
+            }`}
+          />
+        )}
+        
         <input
+          type={type}
           {...props}
           onFocus={(e) => { setFocused(true); props.onFocus?.(e) }}
           onBlur={(e) => { setFocused(false); props.onBlur?.(e) }}
-          className={`w-full peer bg-slate-50 border rounded-xl px-3 py-3.5 text-sm text-slate-900 outline-none transition-all duration-200 placeholder-transparent
+          className={`w-full peer bg-white/70 border rounded-xl px-3 py-3.5 text-sm text-slate-900 outline-none transition-all duration-200 placeholder-transparent
             ${Icon ? 'pl-10' : 'pl-3'}
-            ${error ? 'border-red-400 focus:border-red-500 focus:ring-2 focus:ring-red-200' : 'border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100'}
+            ${isDate ? 'pt-5 pb-2' : ''}
+            ${error ? 'border-red-400 focus:border-red-500 focus:ring-2 focus:ring-red-200' : 'border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100/50'}
           `}
           placeholder={label}
         />
-        <label className={`absolute pointer-events-none transition-all duration-200 text-xs
-          ${Icon ? 'left-10' : 'left-3'}
-          ${float ? '-top-2.5 text-[11px] bg-white px-1 text-blue-600' : 'top-3.5 text-slate-400'}
-          ${error ? 'text-red-500' : ''}
-        `}>
+
+        {/* Dynamic Label styling - For date inputs, it stays static at top */}
+        <label
+          className={`absolute pointer-events-none transition-all duration-200 text-xs select-none
+            ${Icon ? 'left-10' : 'left-3'}
+            ${isDate 
+              ? 'top-1 text-[10px] text-blue-600 font-bold uppercase tracking-wider' 
+              : float 
+                ? '-top-2.5 text-[11px] bg-white px-1 text-blue-600 font-medium' 
+                : 'top-3.5 text-slate-400'
+            }
+            ${error ? 'text-red-500' : ''}
+          `}
+        >
           {label}
         </label>
       </div>
@@ -58,97 +81,205 @@ function FloatingInput({ label, icon: Icon, error, ...props }) {
   )
 }
 
-function PlainInput({ label, icon: Icon, error, ...props }) {
-  return (
-    <div>
-      <label className="text-xs font-semibold text-slate-500 mb-1.5 block">{label}</label>
-      <div className="relative">
-        {Icon && <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />}
-        <input
-          {...props}
-          className={`w-full bg-slate-50 border rounded-xl px-3 py-3.5 text-sm text-slate-900 outline-none transition-all duration-200
-            ${Icon ? 'pl-10' : 'pl-3'}
-            ${error ? 'border-red-400 focus:border-red-500 focus:ring-2 focus:ring-red-200' : 'border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100'}
-          `}
-        />
-      </div>
-      {error && <p className="text-red-500 text-[11px] mt-1 ml-1">{error}</p>}
-    </div>
-  )
-}
+/* ─── Premium Custom Dropdown Component ────────────────────── */
+function CustomDropdown({ label, options, value, onChange, error }) {
+  const [isOpen, setIsOpen] = useState(false)
+  const dropdownRef = useRef(null)
 
-function PlainSelect({ label, icon: Icon, error, children, ...props }) {
-  return (
-    <div>
-      <label className="text-xs font-semibold text-slate-500 mb-1.5 block">{label}</label>
-      <div className="relative">
-        {Icon && <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none z-10" />}
-        <select
-          {...props}
-          className={`w-full bg-slate-50 border rounded-xl px-3 py-3.5 text-sm text-slate-900 outline-none transition-all duration-200 appearance-none
-            ${Icon ? 'pl-10' : 'pl-3'}
-            ${error ? 'border-red-400 focus:border-red-500' : 'border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100'}
-          `}
-        >
-          <option value="" disabled>{label}</option>
-          {children}
-        </select>
-      </div>
-      {error && <p className="text-red-500 text-[11px] mt-1 ml-1">{error}</p>}
-    </div>
-  )
-}
+  const selectedOption = options.find((opt) => opt.value === value)
 
-function IconInput({ icon: Icon, error, ...props }) {
-  return (
-    <div className="relative">
-      {Icon && <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />}
-      <input
-        {...props}
-        className={`w-full bg-slate-50 border rounded-xl px-3 py-3.5 text-sm text-slate-900 outline-none transition-all duration-200
-          ${Icon ? 'pl-10' : 'pl-3'}
-          ${error ? 'border-red-400 focus:border-red-500 focus:ring-2 focus:ring-red-200' : 'border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100'}
-        `}
-      />
-      {error && <p className="text-red-500 text-[11px] mt-1 ml-1">{error}</p>}
-    </div>
-  )
-}
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setIsOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleOutsideClick)
+    return () => document.removeEventListener('mousedown', handleOutsideClick)
+  }, [])
 
-function IconSelect({ icon: Icon, error, children, ...props }) {
   return (
-    <div className="relative">
-      {Icon && <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none z-10" />}
-      <select
-        {...props}
-        className={`w-full bg-slate-50 border rounded-xl px-3 py-3.5 text-sm text-slate-900 outline-none transition-all duration-200 appearance-none
-          ${Icon ? 'pl-10' : 'pl-3'}
-          ${error ? 'border-red-400 focus:border-red-500' : 'border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100'}
+    <div className="relative flex flex-col gap-1.5" ref={dropdownRef}>
+      <label className="text-xs text-slate-400 font-bold uppercase tracking-wider ml-1">{label}</label>
+      
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className={`w-full flex items-center justify-between bg-white/70 border rounded-xl px-4 py-3.5 text-sm text-left transition-all duration-200 outline-none
+          ${isOpen ? 'border-blue-500 ring-2 ring-blue-100/50' : 'border-slate-200 hover:border-slate-300'}
+          ${error ? 'border-red-400' : ''}
         `}
       >
-        {children}
-      </select>
-      {error && <p className="text-red-500 text-[11px] mt-1 ml-1">{error}</p>}
+        <span className={selectedOption ? 'text-slate-900' : 'text-slate-400'}>
+          {selectedOption ? selectedOption.label : 'Select an option'}
+        </span>
+        <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-300 ${isOpen ? 'rotate-180 text-blue-500' : ''}`} />
+      </button>
+
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            transition={{ duration: 0.15 }}
+            className="absolute top-[105%] left-0 w-full bg-white border border-slate-100 rounded-xl shadow-xl z-[1001] overflow-hidden"
+          >
+            <div className="py-1">
+              {options.map((opt) => (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => {
+                    onChange(opt.value)
+                    setIsOpen(false)
+                  }}
+                  className={`w-full text-left px-4 py-3 text-sm transition-colors
+                    ${opt.value === value 
+                      ? 'bg-blue-50 text-blue-700 font-semibold' 
+                      : 'text-slate-700 hover:bg-slate-50'
+                    }
+                  `}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      {error && <p className="text-red-500 text-[11px] mt-0.5 ml-1">{error}</p>}
     </div>
   )
 }
 
-function StepIndicator({ current, total }) {
+/* ─── Form Page Constellation Canvas ─────────────────────── */
+function FormConstellation() {
+  const canvasRef = useRef(null)
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+
+    let particles = []
+    let animId
+    const mouse = { x: null, y: null, radius: 180 }
+
+    const resize = () => {
+      canvas.width = window.innerWidth
+      canvas.height = window.innerHeight
+    }
+    resize()
+    window.addEventListener('resize', resize)
+
+    const handleMouseMove = (e) => {
+      mouse.x = e.clientX
+      mouse.y = e.clientY
+    }
+    const handleMouseLeave = () => {
+      mouse.x = null
+      mouse.y = null
+    }
+
+    window.addEventListener('mousemove', handleMouseMove)
+    document.addEventListener('mouseleave', handleMouseLeave)
+
+    const setupParticles = () => {
+      particles = []
+      const particleCount = 50
+      for (let i = 0; i < particleCount; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() * 2 + 1.2,
+          vx: (Math.random() - 0.5) * 0.35,
+          vy: (Math.random() - 0.5) * 0.35,
+          alpha: Math.random() * 0.6 + 0.25,
+        })
+      }
+    }
+    setupParticles()
+
+    const draw = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      const lineColor = '9, 86, 252'
+
+      for (let i = 0; i < particles.length; i++) {
+        const p1 = particles[i]
+        for (let j = i + 1; j < particles.length; j++) {
+          const p2 = particles[j]
+          const dx = p1.x - p2.x
+          const dy = p1.y - p2.y
+          const dist = Math.sqrt(dx * dx + dy * dy)
+
+          if (dist < 135) {
+            const opacity = (1 - dist / 135) * 0.16
+            ctx.beginPath()
+            ctx.strokeStyle = `rgba(${lineColor}, ${opacity})`
+            ctx.lineWidth = 0.9
+            ctx.moveTo(p1.x, p1.y)
+            ctx.lineTo(p2.x, p2.y)
+            ctx.stroke()
+          }
+        }
+
+        if (mouse.x !== null && mouse.y !== null) {
+          const dxMouse = p1.x - mouse.x
+          const dyMouse = p1.y - mouse.y
+          const distMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse)
+
+          if (distMouse < mouse.radius) {
+            const opacity = (1 - distMouse / mouse.radius) * 0.3
+            ctx.beginPath()
+            ctx.strokeStyle = `rgba(${lineColor}, ${opacity})`
+            ctx.lineWidth = 1.2
+            ctx.moveTo(p1.x, p1.y)
+            ctx.lineTo(mouse.x, mouse.y)
+            ctx.stroke()
+          }
+        }
+      }
+
+      particles.forEach((p) => {
+        ctx.beginPath()
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(${lineColor}, ${p.alpha})`
+        ctx.fill()
+
+        p.x += p.vx
+        p.y += p.vy
+
+        if (p.x < -10) p.x = canvas.width + 10
+        if (p.x > canvas.width + 10) p.x = -10
+        if (p.y < -10) p.y = canvas.height + 10
+        if (p.y > canvas.height + 10) p.y = -10
+      })
+
+      animId = requestAnimationFrame(draw)
+    }
+    draw()
+
+    return () => {
+      cancelAnimationFrame(animId)
+      window.removeEventListener('resize', resize)
+      window.removeEventListener('mousemove', handleMouseMove)
+      document.removeEventListener('mouseleave', handleMouseLeave)
+    }
+  }, [])
+
   return (
-    <div className="flex items-center gap-2 mb-8">
-      {Array.from({ length: total }).map((_, i) => (
-        <div key={i} className="flex items-center gap-2 flex-1">
-          <div className={`flex items-center justify-center w-8 h-8 rounded-full text-xs font-bold transition-all duration-300
-            ${i < current ? 'bg-blue-600 text-white shadow-md shadow-blue-200' : i === current ? 'bg-blue-600 text-white ring-4 ring-blue-100' : 'bg-slate-100 text-slate-400'}
-          `}>
-            {i < current ? <CheckCircle className="w-4 h-4" /> : i + 1}
-          </div>
-          {i < total - 1 && (
-            <div className={`flex-1 h-0.5 rounded transition-all duration-300 ${i < current ? 'bg-blue-600' : 'bg-slate-200'}`} />
-          )}
-        </div>
-      ))}
-    </div>
+    <canvas
+      ref={canvasRef}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        width: '100vw',
+        height: '100vh',
+        zIndex: 999,
+        pointerEvents: 'none',
+      }}
+    />
   )
 }
 
@@ -157,34 +288,64 @@ function SuccessModal({ appId, onClose }) {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
-      onClick={onClose}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
     >
       <motion.div
-        initial={{ scale: 0.8, opacity: 0, y: 30 }}
-        animate={{ scale: 1, opacity: 1, y: 0 }}
-        transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-        onClick={(e) => e.stopPropagation()}
-        className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 text-center"
+        initial={{ scale: 0.9, y: 20 }}
+        animate={{ scale: 1, y: 0 }}
+        exit={{ scale: 0.9, y: 20 }}
+        className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 text-center border border-slate-100 relative z-[1000]"
       >
-        <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-5">
-          <CheckCircle className="w-10 h-10 text-green-600" />
+        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 text-green-600">
+          <CheckCircle className="w-10 h-10" />
         </div>
-        <h2 className="font-space font-extrabold text-2xl text-slate-900 mb-2">Application Submitted!</h2>
-        <p className="text-slate-500 text-sm mb-6">Your application has been received successfully.</p>
-        <div className="bg-slate-50 rounded-xl p-4 mb-6">
-          <p className="text-xs text-slate-400 uppercase tracking-widest mb-1">Application ID</p>
-          <p className="font-space font-bold text-xl text-blue-600">{appId}</p>
+        <h3 className="font-space font-extrabold text-slate-900 text-2xl mb-2">Application Submitted!</h3>
+        <p className="text-slate-500 text-sm mb-6">
+          Your admission request has been sent successfully. Please save your application ID for future references.
+        </p>
+
+        <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 mb-6">
+          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Application Reference ID</p>
+          <p className="font-space font-extrabold text-blue-600 text-lg tracking-wider">{appId}</p>
         </div>
-        <p className="text-slate-400 text-xs mb-6">We will contact you within 24-48 hours for the next steps.</p>
+
         <button
           onClick={onClose}
-          className="w-full bg-blue-600 text-white font-bold text-sm py-3.5 rounded-xl hover:bg-blue-700 transition-all"
+          className="w-full btn-primary py-3 rounded-xl font-bold text-sm shadow-lg shadow-blue-500/25"
         >
-          Back to Home
+          Return to Home
         </button>
       </motion.div>
     </motion.div>
+  )
+}
+
+function StepIndicator({ current, total }) {
+  const percent = (current / (total - 1)) * 100
+  return (
+    <div className="relative mb-10">
+      <div className="h-1 bg-slate-200 rounded-full w-full">
+        <div
+          className="h-1 bg-gradient-to-r from-blue-600 to-blue-400 rounded-full transition-all duration-500"
+          style={{ width: `${percent}%` }}
+        />
+      </div>
+      <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 flex justify-between pointer-events-none">
+        {Array.from({ length: total }).map((_, i) => (
+          <div
+            key={i}
+            className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-all duration-500 border-2
+              ${i < current ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-500/20' : ''}
+              ${i === current ? 'bg-white border-blue-600 text-blue-600 shadow-md ring-4 ring-blue-50' : ''}
+              ${i > current ? 'bg-white border-slate-200 text-slate-400' : ''}
+            `}
+          >
+            {i + 1}
+          </div>
+        ))}
+      </div>
+    </div>
   )
 }
 
@@ -193,358 +354,318 @@ export default function AdmissionForm({ onBack }) {
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [appId, setAppId] = useState('')
-  const [photoPreview, setPhotoPreview] = useState(null)
-  const [signData, setSignData] = useState(null)
-  const canvasRef = useRef(null)
-  const [isDrawing, setIsDrawing] = useState(false)
 
   const [form, setForm] = useState({
-    fullName: '', fatherName: '', dob: '', gender: '', cnic: '',
-    email: '', phone: '', city: '', address: '',
-    qualification: '', institute: '', field: '', passingYear: '',
-    cgpa: '', experience: '', experienceDetails: '',
+    fullName: '',
+    dob: '',
+    email: '',
+    phone: '',
+    address: '',
+    city: '',
+    qualification: '',
+    institute: '',
     courses: [],
-    source: '', goal: '', batch: '', paymentMethod: '',
-    transactionId: '', amount: '', paymentDate: '',
-    agreeTerms: false,
+    customCourse: '',
+    source: '',
+    whatsappGroup: false,
+    agreeTerms: false
   })
 
   const [errors, setErrors] = useState({})
 
-  const update = (field, value) => {
-    setForm(prev => ({ ...prev, [field]: value }))
-    setErrors(prev => ({ ...prev, [field]: '' }))
-  }
-
-  const toggleCourse = (id) => {
-    setForm(prev => ({
-      ...prev,
-      courses: prev.courses.includes(id) ? prev.courses.filter(c => c !== id) : [...prev.courses, id],
-    }))
-  }
-
-  const handlePhoto = (e) => {
-    const file = e.target.files[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onload = (ev) => setPhotoPreview(ev.target.result)
-      reader.readAsDataURL(file)
-    }
-  }
-
-  const startDrawing = (e) => {
-    const canvas = canvasRef.current
-    const rect = canvas.getBoundingClientRect()
-    const ctx = canvas.getContext('2d')
-    setIsDrawing(true)
-    const x = (e.clientX || e.touches[0].clientX) - rect.left
-    const y = (e.clientY || e.touches[0].clientY) - rect.top
-    ctx.beginPath()
-    ctx.moveTo(x, y)
-  }
-
-  const draw = (e) => {
-    if (!isDrawing) return
-    const canvas = canvasRef.current
-    const rect = canvas.getBoundingClientRect()
-    const ctx = canvas.getContext('2d')
-    const x = (e.clientX || e.touches[0].clientX) - rect.left
-    const y = (e.clientY || e.touches[0].clientY) - rect.top
-    ctx.lineWidth = 2
-    ctx.lineCap = 'round'
-    ctx.strokeStyle = '#1e293b'
-    ctx.lineTo(x, y)
-    ctx.stroke()
-  }
-
-  const stopDrawing = () => {
-    setIsDrawing(false)
-    const canvas = canvasRef.current
-    setSignData(canvas.toDataURL())
-  }
-
-  const clearSignature = () => {
-    const canvas = canvasRef.current
-    const ctx = canvas.getContext('2d')
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
-    setSignData(null)
-  }
-
   const validateStep = (s) => {
-    const errs = {}
+    let err = {}
     if (s === 0) {
-      if (!form.fullName) errs.fullName = 'Required'
-      if (!form.fatherName) errs.fatherName = 'Required'
-      if (!form.dob) errs.dob = 'Required'
-      if (!form.gender) errs.gender = 'Required'
-      if (!form.cnic) errs.cnic = 'Required'
-      if (!form.email) errs.email = 'Required'
-      if (!form.phone) errs.phone = 'Required'
-      if (!form.city) errs.city = 'Required'
-      if (!form.address) errs.address = 'Required'
+      if (!form.fullName.trim()) err.fullName = 'Full Name is required'
+      if (!form.dob) err.dob = 'Date of Birth is required'
+      if (!form.email.trim()) err.email = 'Email address is required'
+      else if (!/\S+@\S+\.\S+/.test(form.email)) err.email = 'Please enter a valid email'
+      if (!form.phone.trim()) err.phone = 'Phone number is required'
+      else if (form.phone.trim().length < 10) err.phone = 'Please enter a valid phone number'
     } else if (s === 1) {
-      if (!form.qualification) errs.qualification = 'Required'
-      if (!form.institute) errs.institute = 'Required'
-      if (!form.field) errs.field = 'Required'
-      if (!form.passingYear) errs.passingYear = 'Required'
+      if (!form.qualification.trim()) err.qualification = 'Last qualification is required'
+      if (!form.institute.trim()) err.institute = 'School/College/University name is required'
     } else if (s === 2) {
-      if (form.courses.length === 0) errs.courses = 'Select at least one course'
+      if (form.courses.length === 0) err.courses = 'Please select at least one course'
+      if (form.courses.includes('other') && !form.customCourse.trim()) {
+        err.customCourse = 'Please specify the course name'
+      }
     } else if (s === 3) {
-      if (!form.source) errs.source = 'Required'
-      if (!form.goal) errs.goal = 'Required'
-      if (!form.batch) errs.batch = 'Required'
-      if (!form.paymentMethod) errs.paymentMethod = 'Required'
-      if (!form.transactionId) errs.transactionId = 'Required'
-      if (!form.amount) errs.amount = 'Required'
-      if (!form.paymentDate) errs.paymentDate = 'Required'
+      if (!form.source) err.source = 'Please select an option'
     }
-    return errs
+    setErrors(err)
+    return Object.keys(err).length === 0
   }
 
   const nextStep = () => {
-    const errs = validateStep(step)
-    if (Object.keys(errs).length > 0) {
-      setErrors(errs)
-      return
+    if (validateStep(step)) {
+      setStep((prev) => prev + 1)
     }
-    setErrors({})
-    setStep(prev => Math.min(prev + 1, 4))
   }
 
-  const prevStep = () => setStep(prev => Math.max(prev - 1, 0))
+  const prevStep = () => {
+    setStep((prev) => prev - 1)
+  }
 
-  const handleSubmit = async () => {
+  const handleSelectCourse = (id) => {
+    setForm((prev) => {
+      const selected = prev.courses.includes(id)
+      let newList = []
+      if (selected) {
+        newList = prev.courses.filter((c) => c !== id)
+      } else {
+        newList = [...prev.courses, id]
+      }
+      return { ...prev, courses: newList }
+    })
+  }
+
+  const handleSubmit = () => {
+    if (!form.agreeTerms) return
     setLoading(true)
-    await new Promise(r => setTimeout(r, 2000))
-    setLoading(false)
-    setAppId(generateAppId())
-    setSuccess(true)
+    setTimeout(() => {
+      const newId = generateAppId()
+      setAppId(newId)
+      setLoading(false)
+      setSuccess(true)
+    }, 1500)
   }
-
-  useEffect(() => {
-    if (canvasRef.current) {
-      const canvas = canvasRef.current
-      canvas.width = canvas.offsetWidth
-      canvas.height = canvas.offsetHeight
-    }
-  }, [step])
 
   const renderStep = () => {
     switch (step) {
       case 0:
         return (
-          <motion.div key="step0" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} className="space-y-5">
-            <div className="text-center mb-6">
-              <h3 className="font-space font-extrabold text-xl text-slate-900">Personal Information</h3>
-              <p className="text-slate-400 text-sm">Tell us about yourself</p>
+          <motion.div
+            key="step1"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            className="flex flex-col gap-5"
+          >
+            <h3 className="font-space font-extrabold text-slate-800 text-lg">Personal Information</h3>
+            <FloatingInput
+              label="Full Name"
+              icon={User}
+              value={form.fullName}
+              onChange={(e) => setForm({ ...form, fullName: e.target.value })}
+              error={errors.fullName}
+            />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <FloatingInput
+                label="Date of Birth"
+                type="date"
+                icon={Calendar}
+                value={form.dob}
+                onChange={(e) => setForm({ ...form, dob: e.target.value })}
+                error={errors.dob}
+              />
+              <FloatingInput
+                label="Active Email Address"
+                type="email"
+                icon={Mail}
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                error={errors.email}
+              />
             </div>
-
-            {/* Photo Upload */}
-            <div className="flex flex-col items-center gap-3 mb-4">
-              <div className="relative w-24 h-24 rounded-full overflow-hidden bg-slate-100 border-2 border-dashed border-slate-300 flex items-center justify-center group cursor-pointer hover:border-blue-400 transition-all">
-                {photoPreview ? (
-                  <img src={photoPreview} alt="Preview" className="w-full h-full object-cover" />
-                ) : (
-                  <Camera className="w-6 h-6 text-slate-400 group-hover:text-blue-500 transition-colors" />
-                )}
-                <input type="file" accept="image/*" onChange={handlePhoto} className="absolute inset-0 opacity-0 cursor-pointer" />
-              </div>
-              <p className="text-[11px] text-slate-400">Upload Profile Photo</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <FloatingInput
+                label="Active Phone / WhatsApp"
+                type="tel"
+                icon={Phone}
+                value={form.phone}
+                onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                error={errors.phone}
+              />
+              <FloatingInput
+                label="City / Town"
+                icon={MapPin}
+                value={form.city}
+                onChange={(e) => setForm({ ...form, city: e.target.value })}
+              />
             </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <FloatingInput icon={User} label="Full Name" value={form.fullName} onChange={e => update('fullName', e.target.value)} error={errors.fullName} />
-              <FloatingInput icon={User} label="Father/Guardian Name" value={form.fatherName} onChange={e => update('fatherName', e.target.value)} error={errors.fatherName} />
-              <PlainInput icon={Calendar} label="Date of Birth" type="date" value={form.dob} onChange={e => update('dob', e.target.value)} error={errors.dob} />
-              <PlainSelect icon={User} label="Gender" value={form.gender} onChange={e => update('gender', e.target.value)} error={errors.gender}>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
-              </PlainSelect>
-              <FloatingInput icon={FileText} label="CNIC (without dashes)" value={form.cnic} onChange={e => update('cnic', e.target.value)} error={errors.cnic} />
-              <FloatingInput icon={Mail} label="Email Address" type="email" value={form.email} onChange={e => update('email', e.target.value)} error={errors.email} />
-              <FloatingInput icon={Phone} label="Phone Number" type="tel" value={form.phone} onChange={e => update('phone', e.target.value)} error={errors.phone} />
-              <FloatingInput icon={MapPin} label="Current City" value={form.city} onChange={e => update('city', e.target.value)} error={errors.city} />
-            </div>
-            <FloatingInput icon={Home} label="Complete Address" value={form.address} onChange={e => update('address', e.target.value)} error={errors.address} />
+            <FloatingInput
+              label="Complete Residential Address"
+              icon={Home}
+              value={form.address}
+              onChange={(e) => setForm({ ...form, address: e.target.value })}
+            />
           </motion.div>
         )
       case 1:
         return (
-          <motion.div key="step1" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} className="space-y-5">
-            <div className="text-center mb-6">
-              <h3 className="font-space font-extrabold text-xl text-slate-900">Academic Information</h3>
-              <p className="text-slate-400 text-sm">Your educational background</p>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <IconSelect icon={GraduationCap} value={form.qualification} onChange={e => update('qualification', e.target.value)} error={errors.qualification}>
-                <option value="" disabled>Highest Qualification</option>
-                <option value="matric">Matric / O-Levels</option>
-                <option value="intermediate">Intermediate / A-Levels</option>
-                <option value="bachelor">Bachelor's Degree</option>
-                <option value="master">Master's Degree</option>
-                <option value="other">Other</option>
-              </IconSelect>
-              <IconInput icon={BookOpen} placeholder="Institute/University" value={form.institute} onChange={e => update('institute', e.target.value)} error={errors.institute} />
-              <FloatingInput icon={Award} label="Field of Study" value={form.field} onChange={e => update('field', e.target.value)} error={errors.field} />
-              <FloatingInput icon={Calendar} label="Passing Year" type="number" value={form.passingYear} onChange={e => update('passingYear', e.target.value)} error={errors.passingYear} />
-              <FloatingInput icon={Star} label="CGPA / Percentage (optional)" value={form.cgpa} onChange={e => update('cgpa', e.target.value)} />
-            </div>
-            <div className="space-y-3">
-              <PlainSelect icon={Briefcase} label="Previous Experience" value={form.experience} onChange={e => update('experience', e.target.value)}>
-                <option value="no">No</option>
-                <option value="yes">Yes</option>
-              </PlainSelect>
-              {form.experience === 'yes' && (
-                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}>
-                  <FloatingInput icon={Briefcase} label="Experience Details" value={form.experienceDetails} onChange={e => update('experienceDetails', e.target.value)} />
-                </motion.div>
-              )}
-            </div>
+          <motion.div
+            key="step2"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            className="flex flex-col gap-5"
+          >
+            <h3 className="font-space font-extrabold text-slate-800 text-lg">Academic / Background Info</h3>
+            <FloatingInput
+              label="Last Qualification (e.g. Matric, Inter, BS, etc.)"
+              icon={GraduationCap}
+              value={form.qualification}
+              onChange={(e) => setForm({ ...form, qualification: e.target.value })}
+              error={errors.qualification}
+            />
+            <FloatingInput
+              label="School / College / University Name"
+              icon={BookOpen}
+              value={form.institute}
+              onChange={(e) => setForm({ ...form, institute: e.target.value })}
+              error={errors.institute}
+            />
           </motion.div>
         )
       case 2:
         return (
-          <motion.div key="step2" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} className="space-y-5">
-            <div className="text-center mb-6">
-              <h3 className="font-space font-extrabold text-xl text-slate-900">Course Selection</h3>
-              <p className="text-slate-400 text-sm">Choose your program</p>
+          <motion.div
+            key="step3"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            className="flex flex-col gap-5"
+          >
+            <div>
+              <h3 className="font-space font-extrabold text-slate-800 text-lg">Select Program(s)</h3>
+              <p className="text-xs text-slate-400 mt-1">You can select more than one course to register concurrently.</p>
             </div>
-            {errors.courses && <p className="text-red-500 text-xs text-center">{errors.courses}</p>}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+
+            <div className="flex flex-col gap-3">
               {COURSES.map((c) => {
                 const Icon = c.icon
                 const selected = form.courses.includes(c.id)
                 return (
                   <button
                     key={c.id}
-                    type="button"
-                    onClick={() => toggleCourse(c.id)}
-                    className={`flex items-start gap-3 p-4 rounded-xl border-2 text-left transition-all duration-200
-                      ${selected ? 'border-blue-500 bg-blue-50 shadow-sm' : 'border-slate-200 bg-white hover:border-slate-300'}
+                    onClick={() => handleSelectCourse(c.id)}
+                    className={`flex items-start gap-4 p-4 rounded-xl border text-left transition-all duration-200 group
+                      ${selected ? 'border-blue-500 bg-blue-50/50 shadow-sm' : 'border-slate-100 bg-white hover:border-slate-200'}
                     `}
                   >
-                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 transition-all
-                      ${selected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500'}
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors flex-shrink-0
+                      ${selected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 group-hover:bg-slate-200'}
                     `}>
                       <Icon className="w-5 h-5" />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className={`font-bold text-sm ${selected ? 'text-blue-700' : 'text-slate-800'}`}>{c.title}</p>
-                      <p className="text-xs text-slate-400 mt-0.5">{c.desc}</p>
+                    <div>
+                      <p className={`font-space font-bold text-sm ${selected ? 'text-blue-700' : 'text-slate-800'}`}>{c.title}</p>
+                      <p className="text-slate-500 text-xs mt-0.5 leading-relaxed">{c.desc}</p>
                     </div>
-                    {selected && <CheckCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-1" />}
                   </button>
                 )
               })}
             </div>
+
+            {form.courses.includes('other') && (
+              <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="pt-2">
+                <FloatingInput
+                  label="Please specify the course name"
+                  icon={Star}
+                  value={form.customCourse}
+                  onChange={(e) => setForm({ ...form, customCourse: e.target.value })}
+                  error={errors.customCourse}
+                />
+              </motion.div>
+            )}
+
+            {errors.courses && <p className="text-red-500 text-[11px] ml-1">{errors.courses}</p>}
           </motion.div>
         )
       case 3:
         return (
-          <motion.div key="step3" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} className="space-y-5">
-            <div className="text-center mb-6">
-              <h3 className="font-space font-extrabold text-xl text-slate-900">Additional Information</h3>
-              <p className="text-slate-400 text-sm">Almost there! Fill in the final details.</p>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <IconSelect icon={Globe} value={form.source} onChange={e => update('source', e.target.value)} error={errors.source}>
-                <option value="" disabled>How did you hear about us?</option>
-                <option value="social">Social Media</option>
-                <option value="website">Website</option>
-                <option value="referral">Referral</option>
-                <option value="ad">Advertisement</option>
-                <option value="other">Other</option>
-              </IconSelect>
-              <IconInput icon={Target} placeholder="Your Goal" value={form.goal} onChange={e => update('goal', e.target.value)} error={errors.goal} />
-              <IconSelect icon={Clock} value={form.batch} onChange={e => update('batch', e.target.value)} error={errors.batch}>
-                <option value="" disabled>Preferred Batch</option>
-                <option value="morning">Morning</option>
-                <option value="afternoon">Afternoon</option>
-                <option value="evening">Evening</option>
-                <option value="weekend">Weekend</option>
-              </IconSelect>
-              <IconSelect icon={CreditCard} value={form.paymentMethod} onChange={e => update('paymentMethod', e.target.value)} error={errors.paymentMethod}>
-                <option value="" disabled>Payment Method</option>
-                <option value="jazzcash">JazzCash</option>
-                <option value="easypaisa">EasyPaisa</option>
-                <option value="bank">Bank Transfer</option>
-                <option value="cash">Cash</option>
-              </IconSelect>
-              <FloatingInput icon={Hash} label="Transaction ID" value={form.transactionId} onChange={e => update('transactionId', e.target.value)} error={errors.transactionId} />
-              <FloatingInput icon={DollarSign} label="Amount Paid" type="number" value={form.amount} onChange={e => update('amount', e.target.value)} error={errors.amount} />
-              <IconInput icon={Calendar} type="date" value={form.paymentDate} onChange={e => update('paymentDate', e.target.value)} error={errors.paymentDate} />
+          <motion.div
+            key="step4"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            className="flex flex-col gap-5"
+          >
+            <h3 className="font-space font-extrabold text-slate-800 text-lg">Additional Details</h3>
+
+            <CustomDropdown
+              label="How did you hear about us?"
+              options={[
+                { value: 'facebook', label: 'Facebook' },
+                { value: 'instagram', label: 'Instagram' },
+                { value: 'whatsapp', label: 'WhatsApp / Friend recommendation' },
+                { value: 'banner', label: 'Banner / Poster' },
+                { value: 'other', label: 'Other' }
+              ]}
+              value={form.source}
+              onChange={(val) => setForm({ ...form, source: val })}
+              error={errors.source}
+            />
+
+            <div className="flex items-center gap-3 bg-blue-50/50 border border-blue-100 rounded-xl p-4 mt-2">
+              <input
+                type="checkbox"
+                id="whatsapp"
+                checked={form.whatsappGroup}
+                onChange={(e) => setForm({ ...form, whatsappGroup: e.target.checked })}
+                className="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500 accent-blue-600"
+              />
+              <label htmlFor="whatsapp" className="text-xs text-slate-600 leading-normal cursor-pointer select-none">
+                Add me to Shine Tech Academy's official info WhatsApp group.
+              </label>
             </div>
           </motion.div>
         )
       case 4:
+        const selectedNames = form.courses.map((id) => COURSES.find((c) => c.id === id)?.title).join(', ')
         return (
-          <motion.div key="step4" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} className="space-y-5">
-            <div className="text-center mb-6">
-              <h3 className="font-space font-extrabold text-xl text-slate-900">Review & Submit</h3>
-              <p className="text-slate-400 text-sm">Please review your information before submitting.</p>
-            </div>
-
-            <div className="bg-slate-50 rounded-xl p-5 space-y-4">
-              <div>
-                <p className="text-xs text-slate-400 uppercase tracking-widest mb-2">Application ID Preview</p>
-                <p className="font-space font-bold text-lg text-blue-600">{appId || generateAppId().replace(/\d{4}$/, '****')}</p>
-              </div>
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                {[
-                  ['Full Name', form.fullName], ['Father Name', form.fatherName], ['Email', form.email],
-                  ['Phone', form.phone], ['City', form.city], ['Qualification', form.qualification],
-                  ['Institute', form.institute], ['Batch', form.batch], ['Payment', form.paymentMethod],
-                ].map(([label, value]) => (
-                  <div key={label}>
-                    <p className="text-[11px] text-slate-400">{label}</p>
-                    <p className="text-slate-800 font-medium">{value || '-'}</p>
-                  </div>
-                ))}
-                <div className="col-span-2">
-                  <p className="text-[11px] text-slate-400">Selected Courses</p>
-                  <p className="text-slate-800 font-medium">{form.courses.map(id => COURSES.find(c => c.id === id)?.title).filter(Boolean).join(', ') || '-'}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Signature */}
+          <motion.div
+            key="step5"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            className="flex flex-col gap-6"
+          >
             <div>
-              <p className="text-sm font-semibold text-slate-700 mb-2">Digital Signature</p>
-              <div className="relative bg-white border-2 border-slate-200 rounded-xl overflow-hidden" style={{ height: 120 }}>
-                <canvas
-                  ref={canvasRef}
-                  className="w-full h-full cursor-crosshair"
-                  onMouseDown={startDrawing}
-                  onMouseMove={draw}
-                  onMouseUp={stopDrawing}
-                  onMouseLeave={stopDrawing}
-                  onTouchStart={startDrawing}
-                  onTouchMove={draw}
-                  onTouchEnd={stopDrawing}
-                />
-                {!signData && <p className="absolute inset-0 flex items-center justify-center text-slate-300 text-xs pointer-events-none">Sign here</p>}
-              </div>
-              {signData && (
-                <button type="button" onClick={clearSignature} className="text-red-500 text-xs mt-1 hover:underline">Clear</button>
-              )}
+              <h3 className="font-space font-extrabold text-slate-800 text-lg">Review Information</h3>
+              <p className="text-xs text-slate-400 mt-1">Please double check your credentials before submitting.</p>
             </div>
 
-            {/* Terms */}
-            <label className="flex items-start gap-3 cursor-pointer">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[
+                { label: 'Full Name', value: form.fullName, icon: User },
+                { label: 'Email Address', value: form.email, icon: Mail },
+                { label: 'Phone / WhatsApp', value: form.phone, icon: Phone },
+                { label: 'City', value: form.city || 'N/A', icon: MapPin },
+                { label: 'Last Qualification', value: form.qualification, icon: GraduationCap },
+                { label: 'School/College/Uni', value: form.institute, icon: BookOpen },
+                { label: 'Selected Program(s)', value: selectedNames || form.customCourse, icon: Code },
+              ].map((item) => {
+                const Icon = item.icon
+                return (
+                  <div key={item.label} className="bg-slate-50/70 border border-slate-100 rounded-xl p-4 flex gap-3">
+                    <Icon className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{item.label}</p>
+                      <p className="text-slate-800 font-semibold text-xs mt-0.5 leading-relaxed">{item.value}</p>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+
+            <div className="flex items-start gap-3 mt-2">
               <input
                 type="checkbox"
+                id="terms"
                 checked={form.agreeTerms}
-                onChange={e => update('agreeTerms', e.target.checked)}
-                className="mt-0.5 w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                onChange={(e) => setForm({ ...form, agreeTerms: e.target.checked })}
+                className="w-4.5 h-4.5 text-blue-600 border-slate-300 rounded focus:ring-blue-500 accent-blue-600 mt-0.5"
               />
-              <span className="text-xs text-slate-500">
-                I confirm that all the information provided above is correct and I agree to the{' '}
-                <span className="text-blue-600 font-semibold">Terms & Conditions</span> of Shine Tech Academy.
-              </span>
-            </label>
+              <label htmlFor="terms" className="text-xs text-slate-500 leading-relaxed cursor-pointer select-none">
+                I hereby declare that all the information provided above is authentic. I agree to abide by Shine Tech Academy's terms & conditions.
+              </label>
+            </div>
           </motion.div>
         )
+      default:
+        return null
     }
   }
 
@@ -552,9 +673,12 @@ export default function AdmissionForm({ onBack }) {
 
   return (
     <>
-      <div className="min-h-screen bg-slate-50">
-        {/* Top bar */}
-        <div className="sticky top-0 z-50 bg-white border-b border-slate-100">
+      {/* Dynamic Background on the Form Page */}
+      <FormConstellation />
+
+      <div className="min-h-screen bg-transparent relative z-10 flex flex-col">
+        {/* Top bar (Glassmorphism layout) */}
+        <div className="sticky top-0 z-50 bg-white/40 backdrop-blur-md border-b border-slate-100/50">
           <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
             <button onClick={onBack} className="flex items-center gap-1.5 text-slate-500 hover:text-slate-800 transition-colors text-sm font-medium self-center">
               <ArrowLeft className="w-4 h-4" /> Back
@@ -567,7 +691,7 @@ export default function AdmissionForm({ onBack }) {
           </div>
         </div>
 
-        <div className="max-w-3xl mx-auto px-4 py-10">
+        <div className="max-w-3xl mx-auto px-4 py-10 w-full flex-1 flex flex-col justify-center relative z-20">
           {/* Progress */}
           <StepIndicator current={step} total={5} />
           <div className="flex justify-between mb-8">
@@ -578,8 +702,8 @@ export default function AdmissionForm({ onBack }) {
             ))}
           </div>
 
-          {/* Form */}
-          <div className="bg-white rounded-2xl shadow-2xl border border-slate-100 p-5 sm:p-8">
+          {/* Premium Glass Card Form */}
+          <div className="bg-white/90 backdrop-blur-md rounded-3xl shadow-2xl border border-white/60 p-6 sm:p-10 hover:shadow-blue-500/5 transition-shadow duration-300">
             <AnimatePresence mode="wait">
               {renderStep()}
             </AnimatePresence>
@@ -596,7 +720,7 @@ export default function AdmissionForm({ onBack }) {
               {step < 4 ? (
                 <button
                   onClick={nextStep}
-                  className="flex items-center gap-1.5 bg-blue-600 text-white text-sm font-bold px-6 py-3 rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/25"
+                  className="flex items-center gap-1.5 bg-blue-600 text-white text-sm font-bold px-6 py-3 rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/25 hover:-translate-y-0.5"
                 >
                   Next <ArrowRight className="w-4 h-4" />
                 </button>
@@ -604,7 +728,7 @@ export default function AdmissionForm({ onBack }) {
                 <button
                   onClick={handleSubmit}
                   disabled={!form.agreeTerms || loading}
-                  className="flex items-center gap-2 bg-blue-600 text-white text-sm font-bold px-8 py-3 rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/25 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center gap-2 bg-blue-600 text-white text-sm font-bold px-8 py-3 rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/25 disabled:opacity-50 disabled:cursor-not-allowed hover:-translate-y-0.5"
                 >
                   {loading ? <Loader className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
                   {loading ? 'Submitting...' : 'Submit Application'}
@@ -622,14 +746,7 @@ export default function AdmissionForm({ onBack }) {
         input[type="number"]::-webkit-inner-spin-button {
           opacity: 0.5;
         }
-        select {
-          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-          background-repeat: no-repeat;
-          background-position: right 12px center;
-          padding-right: 36px;
-        }
       `}</style>
     </>
   )
 }
-
