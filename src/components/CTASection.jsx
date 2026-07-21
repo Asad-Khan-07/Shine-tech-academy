@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
-import { ArrowRight, MessageCircle, Rocket } from 'lucide-react'
+import { ArrowRight, MessageCircle, Rocket, Sparkles } from 'lucide-react'
 
 function CountUp({ end, suffix = '', duration = 2 }) {
   const [count, setCount] = useState(0)
@@ -32,22 +32,53 @@ function CountUp({ end, suffix = '', duration = 2 }) {
 
 export default function CTASection() {
   return (
-    <section id="cta" className="py-24 px-4 sm:px-6 lg:px-8 dark-section">
-      <div className="max-w-4xl mx-auto text-center">
+    <section id="cta" className="py-28 px-4 sm:px-6 lg:px-8 dark-section relative overflow-hidden">
+
+      {/* Decorative floating orbs */}
+      <div className="absolute top-10 left-10 w-72 h-72 bg-blue-600/10 rounded-full blur-3xl animate-float pointer-events-none" />
+      <div className="absolute bottom-10 right-10 w-64 h-64 bg-blue-400/8 rounded-full blur-3xl animate-float pointer-events-none" style={{ animationDelay: '2s' }} />
+
+      {/* Grid pattern overlay */}
+      <div className="absolute inset-0 opacity-20 pointer-events-none"
+        style={{
+          backgroundImage: 'linear-gradient(rgba(61,124,255,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(61,124,255,0.08) 1px, transparent 1px)',
+          backgroundSize: '50px 50px',
+        }}
+      />
+
+      <div className="max-w-4xl mx-auto text-center relative z-10">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.7, ease: [0.4, 0, 0.2, 1] }}
           className="flex flex-col items-center gap-8"
         >
-          {/* Decorative top badge */}
-          <span className="section-tag-white">Start Today</span>
+          {/* Badge */}
+          <motion.span
+            className="section-tag-white flex items-center gap-2"
+            initial={{ scale: 0.8, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1, duration: 0.4 }}
+          >
+            <Sparkles className="w-3.5 h-3.5 text-blue-400" />
+            Start Today
+          </motion.span>
 
           <h2 className="font-space font-extrabold text-4xl sm:text-5xl lg:text-6xl text-white leading-tight">
             Ready to Start Your
             <br />
-            <span className="text-blue-400">Tech Journey?</span>
+            <span className="relative inline-block">
+              <span className="text-blue-400">Tech Journey?</span>
+              <motion.span
+                className="absolute -bottom-2 left-0 h-1 bg-gradient-to-r from-blue-500 to-blue-300 rounded-full"
+                initial={{ width: 0 }}
+                whileInView={{ width: '100%' }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.5 }}
+              />
+            </span>
           </h2>
 
           <p className="text-slate-400 text-base sm:text-lg leading-relaxed max-w-xl">
@@ -56,36 +87,43 @@ export default function CTASection() {
 
           <div className="flex flex-wrap gap-4 justify-center">
             <motion.a
-              whileHover={{ scale: 1.04 }}
+              whileHover={{ scale: 1.05, y: -4 }}
               whileTap={{ scale: 0.97 }}
               href="#apply"
-              className="btn-primary px-9 py-4 rounded-full text-base shadow-xl shadow-blue-500/20 font-bold flex items-center gap-2"
+              className="btn-primary px-10 py-4 rounded-full text-base shadow-2xl shadow-blue-500/30 font-bold flex items-center gap-2"
             >
-              <Rocket className="w-4 h-4" /> Apply Now <ArrowRight className="w-4 h-4" />
+              <Rocket className="w-5 h-5 relative z-10" />
+              <span className="relative z-10">Apply Now</span>
+              <ArrowRight className="w-5 h-5 relative z-10" />
             </motion.a>
             <motion.button
-              whileHover={{ scale: 1.04 }}
+              whileHover={{ scale: 1.05, y: -4 }}
               whileTap={{ scale: 0.97 }}
               onClick={() => document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })}
-              className="btn-outline-white px-9 py-4 rounded-full text-base font-bold flex items-center gap-2"
+              className="btn-outline-white px-10 py-4 rounded-full text-base font-bold flex items-center gap-2"
             >
-              <MessageCircle className="w-4 h-4" /> Contact Us
+              <MessageCircle className="w-5 h-5" /> Contact Us
             </motion.button>
           </div>
 
           {/* Stats strip */}
-          <div className="flex flex-wrap justify-center gap-8 pt-4 border-t border-white/10 w-full mt-2">
+          <div className="grid grid-cols-3 gap-8 pt-6 border-t border-white/10 w-full mt-2">
             {[
               { end: 10, suffix: '+', label: 'Courses Available' },
               { end: 500, suffix: '+', label: 'Students Enrolled' },
               { end: 100, suffix: '%', label: 'Practical Learning' },
             ].map((s) => (
-              <div key={s.label} className="text-center">
-                <p className="text-white font-space font-extrabold text-3xl">
+              <motion.div
+                key={s.label}
+                className="text-center group"
+                whileHover={{ y: -4, scale: 1.05 }}
+                transition={{ duration: 0.2 }}
+              >
+                <p className="text-white font-space font-extrabold text-3xl sm:text-4xl group-hover:text-blue-300 transition-colors">
                   <CountUp end={s.end} suffix={s.suffix} />
                 </p>
-                <p className="text-slate-500 text-xs uppercase tracking-widest mt-1">{s.label}</p>
-              </div>
+                <p className="text-slate-500 text-xs uppercase tracking-widest mt-1 group-hover:text-slate-400 transition-colors">{s.label}</p>
+              </motion.div>
             ))}
           </div>
         </motion.div>

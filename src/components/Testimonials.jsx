@@ -63,7 +63,7 @@ const card = {
 
 export default function Testimonials() {
   return (
-    <section id="reviews" className="py-24 px-4 sm:px-6 lg:px-8 bg-white">
+    <section id="reviews" className="py-24 px-4 sm:px-6 lg:px-8 bg-white/80 backdrop-blur-sm">
       <div className="max-w-7xl mx-auto">
 
         {/* Header */}
@@ -72,7 +72,8 @@ export default function Testimonials() {
           <h2 className="font-space font-extrabold text-3xl sm:text-4xl text-slate-900 mt-3">
             What Our Students Say
           </h2>
-          <div className="w-12 h-1 bg-blue-600 mx-auto mt-4 rounded-full" />
+          <div className="w-20 h-1 bg-gradient-to-r from-blue-600 via-blue-400 to-blue-600 mx-auto mt-4 rounded-full" />
+          <p className="text-slate-500 text-sm mt-4 max-w-md mx-auto">Real stories from real students who transformed their careers with Shine Tech Academy.</p>
         </div>
 
         {/* Grid */}
@@ -87,10 +88,12 @@ export default function Testimonials() {
             <motion.div
               key={r.name}
               variants={card}
-              className="testimonial-card p-6 flex flex-col gap-4"
+              className="testimonial-card p-6 flex flex-col gap-4 shimmer-on-hover"
             >
-              {/* Quote icon */}
-              <Quote className="w-8 h-8 text-blue-100 fill-blue-100" />
+              {/* Gradient quote icon */}
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center shadow-lg shadow-blue-500/20">
+                <Quote className="w-5 h-5 text-white fill-white" />
+              </div>
 
               {/* Stars */}
               <div className="flex gap-1">
@@ -101,12 +104,12 @@ export default function Testimonials() {
 
               {/* Review text */}
               <p className="text-slate-600 text-sm leading-relaxed flex-1">
-                "{r.text}"
+                &ldquo;{r.text}&rdquo;
               </p>
 
               {/* Author */}
               <div className="flex items-center gap-3 pt-4 border-t border-slate-100">
-                <div className={`w-10 h-10 rounded-full ${r.color} flex items-center justify-center text-white text-xs font-black flex-shrink-0`}>
+                <div className={`w-11 h-11 rounded-full ${r.color} flex items-center justify-center text-white text-xs font-black flex-shrink-0 shadow-lg`}>
                   {r.avatar}
                 </div>
                 <div>

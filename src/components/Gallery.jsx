@@ -44,7 +44,7 @@ const photo = {
 
 export default function Gallery() {
   return (
-    <section id="gallery" className="py-24 px-4 sm:px-6 lg:px-8 bg-slate-50">
+    <section id="gallery" className="py-24 px-4 sm:px-6 lg:px-8 bg-slate-50/60 backdrop-blur-sm">
       <div className="max-w-7xl mx-auto">
 
         {/* Header */}

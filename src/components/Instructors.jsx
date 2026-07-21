@@ -34,7 +34,7 @@ const INSTRUCTORS = [
 
 export default function Instructors() {
   return (
-    <section id="instructors" className="py-24 px-4 sm:px-6 lg:px-8 bg-white overflow-hidden">
+    <section id="instructors" className="py-24 px-4 sm:px-6 lg:px-8 bg-white/70 backdrop-blur-sm overflow-hidden">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-16">

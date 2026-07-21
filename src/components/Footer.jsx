@@ -29,7 +29,7 @@ export default function Footer() {
   const scrollTo = (href) => document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' })
 
   return (
-    <footer className="bg-white border-t border-slate-100 pt-16 pb-8 px-4 sm:px-6 lg:px-8">
+    <footer className="bg-white/80 backdrop-blur-sm border-t border-slate-100 pt-16 pb-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
 

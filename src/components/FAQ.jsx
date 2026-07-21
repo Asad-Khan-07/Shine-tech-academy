@@ -68,7 +68,7 @@ function FAQItem({ item, index }) {
 
 export default function FAQ() {
   return (
-    <section id="faq" className="py-24 px-4 sm:px-6 lg:px-8 bg-white">
+    <section id="faq" className="py-24 px-4 sm:px-6 lg:px-8 bg-white/70 backdrop-blur-sm">
       <div className="max-w-3xl mx-auto">
 
         {/* Header */}

@@ -21,7 +21,7 @@ const item = {
 
 export default function LearningJourney() {
   return (
-    <section id="admission" className="py-24 px-4 sm:px-6 lg:px-8 bg-white">
+    <section id="admission" className="py-24 px-4 sm:px-6 lg:px-8 bg-white/70 backdrop-blur-sm">
       <div className="max-w-6xl mx-auto">
 
         {/* Header */}

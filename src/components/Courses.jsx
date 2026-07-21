@@ -205,7 +205,7 @@ function CourseCard({ course, live, onViewCurriculum }) {
   return (
     <motion.div
       variants={cardAnim}
-      className="bg-white rounded-2xl border border-slate-100 overflow-hidden flex flex-col card-hover shadow-sm relative"
+      className="bg-white rounded-2xl border border-slate-100 overflow-hidden flex flex-col card-hover shadow-sm relative group shimmer-on-hover glow-border"
     >
       {!live && (
         <div className="absolute top-3 right-3 z-10 flex items-center gap-1 bg-amber-400 text-amber-900 text-[10px] font-bold px-2.5 py-1 rounded-full shadow-md">
@@ -316,7 +316,7 @@ export default function Courses() {
   const [selectedCourse, setSelectedCourse] = useState(null)
 
   return (
-    <section id="courses" className="py-24 px-4 sm:px-6 lg:px-8 bg-slate-50">
+    <section id="courses" className="py-24 px-4 sm:px-6 lg:px-8 bg-slate-50/60 backdrop-blur-sm">
       <div className="max-w-7xl mx-auto">
 
         {/* Live Courses Header */}
