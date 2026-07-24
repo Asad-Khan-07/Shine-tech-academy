@@ -144,7 +144,7 @@ function CodeRainBackground() {
 
 export default function WhySTA() {
   return (
-    <section id="why-sta" className="dark-navy py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+    <section id="why-sta" className="dark-navy py-16 sm:py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
       
       {/* ── Subtle Cyberpunk Code Rain ── */}
       <CodeRainBackground />
@@ -177,7 +177,7 @@ export default function WhySTA() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: '-80px' }}
-          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6"
+          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-6"
         >
           {REASONS.map((r) => {
             const Icon = r.icon
@@ -185,16 +185,16 @@ export default function WhySTA() {
               <motion.div
                 key={r.title}
                 variants={cardAnim}
-                className="flex flex-col items-center text-center gap-4 group cursor-default glass-card-dark rounded-2xl p-5 hover:bg-white/8 transition-all duration-400"
+                className="flex flex-col items-center text-center gap-3 sm:gap-4 group cursor-default glass-card-dark rounded-2xl p-4 sm:p-5 hover:bg-white/8 transition-all duration-400"
                 whileHover={{ y: -8, scale: 1.03 }}
               >
                 {/* Icon circle */}
                 <div className="relative">
                   <div
-                    className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${r.color} flex items-center justify-center text-white shadow-lg transition-all duration-400 group-hover:scale-110`}
+                    className={`w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br ${r.color} flex items-center justify-center text-white shadow-lg transition-all duration-400 group-hover:scale-110`}
                     style={{ boxShadow: `0 8px 25px ${r.glow}` }}
                   >
-                    <Icon className="w-7 h-7" />
+                    <Icon className="w-5 h-5 sm:w-7 sm:h-7" />
                   </div>
                   {/* Glow halo */}
                   <div
@@ -204,10 +204,10 @@ export default function WhySTA() {
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <h3 className="font-space font-bold text-white text-sm leading-tight">
+                  <h3 className="font-space font-bold text-white text-xs sm:text-sm leading-tight">
                     {r.title}
                   </h3>
-                  <p className="text-slate-400 text-[11px] leading-relaxed max-w-[130px]">
+                  <p className="text-slate-400 text-[10px] sm:text-[11px] leading-relaxed max-w-[120px] sm:max-w-[130px]">
                     {r.desc}
                   </p>
                 </div>

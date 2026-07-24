@@ -21,11 +21,11 @@ const item = {
 
 export default function LearningJourney() {
   return (
-    <section id="admission" className="py-24 px-4 sm:px-6 lg:px-8 bg-white/70 backdrop-blur-sm">
+    <section id="learning-journey" className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-white/70 backdrop-blur-sm">
       <div className="max-w-6xl mx-auto">
 
         {/* Header */}
-        <div className="text-center mb-20">
+        <div className="text-center mb-12 sm:mb-20">
           <span className="section-tag mb-3 inline-block">Our Process</span>
           <h2 className="font-space font-extrabold text-3xl sm:text-4xl text-slate-900 mt-3">
             Your Learning Journey
@@ -39,7 +39,7 @@ export default function LearningJourney() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: '-80px' }}
-          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-10"
+          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 sm:gap-8"
         >
           {STEPS.map((step, i) => {
             const Icon = step.icon
@@ -52,8 +52,8 @@ export default function LearningJourney() {
               >
                 {/* Icon circle */}
                 <div className="relative">
-                  <div className="w-16 h-16 rounded-full bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/25 text-white z-10 relative hover:bg-blue-700 transition-colors">
-                    <Icon className="w-6 h-6" />
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/25 text-white z-10 relative hover:bg-blue-700 transition-colors">
+                    <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
                   </div>
                   {/* Step number badge */}
                   <div className="absolute -top-1.5 -right-1.5 w-6 h-6 bg-slate-900 border-2 border-white rounded-full flex items-center justify-center text-white text-[10px] font-black z-20">
@@ -63,14 +63,14 @@ export default function LearningJourney() {
 
                 {/* Arrow (desktop, between steps) */}
                 {!isLast && (
-                  <div className="absolute top-8 left-[calc(50%+36px)] w-[calc(100%-72px)] h-px bg-gradient-to-r from-blue-500 to-blue-200 hidden lg:block pointer-events-none" />
+                  <div className="absolute top-7 sm:top-8 left-[calc(50%+30px)] sm:left-[calc(50%+36px)] w-[calc(100%-60px)] sm:w-[calc(100%-72px)] h-px bg-gradient-to-r from-blue-500 to-blue-200 hidden lg:block pointer-events-none" />
                 )}
 
                 <div>
-                  <h3 className="font-space font-extrabold text-slate-900 text-sm uppercase tracking-wide mb-1">
+                  <h3 className="font-space font-extrabold text-slate-900 text-xs sm:text-sm uppercase tracking-wide mb-1">
                     {step.title}
                   </h3>
-                  <p className="text-slate-500 text-xs leading-relaxed max-w-[130px] mx-auto">
+                  <p className="text-slate-500 text-[10px] sm:text-xs leading-relaxed max-w-[110px] sm:max-w-[130px] mx-auto">
                     {step.desc}
                   </p>
                 </div>

@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Clock, Monitor, DollarSign, BookOpen, ArrowRight, ShieldCheck, Hourglass, Sparkles, X, CheckCircle
@@ -122,12 +123,12 @@ const LIVE_COURSES = [
 const COMING_SOON = [
   { id: 'ai-advanced',  title: 'Artificial Intelligence (Advanced)',  level: 'Advanced Diploma', duration: '4 Months', mode: 'Online & Onsite', curriculum: ['Advanced Machine Learning', 'Deep Learning & Neural Networks', 'Computer Vision', 'Natural Language Processing', 'Reinforcement Learning', 'AI Model Deployment', 'Research & Development', 'Final AI Project'] },
   { id: 'agentic-ai',  title: 'Agentic AI',                         level: 'Advanced Diploma', duration: '4 Months', mode: 'Online & Onsite', curriculum: ['Foundations of Agentic AI', 'Autonomous Agents & Planning', 'Multi-Agent Systems', 'Tool Use & Function Calling', 'Memory & Reasoning', 'Safety & Alignment', 'Building AI Assistants', 'Capstone: AI Agent Application'] },
-  { id: 'data-science', title: 'Data Science',                       level: 'Advanced Diploma', duration: '4 Months', mode: 'Online & Onsite', curriculum: ['Python for Data Science', 'Statistics & Probability', 'Data Wrangling & Cleaning', 'Data Visualization', 'Machine Learning Algorithms', 'SQL & Big Data', 'Data Storytelling', 'Final Data Science Project'] },
-  { id: 'cyber',        title: 'Cyber Security',                     level: 'Advanced Diploma', duration: '4 Months', mode: 'Online & Onsite', curriculum: ['Network Security Fundamentals', 'Ethical Hacking & Penetration Testing', 'Cryptography Basics', 'Security Operations (SOC)', 'Incident Response', 'Web Application Security', 'Digital Forensics', 'Final Security Assessment'] },
-  { id: 'flutter',      title: 'Flutter App Development',            level: 'Intermediate',     duration: '3 Months', mode: 'Online & Onsite', curriculum: ['Dart Programming Basics', 'Flutter Widgets & UI', 'State Management', 'Navigation & Routing', 'API Integration', 'Firebase & Backend', 'App Store Deployment', 'Final Mobile App Project'] },
+  // { id: 'data-science', title: 'Data Science',                       level: 'Advanced Diploma', duration: '4 Months', mode: 'Online & Onsite', curriculum: ['Python for Data Science', 'Statistics & Probability', 'Data Wrangling & Cleaning', 'Data Visualization', 'Machine Learning Algorithms', 'SQL & Big Data', 'Data Storytelling', 'Final Data Science Project'] },
+  // { id: 'cyber',        title: 'Cyber Security',                     level: 'Advanced Diploma', duration: '4 Months', mode: 'Online & Onsite', curriculum: ['Network Security Fundamentals', 'Ethical Hacking & Penetration Testing', 'Cryptography Basics', 'Security Operations (SOC)', 'Incident Response', 'Web Application Security', 'Digital Forensics', 'Final Security Assessment'] },
+  // { id: 'flutter',      title: 'Flutter App Development',            level: 'Intermediate',     duration: '3 Months', mode: 'Online & Onsite', curriculum: ['Dart Programming Basics', 'Flutter Widgets & UI', 'State Management', 'Navigation & Routing', 'API Integration', 'Firebase & Backend', 'App Store Deployment', 'Final Mobile App Project'] },
   { id: 'graphic-d',    title: 'Professional Graphic Designing',     level: 'Intermediate',     duration: '3 Months', mode: 'Online & Onsite', curriculum: ['Design Principles & Color Theory', 'Adobe Photoshop Mastery', 'Adobe Illustrator Basics', 'Typography & Layout', 'Logo & Brand Identity', 'Social Media Graphics', 'Portfolio Development', 'Final Design Project'] },
   { id: 'video-e',      title: 'Professional Video Editing',         level: 'Intermediate',     duration: '3 Months', mode: 'Online & Onsite', curriculum: ['Video Editing Fundamentals', 'Adobe Premiere Pro', 'Motion Graphics in After Effects', 'Color Grading & Audio', 'Storytelling through Video', 'YouTube & Short-form Content', 'CapCut Advanced Techniques', 'Final Video Portfolio'] },
-  { id: 'ecommerce',    title: 'E-Commerce & Shopify',               level: 'Intermediate',     duration: '3 Months', mode: 'Online & Onsite', curriculum: ['E-Commerce Business Models', 'Shopify Store Setup & Design', 'Product Listing & Optimization', 'Payment Gateways & Shipping', 'Marketing & SEO for Stores', 'Customer Service & Retention', 'Analytics & Growth', 'Final E-Commerce Launch'] },
+  // { id: 'ecommerce',    title: 'E-Commerce & Shopify',               level: 'Intermediate',     duration: '3 Months', mode: 'Online & Onsite', curriculum: ['E-Commerce Business Models', 'Shopify Store Setup & Design', 'Product Listing & Optimization', 'Payment Gateways & Shipping', 'Marketing & SEO for Stores', 'Customer Service & Retention', 'Analytics & Growth', 'Final E-Commerce Launch'] },
 ]
 
 const container = {
@@ -139,68 +140,91 @@ const cardAnim = {
   visible: { opacity: 1, y: 0,  transition: { duration: 0.5, ease: 'easeOut' } },
 }
 
-function CurriculumModal({ course, onClose }) {
-  if (!course) return null
-  return (
+function CurriculumModal({ course, onClose, onApply }) {
+  // Prevent body scroll when modal open
+  useEffect(() => {
+    if (course) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => { document.body.style.overflow = '' }
+  }, [course])
+
+  return createPortal(
     <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
-        onClick={onClose}
-      >
+      {course && (
         <motion.div
-          initial={{ opacity: 0, scale: 0.9, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.9, y: 20 }}
-          transition={{ duration: 0.3 }}
-          onClick={(e) => e.stopPropagation()}
-          className="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[85vh] overflow-y-auto"
+          key="modal-backdrop"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          style={{ position: 'fixed', inset: 0, zIndex: 99999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', background: 'rgba(15, 23, 42, 0.65)', backdropFilter: 'blur(6px)' }}
+          onClick={onClose}
         >
-          {/* Header */}
-          <div className="sticky top-0 bg-white border-b border-slate-100 px-6 py-4 flex items-center justify-between rounded-t-2xl z-10">
-            <div>
-              <h3 className="font-space font-extrabold text-slate-900 text-lg">{course.title}</h3>
-              <p className="text-blue-600 text-xs font-semibold mt-0.5">{course.level} • {course.duration}</p>
+          <motion.div
+            key="modal-box"
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            transition={{ duration: 0.25 }}
+            onClick={(e) => e.stopPropagation()}
+            style={{ background: '#ffffff', borderRadius: '1.25rem', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)', maxWidth: '520px', width: '95vw', maxHeight: '85vh', overflowY: 'auto' }}
+          >
+            {/* Header */}
+            <div style={{ position: 'sticky', top: 0, background: '#ffffff', borderBottom: '1px solid #e2e8f0', padding: '1rem 1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderRadius: '1.25rem 1.25rem 0 0', zIndex: 10 }}>
+              <div>
+                <h3 style={{ fontFamily: 'Space Grotesk, sans-serif', fontWeight: 800, color: '#0f172a', fontSize: '1.05rem', margin: 0, lineHeight: 1.3 }}>{course.title}</h3>
+                <p style={{ color: '#2563eb', fontSize: '0.8rem', fontWeight: 700, marginTop: '0.25rem' }}>{course.level} &bull; {course.duration}</p>
+              </div>
+              <button
+                onClick={onClose}
+                style={{ width: '2.25rem', height: '2.25rem', borderRadius: '50%', background: '#f1f5f9', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b', flexShrink: 0 }}
+              >
+                <X style={{ width: '1.1rem', height: '1.1rem' }} />
+              </button>
             </div>
-            <button
-              onClick={onClose}
-              className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition-colors flex-shrink-0"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </div>
 
-          {/* Curriculum List */}
-          <div className="p-6">
-            <p className="text-slate-500 text-xs font-semibold uppercase tracking-widest mb-4">Course Curriculum</p>
-            <ul className="flex flex-col gap-3">
-              {course.curriculum?.map((item, i) => (
-                <li key={i} className="flex items-start gap-3">
-                  <CheckCircle className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
-                  <span className="text-slate-700 text-sm">{item}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+            {/* Curriculum List */}
+            <div style={{ padding: '1.5rem' }}>
+              <p style={{ color: '#64748b', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '1rem' }}>Course Curriculum</p>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+                {course.curriculum?.map((item, i) => (
+                  <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
+                    <CheckCircle style={{ width: '1.1rem', height: '1.1rem', color: '#2563eb', marginTop: '0.1rem', flexShrink: 0 }} />
+                    <span style={{ color: '#1e293b', fontSize: '0.9rem', fontWeight: 500, lineHeight: 1.4 }}>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          {/* Footer */}
-          <div className="border-t border-slate-100 px-6 py-4 flex justify-end">
-            <button
-              onClick={onClose}
-              className="bg-slate-100 text-slate-700 font-bold text-sm px-5 py-2 rounded-xl hover:bg-slate-200 transition-colors"
-            >
-              Close
-            </button>
-          </div>
+            {/* Footer */}
+            <div style={{ borderTop: '1px solid #e2e8f0', padding: '1.25rem 1.5rem', display: 'flex', gap: '0.75rem', background: '#f8fafc', borderRadius: '0 0 1.25rem 1.25rem' }}>
+              <button
+                onClick={onClose}
+                style={{ flex: 1, background: '#ffffff', color: '#475569', fontWeight: 700, fontSize: '0.875rem', padding: '0.75rem 1rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1', cursor: 'pointer' }}
+              >
+                Close
+              </button>
+              <button
+                onClick={() => {
+                  onClose()
+                  if (onApply) onApply()
+                }}
+                style={{ flex: 1, background: 'linear-gradient(135deg, #2563eb, #1d4ed8)', color: '#ffffff', fontWeight: 700, fontSize: '0.875rem', padding: '0.75rem 1rem', borderRadius: '0.75rem', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', boxShadow: '0 4px 14px rgba(37,99,235,0.35)' }}
+              >
+                Enroll Now <ArrowRight style={{ width: '1rem', height: '1rem' }} />
+              </button>
+            </div>
+          </motion.div>
         </motion.div>
-      </motion.div>
-    </AnimatePresence>
+      )}
+    </AnimatePresence>,
+    document.body
   )
 }
 
-function CourseCard({ course, live, onViewCurriculum }) {
+function CourseCard({ course, live, onViewCurriculum, onApply }) {
   const levelStyle = LEVEL_STYLES[course.level]
   return (
     <motion.div
@@ -233,9 +257,9 @@ function CourseCard({ course, live, onViewCurriculum }) {
           <h3 className="text-white font-space font-extrabold text-sm drop-shadow-sm leading-tight flex-1">
             {course.title}
           </h3>
-          <span className={`${levelStyle.bg} ${levelStyle.text} text-[10px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap flex-shrink-0`}>
+          {/* <span className={`${levelStyle.bg} ${levelStyle.text} text-[10px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap flex-shrink-0`}>
             {course.level}
-          </span>
+          </span> */}
         </div>
       </div>
 
@@ -286,23 +310,31 @@ function CourseCard({ course, live, onViewCurriculum }) {
         )}
 
         {/* Actions */}
-        <div className="flex items-center gap-2 pt-1 mt-auto">
+        <div className="flex items-center gap-2 pt-1 mt-auto relative z-20">
           <button
-            onClick={() => onViewCurriculum(course)}
-            className="flex-1 flex items-center justify-center gap-1.5 border border-blue-200 text-blue-600 font-bold text-xs py-2.5 rounded-xl hover:bg-blue-50 transition-all"
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation()
+              onViewCurriculum(course)
+            }}
+            className="flex-1 flex items-center justify-center gap-1.5 border border-blue-200 text-blue-600 font-bold text-xs py-2.5 rounded-xl hover:bg-blue-50 transition-all cursor-pointer relative z-20"
           >
             <BookOpen className="w-3.5 h-3.5" />
             View Curriculum
           </button>
           {live ? (
-            <a
-              href="#apply"
-              className="flex-1 flex items-center justify-center gap-1.5 bg-blue-600 text-white font-bold text-xs py-2.5 rounded-xl hover:bg-blue-700 transition-all"
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation()
+                if (onApply) onApply()
+              }}
+              className="flex-1 flex items-center justify-center gap-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold text-xs py-2.5 rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all shadow-sm shadow-blue-200 cursor-pointer relative z-20"
             >
               Enroll Now <ArrowRight className="w-3.5 h-3.5" />
-            </a>
+            </button>
           ) : (
-            <button className="flex-1 flex items-center justify-center gap-1.5 bg-slate-200 text-slate-500 font-bold text-xs py-2.5 rounded-xl cursor-not-allowed">
+            <button type="button" className="flex-1 flex items-center justify-center gap-1.5 bg-slate-200 text-slate-500 font-bold text-xs py-2.5 rounded-xl cursor-not-allowed">
               Notify Me
             </button>
           )}
@@ -312,11 +344,11 @@ function CourseCard({ course, live, onViewCurriculum }) {
   )
 }
 
-export default function Courses() {
+export default function Courses({ onApply }) {
   const [selectedCourse, setSelectedCourse] = useState(null)
 
   return (
-    <section id="courses" className="py-24 px-4 sm:px-6 lg:px-8 bg-slate-50/60 backdrop-blur-sm">
+    <section id="courses" className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-slate-50/60 backdrop-blur-sm">
       <div className="max-w-7xl mx-auto">
 
         {/* Live Courses Header */}
@@ -341,7 +373,7 @@ export default function Courses() {
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7 mb-20"
         >
           {LIVE_COURSES.map((course) => (
-            <CourseCard key={course.id} course={course} live onViewCurriculum={setSelectedCourse} />
+            <CourseCard key={course.id} course={course} live onViewCurriculum={setSelectedCourse} onApply={onApply} />
           ))}
         </motion.div>
 
@@ -367,13 +399,13 @@ export default function Courses() {
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
         >
           {COMING_SOON.map((course) => (
-            <CourseCard key={course.id} course={course} live={false} onViewCurriculum={setSelectedCourse} />
+            <CourseCard key={course.id} course={course} live={false} onViewCurriculum={setSelectedCourse} onApply={onApply} />
           ))}
         </motion.div>
       </div>
 
       {/* Curriculum Modal */}
-      <CurriculumModal course={selectedCourse} onClose={() => setSelectedCourse(null)} />
+      <CurriculumModal course={selectedCourse} onClose={() => setSelectedCourse(null)} onApply={onApply} />
     </section>
   )
 }

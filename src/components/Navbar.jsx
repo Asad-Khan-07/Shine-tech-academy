@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Menu, X, Rocket, ChevronDown } from 'lucide-react'
+import { Menu, X, Rocket, ChevronDown, CreditCard } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const NAV_LINKS = [
@@ -11,7 +11,7 @@ const NAV_LINKS = [
   { label: 'Contact',    href: '#contact' },
 ]
 
-export default function Navbar({ onApply }) {
+export default function Navbar({ onApply, onGetCard }) {
   const [scrolled,  setScrolled]  = useState(false)
   const [menuOpen,  setMenuOpen]  = useState(false)
 
@@ -44,24 +44,33 @@ export default function Navbar({ onApply }) {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
-            <img src="/SHINE-website-logo-.gif" alt="Shine Tech Academy" className="h-10 w-auto drop-shadow-sm" />
+            <img src="/STA-logo.png" alt="Shine Tech Academy" className="h-10 w-auto drop-shadow-sm" style={{ height: '40px', width: 'auto', objectFit: 'contain' }} />
           </motion.button>
 
           {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-1 self-center">
+          <div className="hidden lg:flex items-center gap-1 self-center">
             {NAV_LINKS.map((link) => (
               <button
                 key={link.label}
                 onClick={() => handleNav(link.href)}
-                className="nav-link-premium animated-underline text-slate-600 hover:text-blue-600 text-sm font-semibold transition-all duration-200 px-4 py-2 rounded-xl hover:bg-blue-50/70"
+                className="nav-link-premium animated-underline text-slate-600 hover:text-blue-600 text-xs lg:text-sm font-semibold transition-all duration-200 px-2.5 lg:px-4 py-2 rounded-xl hover:bg-blue-50/70"
               >
                 {link.label}
               </button>
             ))}
           </div>
 
-          {/* Apply Now */}
-          <div className="hidden md:block self-center">
+          {/* Desktop CTA buttons */}
+          <div className="hidden lg:flex items-center gap-2 self-center">
+            <motion.button
+              onClick={onGetCard}
+              whileHover={{ scale: 1.04, y: -2 }}
+              whileTap={{ scale: 0.96 }}
+              className="flex items-center gap-1.5 px-4 py-2.5 rounded-full text-sm font-semibold border border-blue-500/40 text-blue-600 hover:bg-blue-50 hover:border-blue-500 transition-all duration-200"
+            >
+              <CreditCard className="w-3.5 h-3.5" />
+              <span>Get Admit Card</span>
+            </motion.button>
             <motion.a
               href="#apply"
               onClick={onApply}
@@ -77,7 +86,7 @@ export default function Navbar({ onApply }) {
           {/* Mobile Hamburger */}
           <motion.button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="md:hidden p-2.5 rounded-xl text-slate-700 hover:bg-blue-50 transition-all border border-transparent hover:border-blue-100"
+            className="lg:hidden p-2.5 rounded-xl text-slate-700 hover:bg-blue-50 transition-all border border-transparent hover:border-blue-100"
             whileTap={{ scale: 0.9 }}
           >
             <AnimatePresence mode="wait">
@@ -103,7 +112,7 @@ export default function Navbar({ onApply }) {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.25, ease: 'easeOut' }}
-            className="md:hidden overflow-hidden bg-white/95 backdrop-blur-xl border-t border-blue-50 shadow-xl shadow-blue-500/10"
+            className="lg:hidden overflow-hidden bg-white/95 backdrop-blur-xl border-t border-blue-50 shadow-xl shadow-blue-500/10"
           >
             <div className="px-4 py-4 flex flex-col gap-1">
               {NAV_LINKS.map((link, i) => (
@@ -119,12 +128,22 @@ export default function Navbar({ onApply }) {
                   <ChevronDown className="w-4 h-4 text-slate-400 group-hover:text-blue-500 -rotate-90 transition-transform" />
                 </motion.button>
               ))}
+              <motion.button
+                onClick={() => { setMenuOpen(false); onGetCard() }}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: NAV_LINKS.length * 0.04 }}
+                className="flex items-center justify-center gap-2 border border-blue-500/40 text-blue-600 text-sm font-semibold py-3 rounded-full mt-1 hover:bg-blue-50 transition-all"
+              >
+                <CreditCard className="w-4 h-4" />
+                Get Admit Card
+              </motion.button>
               <motion.a
                 href="#apply"
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: NAV_LINKS.length * 0.04 }}
-                className="btn-primary text-center text-sm font-bold py-3.5 rounded-full mt-2 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
+                transition={{ delay: (NAV_LINKS.length + 1) * 0.04 }}
+                className="btn-primary text-center text-sm font-bold py-3.5 rounded-full mt-1 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
               >
                 <Rocket className="w-4 h-4 relative z-10" />
                 <span className="relative z-10">Apply Now</span>

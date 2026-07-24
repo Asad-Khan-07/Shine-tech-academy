@@ -32,7 +32,7 @@ function CountUp({ end, suffix = '', duration = 2 }) {
 
 export default function CTASection() {
   return (
-    <section id="cta" className="py-28 px-4 sm:px-6 lg:px-8 dark-section relative overflow-hidden">
+    <section id="cta" className="py-20 sm:py-28 px-4 sm:px-6 lg:px-8 dark-section relative overflow-hidden">
 
       {/* Decorative floating orbs */}
       <div className="absolute top-10 left-10 w-72 h-72 bg-blue-600/10 rounded-full blur-3xl animate-float pointer-events-none" />
@@ -56,7 +56,7 @@ export default function CTASection() {
         >
           {/* Badge */}
           <motion.span
-            className="section-tag-white flex items-center gap-2"
+            className="section-tag-white flex justify-center items-center gap-2"
             initial={{ scale: 0.8, opacity: 0 }}
             whileInView={{ scale: 1, opacity: 1 }}
             viewport={{ once: true }}
@@ -66,7 +66,7 @@ export default function CTASection() {
             Start Today
           </motion.span>
 
-          <h2 className="font-space font-extrabold text-4xl sm:text-5xl lg:text-6xl text-white leading-tight">
+          <h2 className="font-space font-extrabold text-3xl sm:text-4xl lg:text-5xl xl:text-6xl text-white leading-tight px-2">
             Ready to Start Your
             <br />
             <span className="relative inline-block">
@@ -85,12 +85,12 @@ export default function CTASection() {
             Join Shine Tech Academy and gain the skills that open doors to internships, freelancing, and full-time careers in tech.
           </p>
 
-          <div className="flex flex-wrap gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 justify-center w-full sm:w-auto">
             <motion.a
               whileHover={{ scale: 1.05, y: -4 }}
               whileTap={{ scale: 0.97 }}
               href="#apply"
-              className="btn-primary px-10 py-4 rounded-full text-base shadow-2xl shadow-blue-500/30 font-bold flex items-center gap-2"
+              className="btn-primary px-8 sm:px-10 py-3.5 sm:py-4 rounded-full text-sm sm:text-base shadow-2xl shadow-blue-500/30 font-bold flex items-center justify-center gap-2 w-full sm:w-auto"
             >
               <Rocket className="w-5 h-5 relative z-10" />
               <span className="relative z-10">Apply Now</span>
@@ -100,14 +100,14 @@ export default function CTASection() {
               whileHover={{ scale: 1.05, y: -4 }}
               whileTap={{ scale: 0.97 }}
               onClick={() => document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })}
-              className="btn-outline-white px-10 py-4 rounded-full text-base font-bold flex items-center gap-2"
+              className="btn-outline-white px-8 sm:px-10 py-3.5 sm:py-4 rounded-full text-sm sm:text-base font-bold flex items-center justify-center gap-2 w-full sm:w-auto"
             >
               <MessageCircle className="w-5 h-5" /> Contact Us
             </motion.button>
           </div>
 
           {/* Stats strip */}
-          <div className="grid grid-cols-3 gap-8 pt-6 border-t border-white/10 w-full mt-2">
+          <div className="grid grid-cols-3 gap-4 sm:gap-8 pt-6 border-t border-white/10 w-full mt-2">
             {[
               { end: 10, suffix: '+', label: 'Courses Available' },
               { end: 500, suffix: '+', label: 'Students Enrolled' },
@@ -119,7 +119,7 @@ export default function CTASection() {
                 whileHover={{ y: -4, scale: 1.05 }}
                 transition={{ duration: 0.2 }}
               >
-                <p className="text-white font-space font-extrabold text-3xl sm:text-4xl group-hover:text-blue-300 transition-colors">
+                <p className="text-white font-space font-extrabold text-2xl sm:text-3xl lg:text-4xl group-hover:text-blue-300 transition-colors">
                   <CountUp end={s.end} suffix={s.suffix} />
                 </p>
                 <p className="text-slate-500 text-xs uppercase tracking-widest mt-1 group-hover:text-slate-400 transition-colors">{s.label}</p>

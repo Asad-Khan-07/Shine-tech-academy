@@ -28,7 +28,7 @@ export default function Contact() {
   }
 
   return (
-    <section id="contact" className="py-24 px-4 sm:px-6 lg:px-8 bg-slate-50/60 backdrop-blur-sm">
+    <section id="contact" className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-slate-50/60 backdrop-blur-sm">
       <div className="max-w-7xl mx-auto">
 
         {/* Header */}
@@ -122,7 +122,7 @@ export default function Contact() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="lg:col-span-3"
           >
-            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-7 sm:p-8">
+            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 sm:p-7 lg:p-8">
               {sent ? (
                 <div className="flex flex-col items-center justify-center gap-4 py-16 text-center">
                   <CheckCircle className="w-16 h-16 text-green-500" />

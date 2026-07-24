@@ -4,9 +4,9 @@ import { GraduationCap, Users, Briefcase, Award, Globe } from 'lucide-react'
 const STATS = [
   { icon: GraduationCap, value: '10+',    label: 'Courses',                 desc: 'Practical skill courses' },
   { icon: Users,         value: 'Expert', label: 'Mentors',                 desc: 'Industry professionals' },
-  { icon: Briefcase,     value: '100%',   label: 'Internship Opportunities', desc: 'Real world exposure' },
-  { icon: Award,         value: 'Free',   label: 'Certificates',             desc: 'On course completion' },
-  { icon: Globe,         value: 'Active', label: 'Community Support',        desc: 'WhatsApp & Discord' },
+  { icon: Briefcase,     value: '100%',   label: 'Internship',              desc: 'Real world exposure' },
+  { icon: Award,         value: 'Free',   label: 'Certificates',            desc: 'On course completion' },
+  { icon: Globe,         value: 'Active', label: 'Community',               desc: 'WhatsApp & Discord' },
 ]
 
 const container = {
@@ -20,39 +20,41 @@ const item = {
 
 export default function Stats() {
   return (
-    <section id="stats" className="dark-navy py-14 px-4 sm:px-6 lg:px-8">
+    <section id="stats" className="dark-navy py-12 sm:py-14 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto relative z-10">
         <motion.div
           variants={container}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-5 lg:gap-6"
+          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-5 lg:gap-6"
         >
-          {STATS.map((s) => {
+          {STATS.map((s, idx) => {
             const Icon = s.icon
+            // Last item on 2-col grid (index 4) spans full width on xs so it's centered
+            const isLast = idx === STATS.length - 1
             return (
               <motion.div
                 key={s.label}
                 variants={item}
-                className="stat-card-glow glow-border flex flex-col items-center text-center gap-2 group cursor-default bg-white/5 border border-white/10 rounded-2xl p-5"
+                className={`stat-card-glow glow-border flex flex-col items-center text-center gap-2 group cursor-default bg-white/5 border border-white/10 rounded-2xl p-4 sm:p-5
+                  ${isLast ? 'col-span-2 sm:col-span-1' : ''}`}
               >
                 {/* Icon with glow ring */}
                 <div className="relative mb-1">
-                  <div className="w-14 h-14 rounded-2xl bg-white/8 border border-white/10 flex items-center justify-center group-hover:bg-blue-600 group-hover:border-blue-500 transition-all duration-400">
-                    <Icon className="w-6 h-6 text-blue-400 group-hover:text-white transition-colors duration-300" />
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-white/8 border border-white/10 flex items-center justify-center group-hover:bg-blue-600 group-hover:border-blue-500 transition-all duration-400">
+                    <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-blue-400 group-hover:text-white transition-colors duration-300" />
                   </div>
-                  {/* Glow on hover */}
                   <div className="absolute inset-0 rounded-2xl bg-blue-500/0 group-hover:bg-blue-500/20 blur-xl transition-all duration-400" />
                 </div>
 
-                <p className="text-white font-space font-extrabold text-2xl sm:text-3xl leading-none tracking-tight">
+                <p className="text-white font-space font-extrabold text-xl sm:text-2xl lg:text-3xl leading-none tracking-tight">
                   {s.value}
                 </p>
                 <p className="text-blue-300 text-[10px] font-bold uppercase tracking-widest leading-tight">
                   {s.label}
                 </p>
-                <p className="text-slate-500 text-[11px] leading-tight hidden sm:block">
+                <p className="text-slate-500 text-[10px] sm:text-[11px] leading-tight hidden sm:block">
                   {s.desc}
                 </p>
 

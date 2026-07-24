@@ -19,6 +19,7 @@ html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
 body {
@@ -26,6 +27,8 @@ body {
   background-color: #ffffff;
   color: #1e293b;
   overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
 }
 
 * { box-sizing: border-box; }
@@ -51,7 +54,7 @@ body {
 /* ─── Buttons ────────────────────────────────────────────── */
 .btn-primary {
   background: linear-gradient(135deg, #0956fc 0%, #3d7cff 100%);
-  color: #ffffff;
+  color: #ffffff;   
   font-weight: 700;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: inline-flex;
@@ -68,7 +71,8 @@ body {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, #3d7cff 0%, #0956fc 100%);
+  /* background: linear-gradient(135deg, #3d7cff 0%, #0956fc 100%);
+  color: #ffffff;    */
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -133,7 +137,7 @@ body {
 }
 
 .section-tag-white {
-  display: inline-block;
+  /* display: inline-block; */
   background: rgba(255,255,255,0.08);
   color: #75a2ff;
   font-size: 11px;
@@ -494,6 +498,7 @@ body {
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
   transform: skewX(-15deg);
   transition: none;
+  pointer-events: none;
 }
 .shimmer-on-hover:hover::after {
   animation: shimmer 0.7s ease forwards;
@@ -518,6 +523,7 @@ body {
   transition: opacity 0.3s ease;
   animation: border-rotate 4s linear infinite;
   background-size: 200% 200%;
+  pointer-events: none;
 }
 .glow-border:hover::before {
   opacity: 1;
@@ -603,4 +609,29 @@ body {
 }
 .nav-link-premium:hover::after {
   width: 100%;
+}
+
+
+
+/* Prevent text overflow on small screens */
+.truncate-mobile {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Touch-friendly tap targets */
+@media (max-width: 640px) {
+  .btn-primary,
+  .btn-outline-white {
+    min-height: 44px;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  /* Reduce massive padding on mobile */
+  section {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
 }

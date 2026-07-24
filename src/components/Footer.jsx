@@ -36,7 +36,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="flex flex-col gap-5">
             <div className="flex items-center gap-3">
-              <img src="/SHINE-website-logo-.gif" alt="Shine Tech Academy" className="h-11 w-auto" />
+              <img src="/STA-logo.png" alt="Shine Tech Academy" className="h-11 w-auto" style={{ height: '44px', width: 'auto', objectFit: 'contain' }} />
               {/* <div>
                 <p className="text-slate-900 font-space font-bold text-base leading-tight">Shine Tech Academy</p>
                 <p className="text-blue-600 text-[10px] font-semibold tracking-widest uppercase">Learn. Build. Earn.</p>

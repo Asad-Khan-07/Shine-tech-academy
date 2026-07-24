@@ -3,7 +3,7 @@ import { CalendarDays, MapPin, ArrowRight, PartyPopper } from 'lucide-react'
 
 export default function UpcomingEvent() {
   return (
-    <section id="events" className="py-20 px-4 sm:px-6 lg:px-8 event-bg">
+    <section id="events" className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 event-bg">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
 

@@ -63,7 +63,7 @@ const card = {
 
 export default function Testimonials() {
   return (
-    <section id="reviews" className="py-24 px-4 sm:px-6 lg:px-8 bg-white/80 backdrop-blur-sm">
+    <section id="reviews" className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-white/80 backdrop-blur-sm">
       <div className="max-w-7xl mx-auto">
 
         {/* Header */}
