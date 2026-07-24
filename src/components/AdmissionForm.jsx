@@ -453,34 +453,44 @@ function SuccessModal({ appId, form, onClose }) {
   // ── Responsive card scaling ─────────────────────────────────────
   // Measures the natural (unscaled) size of the two-card cluster and
   // shrinks it with a CSS transform so it always fits the available
-  // width on ANY screen size (no manual breakpoints needed), while a
-  // wrapper with the scaled height removes the leftover blank space
-  // that a plain transform: scale() would normally leave behind.
+  // width on ANY screen size (no manual breakpoints needed). We use a
+  // negative bottom margin (never overflow:hidden + fixed height) to
+  // remove the leftover blank space a transform: scale() leaves behind
+  // — this way the cards can NEVER get visually clipped, even if the
+  // measurement is briefly off during image loading.
   const cardsOuterRef = useRef(null)
   const cardsInnerRef = useRef(null)
   const [cardScale, setCardScale] = useState(1)
-  const [scaledHeight, setScaledHeight] = useState(null)
+  const [cardsMarginBottom, setCardsMarginBottom] = useState(0)
 
   useEffect(() => {
+    const inner = cardsInnerRef.current
+    const outer = cardsOuterRef.current
+    if (!inner || !outer) return
+
     const recalcScale = () => {
-      const inner = cardsInnerRef.current
-      const outer = cardsOuterRef.current
-      if (!inner || !outer) return
-      // Measure at natural size first
-      inner.style.transform = 'scale(1)'
+      // scrollWidth/scrollHeight are unaffected by CSS transforms,
+      // so we can measure directly without toggling the transform off.
       const naturalWidth = inner.scrollWidth
       const naturalHeight = inner.scrollHeight
       const availableWidth = outer.clientWidth
       const scale = naturalWidth > 0 ? Math.min(1, availableWidth / naturalWidth) : 1
       setCardScale(scale)
-      setScaledHeight(naturalHeight * scale)
+      setCardsMarginBottom(-(naturalHeight * (1 - scale)))
     }
+
     recalcScale()
     window.addEventListener('resize', recalcScale)
-    return () => window.removeEventListener('resize', recalcScale)
-    // Recalculate once the logo/QR images load in, since they can
-    // change the cards' natural size right after mount.
-  }, [logoDataUrl, qrCodeDataUrl])
+    // Keep recalculating if the cards' natural size changes for any
+    // reason (images finishing loading, fonts loading, etc.)
+    const resizeObserver = new ResizeObserver(recalcScale)
+    resizeObserver.observe(inner)
+
+    return () => {
+      window.removeEventListener('resize', recalcScale)
+      resizeObserver.disconnect()
+    }
+  }, [])
 
   // Standard safe base64-encoded SVG default avatar
   const defaultAvatar = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzExMTgyNyI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MxLjY2IDAgMyAxLjM0IDMgM3MtMS4zNCAzLTMgMy0zLTEuMzQtMy0zIDEuMzQtMyAzLTN6bTAgMTQuMmMtMi41IDAtNC43MS0xLjI4LTYtMy4yMi4wMy0xLjk5IDQtMy4wOCA2LTMuMDggMS45OSAwIDUuOTcgMS4wOSA2IDMuMDgtMS4yOSAxLjk0LTMuNSAzLjIyLTYgMy4yMnoiLz48L3N2Zz4="
@@ -762,7 +772,7 @@ function SuccessModal({ appId, form, onClose }) {
         const publicUrl = publicUrlData?.publicUrl || ''
 
         await supabase.from('admissions').update({ admit_card_url: publicUrl }).eq('app_id', appId)
-        console.log('Admit Card uploaded successfully:', publicUrl)
+        // console.log('Admit Card uploaded successfully:', publicUrl)
       } catch (err) {
         console.error('Error generating/uploading PDF:', err)
       } finally {
@@ -814,11 +824,11 @@ function SuccessModal({ appId, form, onClose }) {
         </div>
 
         {/* ID Cards Preview Container — dynamically scaled to always fit the screen */}
-        <div ref={cardsOuterRef} className="w-full overflow-hidden flex justify-center" style={{ marginBottom: '24px', height: scaledHeight ?? undefined }}>
+        <div ref={cardsOuterRef} className="w-full flex justify-center" style={{ marginBottom: '24px' }}>
         <div
           ref={cardsInnerRef}
           className="flex flex-col sm:flex-row items-center sm:items-start justify-center gap-6"
-          style={{ transform: `scale(${cardScale})`, transformOrigin: 'top center', width: 'max-content' }}
+          style={{ transform: `scale(${cardScale})`, transformOrigin: 'top center', width: 'max-content', marginBottom: cardsMarginBottom }}
         >
           
           {/* FRONT CARD */}
