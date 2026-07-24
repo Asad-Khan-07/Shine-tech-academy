@@ -450,6 +450,38 @@ function SuccessModal({ appId, form, onClose }) {
   const frontCardRef = useRef(null)
   const backCardRef = useRef(null)
 
+  // ── Responsive card scaling ─────────────────────────────────────
+  // Measures the natural (unscaled) size of the two-card cluster and
+  // shrinks it with a CSS transform so it always fits the available
+  // width on ANY screen size (no manual breakpoints needed), while a
+  // wrapper with the scaled height removes the leftover blank space
+  // that a plain transform: scale() would normally leave behind.
+  const cardsOuterRef = useRef(null)
+  const cardsInnerRef = useRef(null)
+  const [cardScale, setCardScale] = useState(1)
+  const [scaledHeight, setScaledHeight] = useState(null)
+
+  useEffect(() => {
+    const recalcScale = () => {
+      const inner = cardsInnerRef.current
+      const outer = cardsOuterRef.current
+      if (!inner || !outer) return
+      // Measure at natural size first
+      inner.style.transform = 'scale(1)'
+      const naturalWidth = inner.scrollWidth
+      const naturalHeight = inner.scrollHeight
+      const availableWidth = outer.clientWidth
+      const scale = naturalWidth > 0 ? Math.min(1, availableWidth / naturalWidth) : 1
+      setCardScale(scale)
+      setScaledHeight(naturalHeight * scale)
+    }
+    recalcScale()
+    window.addEventListener('resize', recalcScale)
+    return () => window.removeEventListener('resize', recalcScale)
+    // Recalculate once the logo/QR images load in, since they can
+    // change the cards' natural size right after mount.
+  }, [logoDataUrl, qrCodeDataUrl])
+
   // Standard safe base64-encoded SVG default avatar
   const defaultAvatar = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzExMTgyNyI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MxLjY2IDAgMyAxLjM0IDMgM3MtMS4zNCAzLTMgMy0zLTEuMzQtMy0zIDEuMzQtMyAzLTN6bTAgMTQuMmMtMi41IDAtNC43MS0xLjI4LTYtMy4yMi4wMy0xLjk5IDQtMy4wOCA2LTMuMDggMS45OSAwIDUuOTcgMS4wOSA2IDMuMDgtMS4yOSAxLjk0LTMuNSAzLjIyLTYgMy4yMnoiLz48L3N2Zz4="
 
@@ -766,9 +798,10 @@ function SuccessModal({ appId, form, onClose }) {
         initial={{ scale: 0.95, y: 20 }}
         animate={{ scale: 1, y: 0 }}
         exit={{ scale: 0.95, y: 20 }}
-        className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full border border-slate-100 relative z-[1000]"
-        style={{ padding: '24px 32px', margin: 'auto' }}
+        className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full border border-slate-100 relative z-[1000] max-h-[92vh] overflow-hidden"
+        style={{ margin: 'auto' }}
       >
+        <div className="p-4 sm:p-6 lg:p-8 max-h-[92vh] overflow-y-auto">
         {/* Success Alert Header */}
         <div className="text-center mb-8">
           <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 text-green-600">
@@ -780,9 +813,13 @@ function SuccessModal({ appId, form, onClose }) {
           </p>
         </div>
 
-        {/* ID Cards Preview Container — scaled down to fit viewport */}
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
-        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'center', gap: '24px', transform: 'scale(0.78)', transformOrigin: 'top center', marginBottom: '-90px' }}>
+        {/* ID Cards Preview Container — dynamically scaled to always fit the screen */}
+        <div ref={cardsOuterRef} className="w-full overflow-hidden flex justify-center" style={{ marginBottom: '24px', height: scaledHeight ?? undefined }}>
+        <div
+          ref={cardsInnerRef}
+          className="flex flex-col sm:flex-row items-center sm:items-start justify-center gap-6"
+          style={{ transform: `scale(${cardScale})`, transformOrigin: 'top center', width: 'max-content' }}
+        >
           
           {/* FRONT CARD */}
           <div className="flex flex-col items-center gap-3">
@@ -993,6 +1030,7 @@ function SuccessModal({ appId, form, onClose }) {
           >
             Return to Home
           </button>
+        </div>
         </div>
       </motion.div>
     </motion.div>
