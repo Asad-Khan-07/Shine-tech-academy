@@ -18,6 +18,7 @@ import Contact from './components/Contact'
 import Footer from './components/Footer'
 import AdmissionForm from './components/AdmissionForm'
 import GetAdmitCardModal from './components/GetAdmitCardModal'
+import SuccessModal from './components/SuccessModal'
 import { AnimatePresence } from 'framer-motion'
 
 
@@ -44,6 +45,7 @@ function AmbientBackground() {
 function App() {
   const [showForm, setShowForm] = useState(false)
   const [showAdmitModal, setShowAdmitModal] = useState(false)
+  const [successData, setSuccessData] = useState(null) // { appId, form }
 
   useEffect(() => {
     const checkHash = () => {
@@ -66,11 +68,15 @@ function App() {
     window.scrollTo(0, 0)
   }
 
-  const closeForm = () => {
+  const closeForm = (appId, form) => {
     document.body.style.overflow = ''
     window.location.hash = ''
     setShowForm(false)
     window.scrollTo(0, 0)
+    // If called with success data, show the SuccessModal over the website
+    if (appId && form) {
+      setSuccessData({ appId, form })
+    }
   }
 
   if (showForm) {
@@ -114,6 +120,18 @@ function App() {
       <AnimatePresence>
         {showAdmitModal && (
           <GetAdmitCardModal onClose={() => setShowAdmitModal(false)} />
+        )}
+      </AnimatePresence>
+
+      {/* Admission Success Modal — rendered over the website */}
+      <AnimatePresence>
+        {successData && (
+          <SuccessModal
+            appId={successData.appId}
+            form={successData.form}
+            onClose={() => setSuccessData(null)}
+            primaryCourseName={successData.form?.courses?.[0] || successData.form?.customCourse || 'Tech Program'}
+          />
         )}
       </AnimatePresence>
     </div>

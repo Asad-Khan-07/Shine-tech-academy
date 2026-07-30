@@ -1,8 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
+import FaceDetectCrop from './FaceDetectCrop'
 import { motion, AnimatePresence } from 'framer-motion'
 import { supabase } from '../lib/supabase'
-import { jsPDF } from 'jspdf'
-import html2canvas from 'html2canvas'
 import {
   User, Calendar, Mail, Phone, MapPin, Home, GraduationCap, BookOpen,
   Award, Briefcase, Code, Smartphone, Palette, PenTool, Megaphone, DollarSign,
@@ -20,10 +19,40 @@ const COURSES = [
   { id: 'other',    icon: Star,        title: 'Other Course',            desc: 'Tell us what you want to learn' },
 ]
 
-function generateAppId() {
+function generateAppId(courseId) {
   const prefix = 'STA'
-  const unique = Date.now().toString().slice(-5) // Last 5 digits of timestamp (milliseconds) — short and unique
-  return `${prefix}-${unique}`
+  // Combine last 4 digits of timestamp + 2 random digits = 6-digit unique code
+  const tsSlice = Date.now().toString().slice(-4)
+  const randSlice = Math.floor(10 + Math.random() * 90).toString() // 2-digit random (10-99)
+  const unique = tsSlice + randSlice
+  const suffixes = {
+    web: 'WD',
+    mobile: 'MD',
+    uiux: 'UX',
+    graphic: 'GD',
+    marketing: 'DM',
+    freelance: 'FE',
+    other: 'OC'
+  }
+  const suffix = courseId ? `-${suffixes[courseId] || 'OC'}` : ''
+  return `${prefix}-${unique}${suffix}`
+}
+
+async function generateUniqueAppId(courseId) {
+  // Keep generating until a confirmed-unique ID is found in the database
+  let candidate
+  let attempts = 0
+  do {
+    candidate = generateAppId(courseId)
+    const { data } = await supabase
+      .from('admissions')
+      .select('app_id')
+      .eq('app_id', candidate)
+      .maybeSingle()
+    if (!data) break // ID does not exist in DB — it's unique!
+    attempts++
+  } while (attempts < 10) // Safety cap: after 10 tries, use last generated
+  return candidate
 }
 
 /* ─── Premium Custom Floating Input ────────────────────────── */
@@ -442,610 +471,7 @@ function CustomDatePicker({ label, icon: Icon, value, onChange, error }) {
 
 
 
-function SuccessModal({ appId, form, onClose }) {
-  const [downloading, setDownloading] = useState(false)
-  const [uploading, setUploading] = useState(false)
-  const [qrCodeDataUrl, setQrCodeDataUrl] = useState('')
-  const [logoDataUrl, setLogoDataUrl] = useState('')
-  const frontCardRef = useRef(null)
-  const backCardRef = useRef(null)
 
-  // ── Responsive card scaling ─────────────────────────────────────
-  // Measures the natural (unscaled) size of the two-card cluster and
-  // shrinks it with a CSS transform so it always fits the available
-  // width on ANY screen size (no manual breakpoints needed). We use a
-  // negative bottom margin (never overflow:hidden + fixed height) to
-  // remove the leftover blank space a transform: scale() leaves behind
-  // — this way the cards can NEVER get visually clipped, even if the
-  // measurement is briefly off during image loading.
-  const cardsOuterRef = useRef(null)
-  const cardsInnerRef = useRef(null)
-  const [cardScale, setCardScale] = useState(1)
-  const [cardsMarginBottom, setCardsMarginBottom] = useState(0)
-
-  useEffect(() => {
-    const inner = cardsInnerRef.current
-    const outer = cardsOuterRef.current
-    if (!inner || !outer) return
-
-    const recalcScale = () => {
-      // scrollWidth/scrollHeight are unaffected by CSS transforms,
-      // so we can measure directly without toggling the transform off.
-      const naturalWidth = inner.scrollWidth
-      const naturalHeight = inner.scrollHeight
-      const availableWidth = outer.clientWidth
-      const scale = naturalWidth > 0 ? Math.min(1, availableWidth / naturalWidth) : 1
-      setCardScale(scale)
-      setCardsMarginBottom(-(naturalHeight * (1 - scale)))
-    }
-
-    recalcScale()
-    window.addEventListener('resize', recalcScale)
-    // Keep recalculating if the cards' natural size changes for any
-    // reason (images finishing loading, fonts loading, etc.)
-    const resizeObserver = new ResizeObserver(recalcScale)
-    resizeObserver.observe(inner)
-
-    return () => {
-      window.removeEventListener('resize', recalcScale)
-      resizeObserver.disconnect()
-    }
-  }, [])
-
-  // Standard safe base64-encoded SVG default avatar
-  const defaultAvatar = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzExMTgyNyI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MxLjY2IDAgMyAxLjM0IDMgM3MtMS4zNCAzLTMgMy0zLTEuMzQtMy0zIDEuMzQtMyAzLTN6bTAgMTQuMmMtMi41IDAtNC43MS0xLjI4LTYtMy4yMi4wMy0xLjk5IDQtMy4wOCA2LTMuMDggMS45OSAwIDUuOTcgMS4wOSA2IDMuMDgtMS4yOSAxLjk0LTMuNSAzLjIyLTYgMy4yMnoiLz48L3N2Zz4="
-
-  // Get primary course name
-  const primaryCourseId = form.courses[0]
-  const primaryCourseName = COURSES.find((c) => c.id === primaryCourseId)?.title || form.customCourse || 'Tech Program'
-
-  // Fetch QR Code and convert to local data URI to bypass CORS in canvas
-  useEffect(() => {
-    const fetchQr = async () => {
-      try {
-        const res = await fetch(`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${appId}`)
-        const blob = await res.blob()
-        const reader = new FileReader()
-        reader.onloadend = () => {
-          setQrCodeDataUrl(reader.result)
-        }
-        reader.readAsDataURL(blob)
-      } catch (err) {
-        console.error('Error loading QR code base64:', err)
-      }
-    }
-    if (appId) {
-      fetchQr()
-    }
-  }, [appId])
-
-  // Fetch STA logo and convert to base64 to avoid CORS in html2canvas
-  useEffect(() => {
-    const fetchLogo = async () => {
-      try {
-        const res = await fetch('/STA-logo.png')
-        const blob = await res.blob()
-        const reader = new FileReader()
-        reader.onloadend = () => {
-          setLogoDataUrl(reader.result)
-        }
-        reader.readAsDataURL(blob)
-      } catch (err) {
-        console.error('Error loading logo base64:', err)
-      }
-    }
-    fetchLogo()
-  }, [])
-
-  // ── Shared PDF builder ──────────────────────────────────────────
-  const buildAdmitCardPDF = () => {
-    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
-
-    // ── Page Header ─────────────────────────────────────────────
-    pdf.setFont('helvetica', 'bold')
-    pdf.setFontSize(17)
-    pdf.setTextColor(17, 24, 39)
-    pdf.text('SHINE TECH ACADEMY', 105, 17, { align: 'center' })
-    pdf.setFont('helvetica', 'normal')
-    pdf.setFontSize(8.5)
-    pdf.setTextColor(100, 116, 139)
-    pdf.text('Official Digital Student Admit Card & ID', 105, 23, { align: 'center' })
-
-    // card geometry
-    const fc = { x: 14, y: 29, w: 84, h: 133 }  // front card
-    const bc = { x: 112, y: 29, w: 84, h: 133 }  // back card
-
-    // ── FRONT CARD ───────────────────────────────────────────────
-    pdf.setFillColor(255, 255, 255)
-    pdf.setDrawColor(203, 213, 225)
-    pdf.setLineWidth(0.3)
-    pdf.roundedRect(fc.x, fc.y, fc.w, fc.h, 5, 5, 'FD')
-
-    // Logo
-    if (logoDataUrl) {
-      const logoW = 52, logoH = 16
-      pdf.addImage(logoDataUrl, 'PNG', fc.x + (fc.w - logoW) / 2, fc.y + 5, logoW, logoH, '', 'FAST')
-    }
-
-    // Student Photo — blue ring + white fill + photo (clipped to a true circle)
-    const cx = fc.x + fc.w / 2
-    const photoTop = fc.y + 24
-    const r = 14
-    pdf.setFillColor(37, 99, 235)
-    pdf.circle(cx, photoTop + r, r + 1.5, 'F')
-    pdf.setFillColor(255, 255, 255)
-    pdf.circle(cx, photoTop + r, r, 'F')
-    if (form.photoPreview) {
-      // Clip the image to the circle so it never overflows the ring
-      pdf.saveGraphicsState()
-      pdf.circle(cx, photoTop + r, r - 0.5, null) // build path only, no fill/stroke
-      pdf.clip()
-      pdf.discardPath()
-      pdf.addImage(form.photoPreview, 'JPEG', cx - r + 0.5, photoTop + 0.5, (r - 0.5) * 2, (r - 0.5) * 2, '', 'FAST')
-      pdf.restoreGraphicsState()
-    }
-
-    // Student Name
-    const nameY = photoTop + r * 2 + 8
-    pdf.setFont('helvetica', 'bold')
-    pdf.setFontSize(13)
-    pdf.setTextColor(15, 23, 42)
-    pdf.text(form.fullName, cx, nameY, { align: 'center' })
-
-    // Course
-    pdf.setFont('helvetica', 'bold')
-    pdf.setFontSize(7.5)
-    pdf.setTextColor(37, 99, 235)
-    pdf.text(primaryCourseName.toUpperCase(), cx, nameY + 6, { align: 'center' })
-
-    // Details table
-    const lx = fc.x + 7    // label x
-    const kx = fc.x + 33   // colon x
-    const vx = fc.x + 36   // value x
-    let dy = nameY + 14
-    const rowGap = 8.5
-
-    const rows = [
-      { label: 'ID NUMBER',  value: appId },
-      { label: 'DEPARTMENT', value: 'Technology' },
-      { label: 'EMAIL',      value: form.email.length > 25 ? form.email.slice(0, 23) + '..' : form.email },
-      { label: 'PHONE',      value: form.phone },
-    ]
-    rows.forEach((r) => {
-      pdf.setFont('helvetica', 'bold')
-      pdf.setFontSize(7)
-      pdf.setTextColor(148, 163, 184)
-      pdf.text(r.label, lx, dy)
-      pdf.text(':', kx, dy)
-      pdf.setTextColor(30, 41, 59)
-      pdf.text(r.value, vx, dy)
-      dy += rowGap
-    })
-
-    // Blue bottom banner
-    pdf.setFillColor(37, 99, 235)
-    pdf.roundedRect(fc.x, fc.y + fc.h - 17, fc.w, 17, 0, 4, 'F')
-    // cover top corners of banner so they look flat
-    pdf.setFillColor(37, 99, 235)
-    pdf.rect(fc.x, fc.y + fc.h - 17, fc.w, 5, 'F')
-    pdf.setFont('helvetica', 'bold')
-    pdf.setFontSize(6.5)
-    pdf.setTextColor(255, 255, 255)
-    pdf.text('EMPOWERING FUTURE TECH LEADERS', cx, fc.y + fc.h - 7, { align: 'center' })
-
-    // ── BACK CARD ────────────────────────────────────────────────
-    pdf.setFillColor(255, 255, 255)
-    pdf.setDrawColor(203, 213, 225)
-    pdf.setLineWidth(0.3)
-    pdf.roundedRect(bc.x, bc.y, bc.w, bc.h, 5, 5, 'FD')
-
-    const bcx = bc.x + bc.w / 2
-
-    // White header bg (cover rounded top)
-    pdf.setFillColor(255, 255, 255)
-    pdf.rect(bc.x, bc.y, bc.w, 23, 'F')
-
-    // Logo (white background — original colors)
-    if (logoDataUrl) {
-      const logoW = 52, logoH = 16
-      pdf.addImage(logoDataUrl, 'PNG', bc.x + (bc.w - logoW) / 2, bc.y + 4, logoW, logoH, '', 'FAST')
-    }
-
-    // "EMPOWERING FUTURE TECH LEADERS" subtitle
-    pdf.setFont('helvetica', 'bold')
-    pdf.setFontSize(5.5)
-    pdf.setTextColor(37, 99, 235)
-    pdf.text('EMPOWERING FUTURE TECH LEADERS', bcx, bc.y + 21.5, { align: 'center' })
-
-    // Blue divider
-    pdf.setDrawColor(37, 99, 235)
-    pdf.setLineWidth(0.7)
-    pdf.line(bc.x, bc.y + 23.5, bc.x + bc.w, bc.y + 23.5)
-
-    // Terms badge
-    const badgeW = 46, badgeH = 6
-    const badgeX = bcx - badgeW / 2
-    pdf.setFillColor(37, 99, 235)
-    pdf.roundedRect(badgeX, bc.y + 29, badgeW, badgeH, 1.5, 1.5, 'F')
-    pdf.setFont('helvetica', 'bold')
-    pdf.setFontSize(6)
-    pdf.setTextColor(255, 255, 255)
-    pdf.text('TERMS & CONDITIONS', bcx, bc.y + 33.5, { align: 'center' })
-
-    // Terms list
-    pdf.setFont('helvetica', 'normal')
-    pdf.setFontSize(6.5)
-    pdf.setTextColor(71, 85, 105)
-    const terms = [
-      '\u2022  This ID card is the property of Shine Tech Academy.',
-      '\u2022  This card is non-transferable.',
-      '\u2022  Report loss of this card immediately to management.',
-      '\u2022  Return this card upon request or when no longer',
-      '     associated with the academy.',
-    ]
-    let ty = bc.y + 42
-    terms.forEach((t) => {
-      pdf.text(t, bc.x + 6, ty)
-      ty += 6.5
-    })
-
-    // QR Code
-    if (qrCodeDataUrl) {
-      pdf.addImage(qrCodeDataUrl, 'PNG', bc.x + 6, bc.y + 88, 22, 22, '', 'FAST')
-    }
-
-    // Signature
-    pdf.setFont('helvetica', 'bold')
-    pdf.setFontSize(12)
-    pdf.setTextColor(30, 41, 59)
-    pdf.text('Saad Ahsan', bc.x + bc.w - 6, bc.y + 98, { align: 'right' })
-    pdf.setDrawColor(203, 213, 225)
-    pdf.setLineWidth(0.3)
-    pdf.line(bc.x + 36, bc.y + 101, bc.x + bc.w - 6, bc.y + 101)
-    pdf.setFont('helvetica', 'bold')
-    pdf.setFontSize(5.5)
-    pdf.setTextColor(148, 163, 184)
-    pdf.text('AUTHORIZED SIGNATURE', bc.x + bc.w - 6, bc.y + 105, { align: 'right' })
-
-    // Dark footer
-    pdf.setFillColor(17, 24, 39)
-    pdf.roundedRect(bc.x, bc.y + bc.h - 17, bc.w, 17, 0, 4, 'F')
-    pdf.setFillColor(17, 24, 39)
-    pdf.rect(bc.x, bc.y + bc.h - 17, bc.w, 5, 'F')
-    pdf.setFont('helvetica', 'normal')
-    pdf.setFontSize(5.5)
-    pdf.setTextColor(203, 213, 225)
-    pdf.text('+92 300 1234567  \u2022  info@shinetechacademy.com', bcx, bc.y + bc.h - 10, { align: 'center' })
-    pdf.setTextColor(148, 163, 184)
-    pdf.text('Hyderabad, Sindh, Pakistan', bcx, bc.y + bc.h - 5, { align: 'center' })
-
-    // ── Instructions ─────────────────────────────────────────────
-    pdf.setDrawColor(226, 232, 240)
-    pdf.setLineWidth(0.4)
-    pdf.line(14, 172, 196, 172)
-
-    pdf.setFont('helvetica', 'bold')
-    pdf.setFontSize(10)
-    pdf.setTextColor(37, 99, 235)
-    pdf.text('IMPORTANT INSTRUCTIONS FOR STUDENTS', 14, 180)
-
-    pdf.setFont('helvetica', 'normal')
-    pdf.setFontSize(8.5)
-    pdf.setTextColor(71, 85, 105)
-    const instrLines = [
-      '1.  This Admit Card is a mandatory document for entry into the Shine Tech Academy campus.',
-      '2.  Please print this PDF on a high-quality standard A4 page or card stock.',
-      '3.  Carry this card along with you to all classes, examinations, and events.',
-      '4.  This Admit Card is digital, verified, and non-transferable.',
-      '5.  The QR Code on the back can be scanned by management to verify your student status.',
-      '6.  In case of loss, report immediately to the administration or contact info@shinetechacademy.com.',
-    ]
-    let iy = 189
-    instrLines.forEach((l) => { pdf.text(l, 14, iy); iy += 7.5 })
-
-    pdf.setFont('helvetica', 'bold')
-    pdf.setFontSize(7)
-    pdf.setTextColor(148, 163, 184)
-    pdf.text('SHINE TECH ACADEMY  |  WWW.SHINETECHACADEMY.COM', 105, 282, { align: 'center' })
-
-    return pdf
-  }
-
-  // Auto upload PDF admit card on mount
-  useEffect(() => {
-    const uploadAdmitCard = async () => {
-      if (!appId || !qrCodeDataUrl || !logoDataUrl) return
-      setUploading(true)
-      try {
-        await new Promise((resolve) => setTimeout(resolve, 600))
-        const pdf = buildAdmitCardPDF()
-        const pdfBlob = pdf.output('blob')
-        const fileName = `AdmitCard_${appId}.pdf`
-
-        const { error: uploadError } = await supabase.storage
-          .from('admit-cards')
-          .upload(fileName, pdfBlob, { contentType: 'application/pdf', upsert: true })
-
-        if (uploadError) throw uploadError
-
-        const { data: publicUrlData } = supabase.storage.from('admit-cards').getPublicUrl(fileName)
-        const publicUrl = publicUrlData?.publicUrl || ''
-
-        await supabase.from('admissions').update({ admit_card_url: publicUrl }).eq('app_id', appId)
-        // console.log('Admit Card uploaded successfully:', publicUrl)
-      } catch (err) {
-        console.error('Error generating/uploading PDF:', err)
-      } finally {
-        setUploading(false)
-      }
-    }
-    uploadAdmitCard()
-  }, [appId, qrCodeDataUrl, logoDataUrl])
-
-  const handleDownload = async () => {
-    setDownloading(true)
-    try {
-      const pdf = buildAdmitCardPDF()
-      pdf.save(`STA_AdmitCard_${appId}.pdf`)
-    } catch (err) {
-      console.error(err)
-      alert('Failed to generate PDF: ' + err.message)
-    } finally {
-      setDownloading(false)
-    }
-  }
-
-
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md"
-      style={{ overflowY: 'auto', overflowX: 'hidden', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '12px' }}
-    >
-      <motion.div
-        initial={{ scale: 0.95, y: 20 }}
-        animate={{ scale: 1, y: 0 }}
-        exit={{ scale: 0.95, y: 20 }}
-        className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full border border-slate-100 relative z-[1000] max-h-[92vh] overflow-hidden"
-        style={{ margin: 'auto' }}
-      >
-        <div className="p-4 sm:p-6 lg:p-8 max-h-[92vh] overflow-y-auto">
-        {/* Success Alert Header */}
-        <div className="text-center mb-8">
-          <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 text-green-600">
-            <CheckCircle className="w-8 h-8" />
-          </div>
-          <h3 className="font-space font-extrabold text-slate-900 text-2xl mb-1">Admission Submitted!</h3>
-          <p className="text-slate-500 text-sm max-w-md mx-auto">
-            Your admission request has been sent successfully. Your digital student admit card is ready.
-          </p>
-        </div>
-
-        {/* ID Cards Preview Container — dynamically scaled to always fit the screen */}
-        <div ref={cardsOuterRef} className="w-full flex justify-center" style={{ marginBottom: '24px' }}>
-        <div
-          ref={cardsInnerRef}
-          className="flex flex-col sm:flex-row items-center sm:items-start justify-center gap-6"
-          style={{ transform: `scale(${cardScale})`, transformOrigin: 'top center', width: 'max-content', marginBottom: cardsMarginBottom }}
-        >
-          
-          {/* FRONT CARD */}
-          <div className="flex flex-col items-center gap-3">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Card Front</span>
-            <div
-              ref={frontCardRef}
-              style={{
-                width: '280px',
-                height: '443px',
-                borderRadius: '24px',
-                border: '1px solid #cbd5e1',
-                boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-                position: 'relative',
-                overflow: 'hidden',
-                backgroundColor: '#ffffff',
-                display: 'flex',
-                flexDirection: 'column',
-                fontFamily: 'sans-serif',
-                minWidth: '280px',
-                minHeight: '443px',
-                boxSizing: 'border-box'
-              }}
-            >
-              {/* Tech background lines */}
-              <div style={{ position: 'absolute', inset: 0, opacity: 0.04, pointerEvents: 'none', backgroundImage: 'radial-gradient(#0956fc 1px, transparent 1px)', backgroundSize: '16px 16px' }} />
-              
-              {/* Header Logo */}
-              <div style={{ paddingTop: '18px', paddingLeft: '20px', paddingRight: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative', zIndex: 10 }}>
-                {logoDataUrl ? (
-                  <img src={logoDataUrl} alt="STA Logo" style={{ height: '52px', width: 'auto', objectFit: 'contain' }} />
-                ) : (
-                  <div style={{ height: '52px', width: '120px', backgroundColor: '#f1f5f9', borderRadius: '6px' }} />
-                )}
-              </div>
-
-              {/* Student Photo */}
-              <div style={{ marginTop: '24px', display: 'flex', justifyContent: 'center', position: 'relative', zIndex: 10 }}>
-                <svg width="105" height="105" viewBox="0 0 105 105" style={{ display: 'block', filter: 'drop-shadow(0px 1px 3px rgba(0,0,0,0.1))' }}>
-                  <defs>
-                    <clipPath id="avatarClip">
-                      <circle cx="52.5" cy="52.5" r="48" />
-                    </clipPath>
-                  </defs>
-                  {/* White background circle */}
-                  <circle cx="52.5" cy="52.5" r="49" fill="#ffffff" />
-                  
-                  {/* Clipped Student Image */}
-                  <image
-                    href={form.photoPreview || defaultAvatar}
-                    x="4.5"
-                    y="4.5"
-                    width="96"
-                    height="96"
-                    clipPath="url(#avatarClip)"
-                    preserveAspectRatio="xMidYMid slice"
-                  />
-                  
-                  {/* Outer Blue Border (drawn on top of the image to perfectly cover any edge issues) */}
-                  <circle cx="52.5" cy="52.5" r="49" fill="none" stroke="#2563eb" strokeWidth="3" />
-                </svg>
-              </div>
-
-              {/* Name & Title */}
-              <div style={{ marginTop: '16px', textAlign: 'center', paddingLeft: '16px', paddingRight: '16px', position: 'relative', zIndex: 10, flex: 1, display: 'flex', flexDirection: 'column' }}>
-                <h4 style={{ fontFamily: 'Arial, Helvetica, sans-serif', fontWeight: 800, fontSize: '17px', color: '#0f172a', lineHeight: 1.2, margin: 0 }}>{form.fullName}</h4>
-                <p style={{ color: '#2563eb', fontWeight: 'bold', fontSize: '11px', marginTop: '2px', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '2px 0 0 0' }}>{primaryCourseName}</p>
-
-                {/* Details list */}
-                <div style={{ marginTop: '20px', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '7px', paddingLeft: '12px', paddingRight: '12px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', fontSize: '10px' }}>
-                    <span style={{ display: 'inline-block', minWidth: '78px', color: '#94a3b8', fontWeight: 'bold', textTransform: 'uppercase', flexShrink: 0 }}>ID Number</span>
-                    <span style={{ color: '#94a3b8', fontWeight: 'bold', marginRight: '5px', flexShrink: 0 }}>:</span>
-                    <span style={{ fontFamily: 'Arial, Helvetica, sans-serif', fontWeight: 'bold', color: '#1e293b' }}>{appId}</span>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', fontSize: '10px' }}>
-                    <span style={{ display: 'inline-block', minWidth: '78px', color: '#94a3b8', fontWeight: 'bold', textTransform: 'uppercase', flexShrink: 0 }}>Department</span>
-                    <span style={{ color: '#94a3b8', fontWeight: 'bold', marginRight: '5px', flexShrink: 0 }}>:</span>
-                    <span style={{ fontWeight: 'bold', color: '#1e293b' }}>Technology</span>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', fontSize: '10px' }}>
-                    <span style={{ display: 'inline-block', minWidth: '78px', color: '#94a3b8', fontWeight: 'bold', textTransform: 'uppercase', flexShrink: 0 }}>Email</span>
-                    <span style={{ color: '#94a3b8', fontWeight: 'bold', marginRight: '5px', flexShrink: 0 }}>:</span>
-                    <span style={{ fontWeight: 'bold', color: '#1e293b', fontSize: '9px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', flex: 1 }}>{form.email}</span>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', fontSize: '10px' }}>
-                    <span style={{ display: 'inline-block', minWidth: '78px', color: '#94a3b8', fontWeight: 'bold', textTransform: 'uppercase', flexShrink: 0 }}>Phone</span>
-                    <span style={{ color: '#94a3b8', fontWeight: 'bold', marginRight: '5px', flexShrink: 0 }}>:</span>
-                    <span style={{ fontWeight: 'bold', color: '#1e293b' }}>{form.phone}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Bottom Curved Wave and Tag */}
-              <div style={{ marginTop: 'auto', position: 'relative', zIndex: 10, height: '56px', background: 'linear-gradient(135deg, #2563eb, #1d4ed8)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <span style={{ color: '#ffffff', fontFamily: 'Arial, Helvetica, sans-serif', fontWeight: 800, fontSize: '9px', textTransform: 'uppercase', letterSpacing: '0.15em' }}>
-                  EMPOWERING FUTURE TECH LEADERS
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* BACK CARD */}
-          <div className="flex flex-col items-center gap-3">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Card Back</span>
-            <div
-              ref={backCardRef}
-              style={{
-                width: '280px',
-                height: '443px',
-                borderRadius: '24px',
-                border: '1px solid #cbd5e1',
-                boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-                position: 'relative',
-                overflow: 'hidden',
-                backgroundColor: '#ffffff',
-                display: 'flex',
-                flexDirection: 'column',
-                fontFamily: 'sans-serif',
-                justifyContent: 'space-between',
-                minWidth: '280px',
-                minHeight: '443px',
-                boxSizing: 'border-box'
-              }}
-            >
-              {/* Top header - white background so logo is visible */}
-              <div style={{ backgroundColor: '#ffffff', paddingTop: '16px', paddingBottom: '14px', paddingLeft: '20px', paddingRight: '20px', textAlign: 'center', position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', borderBottom: '2px solid #2563eb' }}>
-                {logoDataUrl ? (
-                  <img src={logoDataUrl} alt="STA Logo" style={{ height: '42px', width: 'auto', objectFit: 'contain' }} />
-                ) : (
-                  <div style={{ height: '42px', width: '100px', backgroundColor: '#f1f5f9', borderRadius: '6px' }} />
-                )}
-                <span style={{ fontSize: '7px', fontWeight: 'bold', color: '#2563eb', textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: '6px' }}>
-                  EMPOWERING FUTURE TECH LEADERS
-                </span>
-              </div>
-
-              {/* Terms & Conditions */}
-              <div style={{ paddingLeft: '24px', paddingRight: '24px', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                <span style={{ fontSize: '9px', fontWeight: 800, color: '#ffffff', backgroundColor: '#2563eb', padding: '4px 12px', borderRadius: '6px', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'inline-block', marginBottom: '12px' }}>
-                  Terms &amp; Conditions
-                </span>
-                <ul style={{ fontSize: '8px', color: '#64748b', margin: 0, paddingLeft: '14px', fontWeight: 600, lineHeight: 1.7, listStyleType: 'disc', width: '100%' }}>
-                  <li>This ID card is the property of Shine Tech Academy.</li>
-                  <li>This card is non-transferable.</li>
-                  <li>Report loss of this card immediately to management.</li>
-                  <li>Return this card upon request or when no longer associated with the academy.</li>
-                </ul>
-              </div>
-
-              {/* QR Code and Signature */}
-              <div style={{ paddingLeft: '24px', paddingRight: '24px', paddingBottom: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
-                <div style={{ border: '1px solid #cbd5e1', padding: '4px', backgroundColor: '#ffffff', borderRadius: '8px', flexShrink: 0 }}>
-                  {qrCodeDataUrl ? (
-                    <img
-                      src={qrCodeDataUrl}
-                      alt="QR"
-                      style={{ width: '64px', height: '64px', display: 'block' }}
-                    />
-                  ) : (
-                    <div style={{ width: '64px', height: '64px', backgroundColor: '#f1f5f9', borderRadius: '4px' }} />
-                  )}
-                </div>
-                <div style={{ textAlign: 'right', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'flex-end' }}>
-                  <div style={{ fontFamily: 'Arial, Helvetica, sans-serif', fontWeight: 'bold', color: '#1e293b', fontSize: '18px', opacity: 0.8, lineHeight: 1 }}>
-                    Saad Ahsan
-                  </div>
-                  <div style={{ height: '1px', backgroundColor: '#e2e8f0', width: '96px', marginTop: '4px', marginBottom: '4px' }} />
-                  <span style={{ fontSize: '8px', fontWeight: 'bold', color: '#94a3b8', textTransform: 'uppercase' }}>Authorized Signature</span>
-                </div>
-              </div>
-
-              {/* Footer Block */}
-              <div style={{ backgroundColor: '#111827', color: '#ffffff', paddingTop: '12px', paddingBottom: '12px', paddingLeft: '20px', paddingRight: '20px', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '4px', alignItems: 'center', justifyContent: 'center', fontSize: '8px', fontWeight: 600 }}>
-                <span style={{ color: '#cbd5e1' }}>
-                  +92 300 1234567 &bull; info@shinetechacademy.com
-                </span>
-                <span style={{ color: '#94a3b8', fontSize: '7.5px' }}>
-                  Hyderabad, Sindh, Pakistan
-                </span>
-              </div>
-            </div>
-          </div>
-
-        </div>
-        </div>
-
-        {/* Buttons / Actions */}
-        <div className="flex flex-col sm:flex-row gap-3 pt-6 border-t border-slate-100">
-          <button
-            onClick={handleDownload}
-            disabled={downloading}
-            className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold text-sm py-3.5 rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg shadow-blue-500/20 disabled:opacity-50"
-          >
-            {downloading ? (
-              <>
-                <Loader className="w-4 h-4 animate-spin" /> Generating PDF...
-              </>
-            ) : (
-              <>
-                <FileText className="w-4 h-4" /> Download Admit Card PDF
-              </>
-            )}
-          </button>
-          
-          <button
-            onClick={onClose}
-            className="sm:w-44 bg-slate-100 text-slate-700 font-bold text-sm py-3.5 rounded-xl hover:bg-slate-200 transition-colors"
-          >
-            Return to Home
-          </button>
-        </div>
-        </div>
-      </motion.div>
-    </motion.div>
-  )
-}
 
 function StepIndicator({ current, total }) {
   const percent = (current / (total - 1)) * 100
@@ -1080,6 +506,8 @@ export default function AdmissionForm({ onBack }) {
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [appId, setAppId] = useState('')
+  const [showFaceCrop, setShowFaceCrop] = useState(false)
+  const [rawImageSrc, setRawImageSrc] = useState(null)
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -1109,6 +537,7 @@ export default function AdmissionForm({ onBack }) {
   const validateStep = (s) => {
     let err = {}
     if (s === 0) {
+      if (!form.photoPreview) err.photo = 'Student photo is required'
       if (!form.fullName.trim()) err.fullName = 'Full Name is required'
       if (!form.dob) err.dob = 'Date of Birth is required'
       if (!form.email.trim()) err.email = 'Email address is required'
@@ -1130,8 +559,31 @@ export default function AdmissionForm({ onBack }) {
     return Object.keys(err).length === 0
   }
 
-  const nextStep = () => {
+  const nextStep = async () => {
     if (validateStep(step)) {
+      if (step === 0) {
+        setLoading(true)
+        try {
+          const { data, error } = await supabase
+            .from('admissions')
+            .select('email')
+            .ilike('email', form.email.trim())
+            .maybeSingle()
+
+          if (error) {
+            console.error('Error checking email uniqueness:', error)
+          }
+
+          if (data) {
+            setErrors({ email: 'Email address is already in use' })
+            return
+          }
+        } catch (err) {
+          console.error(err)
+        } finally {
+          setLoading(false)
+        }
+      }
       setStep((prev) => prev + 1)
     }
   }
@@ -1156,7 +608,8 @@ export default function AdmissionForm({ onBack }) {
     setLoading(true)
     
     try {
-      const newId = generateAppId()
+      // Guaranteed unique: checks DB before accepting the ID
+      const newId = await generateUniqueAppId(form.courses[0])
       let photoUrl = ''
 
       // 1. Upload Photo to Supabase Storage if present
@@ -1207,7 +660,8 @@ export default function AdmissionForm({ onBack }) {
       }
 
       setAppId(newId)
-      setSuccess(true)
+      // Close the form and pass success data up to App.jsx
+      onBack(newId, form)
     } catch (err) {
       console.error(err)
       alert(err.message || 'Something went wrong. Please try again.')
@@ -1225,10 +679,31 @@ export default function AdmissionForm({ onBack }) {
       }
       const reader = new FileReader()
       reader.onloadend = () => {
-        setForm((prev) => ({ ...prev, photo: file, photoPreview: reader.result }))
+        setRawImageSrc(reader.result)
+        setShowFaceCrop(true) // Open face detect/crop modal
       }
       reader.readAsDataURL(file)
     }
+  }
+
+  const handleCropComplete = (croppedDataUrl) => {
+    // Convert data URL to File blob for upload
+    fetch(croppedDataUrl)
+      .then(r => r.blob())
+      .then(blob => {
+        const croppedFile = new File([blob], 'student_photo.jpg', { type: 'image/jpeg' })
+        setForm(prev => ({ ...prev, photo: croppedFile, photoPreview: croppedDataUrl }))
+        setErrors(prev => ({ ...prev, photo: undefined }))
+      })
+    setShowFaceCrop(false)
+    setRawImageSrc(null)
+    if (fileInputRef.current) fileInputRef.current.value = ''
+  }
+
+  const handleCancelCrop = () => {
+    setShowFaceCrop(false)
+    setRawImageSrc(null)
+    if (fileInputRef.current) fileInputRef.current.value = ''
   }
 
   const handleRemovePhoto = () => {
@@ -1263,16 +738,16 @@ export default function AdmissionForm({ onBack }) {
               <div className="relative flex-shrink-0">
                 <div
                   onClick={() => fileInputRef.current?.click()}
-                  className="w-24 h-24 rounded-2xl border-2 border-dashed border-slate-300 hover:border-blue-500 bg-white flex flex-col items-center justify-center cursor-pointer overflow-hidden group transition-all duration-200 shadow-sm"
+                  className={`w-24 h-24 rounded-2xl border-2 border-dashed ${errors.photo ? 'border-red-400 bg-red-50' : 'border-slate-300 hover:border-blue-500 bg-white'} flex flex-col items-center justify-center cursor-pointer overflow-hidden group transition-all duration-200 shadow-sm`}
                 >
                   {form.photoPreview ? (
                     <img src={form.photoPreview} alt="Student Photo" className="w-full h-full object-cover" />
                   ) : (
                     <>
-                      <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">
+                      <div className={`w-10 h-10 rounded-full ${errors.photo ? 'bg-red-100 text-red-500' : 'bg-blue-50 text-blue-600'} flex items-center justify-center group-hover:scale-110 transition-transform`}>
                         <Camera className="w-5 h-5" />
                       </div>
-                      <span className="text-[10px] font-bold text-slate-400 mt-1">Upload</span>
+                      <span className={`text-[10px] font-bold mt-1 ${errors.photo ? 'text-red-400' : 'text-slate-400'}`}>Upload</span>
                     </>
                   )}
                 </div>
@@ -1291,7 +766,7 @@ export default function AdmissionForm({ onBack }) {
               <div className="flex-1 text-center sm:text-left">
                 <h4 className="font-bold text-slate-800 text-sm flex items-center justify-center sm:justify-start gap-1.5">
                   Student Passport Size Photo
-                  <span className="text-[10px] font-semibold bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">Recommended</span>
+                  <span className="text-[10px] font-semibold bg-red-100 text-red-600 px-2 py-0.5 rounded-full">Required</span>
                 </h4>
                 <p className="text-slate-400 text-xs mt-1 leading-relaxed">
                   Upload a clear passport size photograph (PNG, JPG up to 5MB) for student ID card generation.
@@ -1304,6 +779,11 @@ export default function AdmissionForm({ onBack }) {
                   <Camera className="w-3.5 h-3.5" />
                   {form.photoPreview ? 'Change Photo' : 'Select Photo from Device'}
                 </button>
+                {errors.photo && (
+                  <p className="text-red-500 text-xs mt-1.5 font-medium flex items-center gap-1">
+                    <span>⚠</span> {errors.photo}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -1553,7 +1033,16 @@ export default function AdmissionForm({ onBack }) {
 
   return (
     <>
-
+      {/* Face Detect / Crop Modal */}
+      <AnimatePresence>
+        {showFaceCrop && rawImageSrc && (
+          <FaceDetectCrop
+            imageSrc={rawImageSrc}
+            onCropComplete={handleCropComplete}
+            onCancel={handleCancelCrop}
+          />
+        )}
+      </AnimatePresence>
 
       <div className="min-h-screen bg-transparent relative z-10 flex flex-col">
         {/* Top bar (Glassmorphism layout) */}
@@ -1599,9 +1088,14 @@ export default function AdmissionForm({ onBack }) {
               {step < 4 ? (
                 <button
                   onClick={nextStep}
-                  className="flex items-center gap-1.5 bg-blue-600 text-white text-sm font-bold px-6 py-3 rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/25 hover:-translate-y-0.5"
+                  disabled={loading}
+                  className="flex items-center gap-1.5 bg-blue-600 text-white text-sm font-bold px-6 py-3 rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/25 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Next <ArrowRight className="w-4 h-4" />
+                  {loading && step === 0 ? (
+                    <>Checking... <Loader className="w-4.5 h-4.5 animate-spin" /></>
+                  ) : (
+                    <>Next <ArrowRight className="w-4 h-4" /></>
+                  )}
                 </button>
               ) : (
                 <button
@@ -1618,7 +1112,7 @@ export default function AdmissionForm({ onBack }) {
         </div>
       </div>
 
-      {success && <SuccessModal appId={appId} form={form} onClose={onBack} />}
+
 
       <style>{`
         input[type="date"]::-webkit-calendar-picker-indicator,

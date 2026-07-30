@@ -11,25 +11,32 @@ export default function GetAdmitCardModal({ onClose }) {
 
   const handleSearch = async (e) => {
     e.preventDefault()
-    const trimmed = idInput.trim().toUpperCase()
-    if (!trimmed) { setError('Please enter your Student ID.'); return }
+    const trimmed = idInput.trim()
+    if (!trimmed) { setError('Please enter your Student ID or Email.'); return }
 
     setLoading(true)
     setError('')
     setFound(null)
 
     try {
-      const { data, error: dbError } = await supabase
+      const isEmail = /\S+@\S+\.\S+/.test(trimmed)
+      let query = supabase
         .from('admissions')
         .select('full_name, admit_card_url, app_id')
-        .eq('app_id', trimmed)
-        .single()
 
-      if (dbError || !data) {
-        setError('No record found for this ID. Please check and try again.')
+      if (isEmail) {
+        query = query.ilike('email', trimmed)
+      } else {
+        query = query.eq('app_id', trimmed.toUpperCase())
+      }
+
+      const { data, error: dbError } = await query
+
+      if (dbError || !data || data.length === 0) {
+        setError('No record found. Please check and try again.')
         return
       }
-      setFound(data)
+      setFound(data[0])
     } catch {
       setError('Something went wrong. Please try again.')
     } finally {
@@ -80,7 +87,7 @@ export default function GetAdmitCardModal({ onClose }) {
           </div>
           <h2 className="text-white font-bold text-xl font-space">Get Your Admit Card</h2>
           <p className="text-blue-100 text-sm mt-1">
-            Enter your Student ID to retrieve and download your admit card.
+            Enter your Student ID or Email to retrieve and download your admit card.
           </p>
         </div>
 
@@ -91,15 +98,15 @@ export default function GetAdmitCardModal({ onClose }) {
             <form onSubmit={handleSearch} className="flex flex-col gap-4">
               <div>
                 <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
-                  Student ID Number
+                  Student ID or Email Address
                 </label>
                 <div className="relative">
                   <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
                   <input
                     type="text"
                     value={idInput}
-                    onChange={(e) => { setIdInput(e.target.value.toUpperCase()); setError('') }}
-                    placeholder="e.g. STA-32130"
+                    onChange={(e) => { setIdInput(e.target.value); setError('') }}
+                    placeholder="e.g. STA-32130 or hh@gmail.com"
                     className="w-full pl-10 pr-4 py-3.5 border border-slate-200 rounded-xl text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all bg-slate-50 font-mono tracking-wider"
                   />
                 </div>

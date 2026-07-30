@@ -378,7 +378,7 @@ export default function Courses({ onApply }) {
         </motion.div>
 
         {/* Coming Soon Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
+        {/* <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
           <div>
             <span className="section-tag mb-3 inline-block">Coming Soon</span>
             <h2 className="font-space font-extrabold text-3xl sm:text-4xl md:text-5xl text-slate-900">
@@ -388,10 +388,10 @@ export default function Courses({ onApply }) {
               Stay tuned — these advanced programs are launching soon.
             </p>
           </div>
-        </div>
+        </div> */}
 
         {/* Coming Soon Grid */}
-        <motion.div
+        {/* <motion.div
           variants={container}
           initial="hidden"
           whileInView="visible"
@@ -401,7 +401,7 @@ export default function Courses({ onApply }) {
           {COMING_SOON.map((course) => (
             <CourseCard key={course.id} course={course} live={false} onViewCurriculum={setSelectedCourse} onApply={onApply} />
           ))}
-        </motion.div>
+        </motion.div> */}
       </div>
 
       {/* Curriculum Modal */}
