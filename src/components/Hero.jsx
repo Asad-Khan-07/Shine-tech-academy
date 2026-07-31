@@ -43,7 +43,7 @@ function useCountUp(target, { decimals = 0, duration = 1.8, delay = 0 } = {}) {
 }
 
 /* ── Animated stat pill with count-up ── */
-function StatPill({ icon: Icon, target, suffix = '', decimals = 0, label, delay = 0 }) {
+function StatPill({ icon: Icon, target, suffix = '', decimals = 0, label, delay = 0, isRating = false }) {
   const { ref, display } = useCountUp(target, { decimals, duration: 1.6, delay })
   return (
     <motion.div
@@ -58,8 +58,9 @@ function StatPill({ icon: Icon, target, suffix = '', decimals = 0, label, delay 
         <Icon className="w-4.5 h-4.5 xs:w-5 xs:h-5 text-white" />
       </div>
       <div className="min-w-0 text-center xs:text-left">
-        <p className="text-slate-900 font-black text-xl xs:text-2xl sm:text-3xl leading-none tracking-tight">
-          {display}{suffix}
+        <p className="text-slate-900 font-black text-xl xs:text-2xl sm:text-3xl leading-none tracking-tight flex items-center justify-center xs:justify-start gap-1">
+          <span>{display}{suffix}</span>
+          {isRating && <Star className="w-5 h-5 xs:w-6 xs:h-6 text-[#0956fc] fill-[#0956fc] inline-block align-middle" />}
         </p>
         <p className="text-slate-500 text-[10px] xs:text-xs sm:text-sm font-semibold mt-1 leading-tight break-words">{label}</p>
       </div>
@@ -91,7 +92,7 @@ const STATS = [
   { icon: Users,    target: 500, suffix: '+', decimals: 0, label: 'Students Enrolled',  delay: 0.7  },
   { icon: Award,    target: 100, suffix: '%', decimals: 0, label: 'Internship Rate',    delay: 0.85 },
   { icon: BookOpen, target: 10,  suffix: '+', decimals: 0, label: 'Courses Available',  delay: 1.0  },
-  { icon: Star,     target: 5.0, suffix: '★', decimals: 1, label: 'Student Rating',     delay: 1.15 },
+  { icon: Star,     target: 5.0, suffix: '',  decimals: 1, label: 'Student Rating',     delay: 1.15, isRating: true },
 ]
 
 export default function Hero({ onApply }) {
@@ -320,7 +321,7 @@ export default function Hero({ onApply }) {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.65, duration: 0.6 }}
+          transition={{ duration: 0.6 }}
           className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-3 w-full max-w-3xl px-2 xs:px-0"
         >
           {STATS.map((stat) => (
