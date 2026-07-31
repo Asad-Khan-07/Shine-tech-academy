@@ -1,4 +1,5 @@
 import { useRef } from 'react'
+import { Link } from 'react-router-dom'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { FileText, Mic, CreditCard, PartyPopper, Rocket, GraduationCap, ChevronRight } from 'lucide-react'
 
@@ -6,36 +7,36 @@ const STEPS = [
   {
     num: '01',
     icon: FileText,
-    title: 'Register',
-    desc: 'Fill out the online application form. It only takes 2 minutes!',
+    title: 'Live Projects',
+    desc: 'Build real-world projects throughout your course to strengthen your portfolio and gain practical experience.',
     color: 'from-blue-600 to-blue-500',
   },
   {
     num: '02',
     icon: Mic,
-    title: 'Counseling',
-    desc: 'Our team will contact you for a free counseling session to pick the right course.',
+    title: 'Career Suppor',
+    desc: 'Receive internship guidance, portfolio reviews, CV building, interview preparation, and career development support.',
     color: 'from-blue-600 to-blue-500',
   },
   {
     num: '03',
     icon: CreditCard,
-    title: 'Fee Deposit',
-    desc: 'Submit the course fee via easy installment-friendly payment plans.',
+    title: 'Career Guidance',
+    desc: 'Get personalized guidance to choose the right learning path and confidently plan your academic and professional journey.',
     color: 'from-blue-600 to-blue-500',
   },
   {
     num: '04',
     icon: PartyPopper,
-    title: 'Orientation',
-    desc: 'Attend the kickoff orientation — meet your batch, mentors, and understand the roadmap.',
+    title: 'Modern Computer Labs',
+    desc: 'Practice in modern, well-equipped computer labs designed to provide an engaging and productive learning experience.',
     color: 'from-blue-700 to-blue-600',
   },
   {
     num: '05',
     icon: Rocket,
-    title: 'Classes Begin',
-    desc: 'Your transformation journey starts! Attend live classes, build projects, grow every day.',
+    title: 'Expert Mentors',
+    desc: 'Learn from experienced instructors and industry professionals who bring practical knowledge into every classroom.',
     color: 'from-blue-600 to-blue-500',
   },
 ]
@@ -75,10 +76,10 @@ export default function Admission() {
             Getting Started
           </span>
           <h2 className="font-space font-bold text-3xl sm:text-4xl md:text-5xl text-slate-900 mb-4 sm:mb-6">
-            Admission <span className="text-blue-600">Process</span>
+            Practical  <span className="text-blue-600">Learning</span>
           </h2>
           <p className="text-slate-600 text-sm sm:text-lg max-w-2xl mx-auto">
-            Simple, transparent, and student-friendly. From application to first class in just 5 steps.
+            Learn by doing through interactive sessions, hands-on exercises, practical assignments, and real-world problem solving. 
           </p>
         </motion.div>
 
@@ -93,8 +94,8 @@ export default function Admission() {
           {STEPS.map((step, i) => {
             const Icon = step.icon
             return (
-              <motion.div key={step.num} variants={card} className="flex items-start flex-1">
-                <div className="bg-white rounded-2xl p-6 flex flex-col gap-3 group flex-1 border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300">
+              <motion.div key={step.num} variants={card} className="flex items-stretch flex-1 self-stretch">
+                <div className="bg-white rounded-2xl p-6 flex flex-col gap-3 group flex-1 border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 h-full">
                   <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${step.color} flex items-center justify-center text-white font-space font-black text-sm shadow-lg group-hover:scale-110 transition-transform duration-300`}>
                     {step.num}
                   </div>
@@ -102,11 +103,11 @@ export default function Admission() {
                     <Icon className="w-5 h-5 text-blue-600" />
                   </div>
                   <h3 className="font-space font-bold text-slate-900 text-base">{step.title}</h3>
-                  <p className="text-slate-500 text-xs leading-relaxed">{step.desc}</p>
+                  <p className="text-slate-500 text-xs leading-relaxed flex-1">{step.desc}</p>
                 </div>
 
                 {i < STEPS.length - 1 && (
-                  <div className="flex items-center self-center px-1 mt-[-20px]">
+                  <div className="flex items-center self-center px-1">
                     <ChevronRight className="w-5 h-5 text-slate-300" />
                   </div>
                 )}
@@ -171,14 +172,14 @@ export default function Admission() {
           transition={{ duration: 0.5, delay: 0.3 }}
           className="text-center mt-10 sm:mt-12"
         >
-          <a
-            href="#apply"
+          <Link
+            to="/apply"
             id="admission-apply-btn"
             className="btn-primary px-8 sm:px-10 py-3.5 sm:py-4 rounded-2xl text-sm sm:text-base font-bold inline-flex items-center gap-2"
           >
             <GraduationCap className="w-5 h-5" />
             Start Your Application
-          </a>
+          </Link>
         </motion.div>
 
         <div className="section-divider mt-16" />

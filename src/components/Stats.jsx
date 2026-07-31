@@ -2,11 +2,11 @@ import { motion } from 'framer-motion'
 import { GraduationCap, Users, Briefcase, Award, Globe } from 'lucide-react'
 
 const STATS = [
-  { icon: GraduationCap, value: '10+',    label: 'Courses',                 desc: 'Practical skill courses' },
-  { icon: Users,         value: 'Expert', label: 'Mentors',                 desc: 'Industry professionals' },
-  { icon: Briefcase,     value: '100%',   label: 'Internship',              desc: 'Real world exposure' },
-  { icon: Award,         value: 'Free',   label: 'Certificates',            desc: 'On course completion' },
-  { icon: Globe,         value: 'Active', label: 'Community',               desc: 'WhatsApp & Discord' },
+  { icon: GraduationCap, value: '10+',    label: 'Professional Courses',                 desc: 'Technology & career-focused programs' },
+  { icon: Users,         value: 'Expert', label: 'Industry Mentors',                 desc: 'Learn from experienced professionals' },
+  { icon: Briefcase,     value: 'Live',   label: 'Projects',              desc: 'Hands-on practical experience' },
+  { icon: Award,         value: 'Free',   label: 'Certificate',            desc: 'Certificate of completion' },
+  { icon: Globe,         value: 'Online & Onsite', label: 'Learning',               desc: 'Flexible learning experience' },
 ]
 
 const container = {

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Menu, X, Rocket, ChevronDown, CreditCard } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { Link } from 'react-router-dom'
 
 const NAV_LINKS = [
   { label: 'Home',       href: '#hero' },
@@ -44,7 +45,7 @@ export default function Navbar({ onApply, onGetCard }) {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
-            <img src="/STA-logo.png" alt="Shine Tech Academy" className="h-10 w-auto drop-shadow-sm" style={{ height: '40px', width: 'auto', objectFit: 'contain' }} />
+            <img src="/STA-logo.png" alt="Shine Tech Academy" className="h-10 w-auto drop-shadow-sm cursor-pointer" style={{ height: '40px', width: 'auto', objectFit: 'contain' }} />
           </motion.button>
 
           {/* Desktop Nav */}
@@ -53,7 +54,7 @@ export default function Navbar({ onApply, onGetCard }) {
               <button
                 key={link.label}
                 onClick={() => handleNav(link.href)}
-                className="nav-link-premium animated-underline text-slate-600 hover:text-blue-600 text-xs lg:text-sm font-semibold transition-all duration-200 px-2.5 lg:px-4 py-2 rounded-xl hover:bg-blue-50/70"
+                className="nav-link-premium cursor-pointer animated-underline text-slate-600 hover:text-blue-600 text-xs lg:text-sm font-semibold transition-all duration-200 px-2.5 lg:px-4 py-2 rounded-xl hover:bg-blue-50/70"
               >
                 {link.label}
               </button>
@@ -71,16 +72,13 @@ export default function Navbar({ onApply, onGetCard }) {
               <CreditCard className="w-3.5 h-3.5" />
               <span>Get Admit Card</span>
             </motion.button>
-            <motion.a
-              href="#apply"
-              onClick={onApply}
-              whileHover={{ scale: 1.04, y: -2 }}
-              whileTap={{ scale: 0.96 }}
+            <Link
+              to="/apply"
               className="btn-primary px-6 py-2.5 rounded-full text-sm shadow-lg shadow-blue-500/25 flex items-center gap-2 relative overflow-hidden"
             >
               <Rocket className="w-4 h-4 relative z-10" />
               <span className="relative z-10">Apply Now</span>
-            </motion.a>
+            </Link>
           </div>
 
           {/* Mobile Hamburger */}
@@ -138,16 +136,14 @@ export default function Navbar({ onApply, onGetCard }) {
                 <CreditCard className="w-4 h-4" />
                 Get Admit Card
               </motion.button>
-              <motion.a
-                href="#apply"
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: (NAV_LINKS.length + 1) * 0.04 }}
+              <Link
+                to="/apply"
+                onClick={() => setMenuOpen(false)}
                 className="btn-primary text-center text-sm font-bold py-3.5 rounded-full mt-1 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
               >
                 <Rocket className="w-4 h-4 relative z-10" />
                 <span className="relative z-10">Apply Now</span>
-              </motion.a>
+              </Link>
             </div>
           </motion.div>
         )}

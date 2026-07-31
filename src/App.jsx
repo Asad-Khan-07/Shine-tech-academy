@@ -1,27 +1,13 @@
 import { useState, useEffect } from 'react'
-import TopBanner from './components/TopBanner'
-import Navbar from './components/Navbar'
-import Hero from './components/Hero'
-import Stats from './components/Stats'
-import Courses from './components/Courses'
-import WhySTA from './components/WhySTA'
-import Admission from './components/Admission'
-import Instructors from './components/Instructors'
-import LearningJourney from './components/LearningJourney'
-import Internship from './components/Internship'
-import Testimonials from './components/Testimonials'
-import Gallery from './components/Gallery'
-import UpcomingEvent from './components/UpcomingEvent'
-import FAQ from './components/FAQ'
-import CTASection from './components/CTASection'
-import Contact from './components/Contact'
-import Footer from './components/Footer'
-import AdmissionForm from './components/AdmissionForm'
+import { HashRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom'
+import Home from './pages/Home'
+import AdmissionForm from './pages/AdmissionForm'
+import TermsAndConditions from './pages/TermsAndConditions'
+import PrivacyPolicy from './pages/PrivacyPolicy'
+import ComingSoon from './pages/ComingSoon'
 import GetAdmitCardModal from './components/GetAdmitCardModal'
 import SuccessModal from './components/SuccessModal'
 import { AnimatePresence } from 'framer-motion'
-
-
 
 /* ─── Ambient Glow Background ───────────────────────────────── */
 function AmbientBackground() {
@@ -42,102 +28,6 @@ function AmbientBackground() {
   )
 }
 
-function App() {
-  const [showForm, setShowForm] = useState(false)
-  const [showAdmitModal, setShowAdmitModal] = useState(false)
-  const [successData, setSuccessData] = useState(null) // { appId, form }
-
-  useEffect(() => {
-    const checkHash = () => {
-      const isForm = window.location.hash === '#apply'
-      setShowForm(isForm)
-      if (isForm) {
-        document.body.style.overflow = ''
-        window.scrollTo(0, 0)
-      }
-    }
-    checkHash()
-    window.addEventListener('hashchange', checkHash)
-    return () => window.removeEventListener('hashchange', checkHash)
-  }, [])
-
-  const openForm = () => {
-    document.body.style.overflow = ''
-    window.location.hash = '#apply'
-    setShowForm(true)
-    window.scrollTo(0, 0)
-  }
-
-  const closeForm = (appId, form) => {
-    document.body.style.overflow = ''
-    window.location.hash = ''
-    setShowForm(false)
-    window.scrollTo(0, 0)
-    // If called with success data, show the SuccessModal over the website
-    if (appId && form) {
-      setSuccessData({ appId, form })
-    }
-  }
-
-  if (showForm) {
-    return <AdmissionForm onBack={closeForm} />
-  }
-
-  return (
-    <div className="min-h-screen bg-white text-slate-900 transition-colors duration-500 relative">
-      {/* Remove html dark class on mount to ensure light mode only */}
-      <ThemeLightModeEnforcer />
-
-      {/* ── Ambient background orbs ── */}
-      <AmbientBackground />
-
-      {/* ── Page content ── */}
-      <div style={{ position: 'relative', zIndex: 1 }}>
-        <Navbar onApply={openForm} onGetCard={() => setShowAdmitModal(true)} />
-        <TopBanner />
-
-        <main>
-          <Hero onApply={openForm} />
-          <Stats />
-          <Courses onApply={openForm} />
-          <WhySTA />
-          <Admission />
-          <Instructors />
-          <LearningJourney />
-          <Internship />
-          <Testimonials />
-          {/* <Gallery /> */}
-          <UpcomingEvent />
-          <FAQ />
-          <CTASection />
-          <Contact />
-        </main>
-
-        <Footer />
-      </div>
-
-      {/* Get Admit Card Modal */}
-      <AnimatePresence>
-        {showAdmitModal && (
-          <GetAdmitCardModal onClose={() => setShowAdmitModal(false)} />
-        )}
-      </AnimatePresence>
-
-      {/* Admission Success Modal — rendered over the website */}
-      <AnimatePresence>
-        {successData && (
-          <SuccessModal
-            appId={successData.appId}
-            form={successData.form}
-            onClose={() => setSuccessData(null)}
-            primaryCourseName={successData.form?.courses?.[0] || successData.form?.customCourse || 'Tech Program'}
-          />
-        )}
-      </AnimatePresence>
-    </div>
-  )
-}
-
 // Small helper component to ensure html has no 'dark' class
 function ThemeLightModeEnforcer() {
   useEffect(() => {
@@ -147,4 +37,92 @@ function ThemeLightModeEnforcer() {
   return null
 }
 
-export default App
+function MainApp() {
+  const [showAdmitModal, setShowAdmitModal] = useState(false)
+  const [successData, setSuccessData] = useState(null)
+  const navigate = useNavigate()
+  const location = useLocation()
+
+  // Clear scrollbar lock when routing changes
+  useEffect(() => {
+    document.body.style.overflow = ''
+    window.scrollTo(0, 0)
+  }, [location.pathname])
+
+  return (
+    <div className="min-h-screen bg-white text-slate-900 transition-colors duration-500 relative">
+      <ThemeLightModeEnforcer />
+      <AmbientBackground />
+
+      <div style={{ position: 'relative', zIndex: 1 }}>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <Home
+                onOpenApply={() => navigate('/apply')}
+                onOpenAdmitCard={() => setShowAdmitModal(true)}
+              />
+            }
+          />
+          <Route
+            path="/apply"
+            element={
+              <AdmissionForm
+                onBack={(appId, form) => {
+                  navigate('/')
+                  if (appId && form) {
+                    setSuccessData({ appId, form })
+                  }
+                }}
+              />
+            }
+          />
+          <Route
+            path="/terms"
+            element={<TermsAndConditions onBack={() => navigate('/')} />}
+          />
+          <Route
+            path="/privacy"
+            element={<PrivacyPolicy onBack={() => navigate('/')} />}
+          />
+          <Route
+            path="/coming-soon"
+            element={<ComingSoon />}
+          />
+        </Routes>
+      </div>
+
+      {/* Get Admit Card Modal */}
+      <AnimatePresence>
+        {showAdmitModal && (
+          <GetAdmitCardModal onClose={() => setShowAdmitModal(false)} />
+        )}
+      </AnimatePresence>
+
+      {/* Admission Success Modal */}
+      <AnimatePresence>
+        {successData && (
+          <SuccessModal
+            appId={successData.appId}
+            form={successData.form}
+            onClose={() => setSuccessData(null)}
+            primaryCourseName={
+              successData.form?.courses?.[0] ||
+              successData.form?.customCourse ||
+              'Tech Program'
+            }
+          />
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
+
+export default function App() {
+  return (
+    <Router>
+      <MainApp />
+    </Router>
+  )
+}

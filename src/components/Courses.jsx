@@ -354,12 +354,12 @@ export default function Courses({ onApply }) {
         {/* Live Courses Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
           <div>
-            <span className="section-tag mb-3 inline-block">Live Courses</span>
+            <span className="section-tag mb-3 inline-block">Live Admissions Open</span>
             <h2 className="font-space font-extrabold text-3xl sm:text-4xl md:text-5xl text-slate-900">
               Admissions Open
             </h2>
             <p className="text-slate-500 mt-2 max-w-xl">
-              Start your tech journey today. Enroll in our hands-on programs with live classes and expert mentorship.
+              Start your journey toward a successful tech career with industry focused Certificate and Diploma programs. Learn through live classes, practical projects, expert mentorship, and hands-on training Available both Online & Onsite.
             </p>
           </div>
         </div>

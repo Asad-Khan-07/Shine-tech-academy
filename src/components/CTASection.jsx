@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { motion, useInView } from 'framer-motion'
 import { ArrowRight, MessageCircle, Rocket, Sparkles } from 'lucide-react'
 
@@ -63,14 +64,14 @@ export default function CTASection() {
             transition={{ delay: 0.1, duration: 0.4 }}
           >
             <Sparkles className="w-3.5 h-3.5 text-blue-400" />
-            Start Today
+            Start Your Journey Today
           </motion.span>
 
           <h2 className="font-space font-extrabold text-3xl sm:text-4xl lg:text-5xl xl:text-6xl text-white leading-tight px-2">
-            Ready to Start Your
+            Build Your Future with
             <br />
             <span className="relative inline-block">
-              <span className="text-blue-400">Tech Journey?</span>
+              <span className="text-blue-400">Shine Tech Academy</span>
               <motion.span
                 className="absolute -bottom-2 left-0 h-1 bg-gradient-to-r from-blue-500 to-blue-300 rounded-full"
                 initial={{ width: 0 }}
@@ -82,35 +83,39 @@ export default function CTASection() {
           </h2>
 
           <p className="text-slate-400 text-base sm:text-lg leading-relaxed max-w-xl">
-            Join Shine Tech Academy and gain the skills that open doors to internships, freelancing, and full-time careers in tech.
+            Take the first step toward a successful career in technology. Learn in-demand skills, work on real-world projects, build a professional portfolio, and prepare for internships, freelancing, or your dream job—all with expert guidance.
           </p>
 
           <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 justify-center w-full sm:w-auto">
-            <motion.a
+            <motion.div
               whileHover={{ scale: 1.05, y: -4 }}
               whileTap={{ scale: 0.97 }}
-              href="#apply"
-              className="btn-primary px-8 sm:px-10 py-3.5 sm:py-4 rounded-full text-sm sm:text-base shadow-2xl shadow-blue-500/30 font-bold flex items-center justify-center gap-2 w-full sm:w-auto"
             >
-              <Rocket className="w-5 h-5 relative z-10" />
-              <span className="relative z-10">Apply Now</span>
-              <ArrowRight className="w-5 h-5 relative z-10" />
-            </motion.a>
+              <Link
+                to="/apply"
+                className="btn-primary px-8 sm:px-10 py-3.5 sm:py-4 rounded-full text-sm sm:text-base shadow-2xl shadow-blue-500/30 font-bold flex items-center justify-center gap-2 w-full sm:w-auto"
+              >
+                <Rocket className="w-5 h-5 relative z-10" />
+                <span className="relative z-10">Apply for Admission</span>
+                <ArrowRight className="w-5 h-5 relative z-10" />
+              </Link>
+            </motion.div>
             <motion.button
               whileHover={{ scale: 1.05, y: -4 }}
               whileTap={{ scale: 0.97 }}
               onClick={() => document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })}
               className="btn-outline-white px-8 sm:px-10 py-3.5 sm:py-4 rounded-full text-sm sm:text-base font-bold flex items-center justify-center gap-2 w-full sm:w-auto"
             >
-              <MessageCircle className="w-5 h-5" /> Contact Us
+              <MessageCircle className="w-5 h-5" />
+Contact Our Team
             </motion.button>
           </div>
 
           {/* Stats strip */}
           <div className="grid grid-cols-3 gap-4 sm:gap-8 pt-6 border-t border-white/10 w-full mt-2">
             {[
-              { end: 10, suffix: '+', label: 'Courses Available' },
-              { end: 500, suffix: '+', label: 'Students Enrolled' },
+              { end: 10, suffix: '+', label: 'Professional Courses' },
+              { end: 500, suffix: '+', label: 'Students Trained' },
               { end: 100, suffix: '%', label: 'Practical Learning' },
             ].map((s) => (
               <motion.div

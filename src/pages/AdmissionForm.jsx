@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import FaceDetectCrop from './FaceDetectCrop'
+import FaceDetectCrop from '../components/FaceDetectCrop'
 import { motion, AnimatePresence } from 'framer-motion'
 import { supabase } from '../lib/supabase'
 import {

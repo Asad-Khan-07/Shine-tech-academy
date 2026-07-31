@@ -6,42 +6,42 @@ const REASONS = [
   {
     icon: Zap,
     title: 'Practical Learning',
-    desc: 'Real-world skills through hands-on exercises and live demos.',
+    desc: 'Learn by doing through hands-on exercises, coding sessions, and interactive classroom activities.',
     color: 'from-blue-500 to-blue-700',
     glow: 'rgba(9, 86, 252, 0.3)',
   },
   {
     icon: Hammer,
     title: 'Live Projects',
-    desc: 'Work on actual projects during your course to build a portfolio.',
+    desc: 'Build real-world projects that strengthen your portfolio and practical experience.',
     color: 'from-violet-500 to-violet-700',
     glow: 'rgba(139, 92, 246, 0.3)',
   },
   {
     icon: Briefcase,
-    title: 'Internship Opportunities',
-    desc: 'Get internship placements and real-work experience.',
+    title: 'Career Support',
+    desc: 'Receive internship guidance, portfolio reviews, CV building, and interview preparation.',
     color: 'from-emerald-500 to-emerald-700',
     glow: 'rgba(16, 185, 129, 0.3)',
   },
   {
     icon: Compass,
-    title: 'Career Guidance',
-    desc: 'Personalized guidance to help you choose and grow your career path.',
+    title: ' Expert Mentorship',
+    desc: 'Learn directly from experienced instructors and industry professionals.',
     color: 'from-amber-500 to-orange-600',
     glow: 'rgba(245, 158, 11, 0.3)',
   },
   {
     icon: FlaskConical,
-    title: 'Modern Labs',
-    desc: 'Access modern, fully equipped computer labs for practice.',
+    title: ' Modern Computer Labs',
+    desc: 'Practice in a comfortable, well-equipped learning environment with high-performance systems.',
     color: 'from-cyan-500 to-blue-600',
     glow: 'rgba(6, 182, 212, 0.3)',
   },
   {
     icon: Users,
-    title: 'Industry Mentors',
-    desc: 'Learn from mentors with real industry experience and expertise.',
+    title: 'Industry-Focused Curriculum',
+    desc: 'Stay ahead with updated, practical, and career-oriented course content aligned with modern industry needs.',
     color: 'from-rose-500 to-pink-600',
     glow: 'rgba(244, 63, 94, 0.3)',
   },
@@ -167,7 +167,7 @@ export default function WhySTA() {
             <div className="step-line absolute inset-0" />
           </div>
           <p className="text-slate-400 mt-4 max-w-lg mx-auto text-sm leading-relaxed">
-            We offer everything you need to launch a successful tech career — from skills to real-world experience.
+            We provide industry-focused education that combines practical learning, expert mentorship, live projects, and career support—helping students build real-world skills and confidently prepare for future opportunities.
           </p>
         </motion.div>
 

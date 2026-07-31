@@ -4,29 +4,28 @@ import { Plus, Minus } from 'lucide-react'
 
 const FAQS = [
   {
-    q: 'How do I apply?',
-    a: 'You can apply by clicking the "Apply Now" button on our website and filling out the online admission form. Alternatively, visit our campus directly.',
+    q: 'How do I apply for admission?',
+    a: 'Applying is simple! Click the "Apply Now" button on our website, complete the online admission form, or visit our campus for on-the-spot registration and free career counseling.',
   },
   {
-    q: 'Are classes onsite or online?',
-    a: 'Our classes are primarily onsite (in-person) at our modern campus. We also provide recorded sessions for students who miss a class.',
+    q: 'Do you offer Online & Onsite classes?',
+    a: 'Yes. We offer both Online and Onsite learning options. Students can choose the mode that best suits their schedule and learning preferences.',
   },
   {
-    q: 'Do you provide certificates?',
-    a: 'Yes! Upon successfully completing your course and projects, you will receive an industry-recognized certificate from Shine Tech Academy.',
+    q: 'Will I receive a certificate after completing the course?',
+    a: 'Absolutely! Students who successfully complete their course, practical assignments, and final project will receive an official Shine Tech Academy Certificate of Completion.',
   },
   {
-    q: 'What is the course duration?',
-    a: 'Course durations vary: AI Productivity (1.5 months), Digital Marketing (2 months), Video Editing (2 months), Graphic Design (3 months), Web Development (6 months), and Freelancing (1 month).',
+    q: 'Can beginners join these courses?',
+    a: 'Yes! Most of our programs are designed for beginners. Our instructors guide you step by step, so no prior experience is required for most courses.',
   },
   {
-    q: 'Do you offer internships?',
-    a: 'Yes! After course completion, we provide internship opportunities to help you gain real-world experience and build your professional portfolio.',
+    q: 'Why choose Shine Tech Academy?',
+    a: 'We focus on practical learning, live projects, expert mentorship, career guidance, and industry-relevant skills to help students become job-ready and future-ready.',
   },
 ]
 
-function FAQItem({ item, index }) {
-  const [open, setOpen] = useState(false)
+function FAQItem({ item, index, isOpen, onToggle }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 15 }}
@@ -36,19 +35,19 @@ function FAQItem({ item, index }) {
       className="border border-slate-200 rounded-xl overflow-hidden"
     >
       <button
-        onClick={() => setOpen(!open)}
+        onClick={onToggle}
         className={`w-full flex items-center justify-between px-5 py-4 text-left transition-colors ${
-          open ? 'bg-blue-600 text-white' : 'bg-white text-slate-900 hover:bg-slate-50'
+          isOpen ? 'bg-blue-600 text-white' : 'bg-white text-slate-900 hover:bg-slate-50'
         }`}
       >
-        <span className="font-space font-bold text-sm sm:text-base pr-4">{item.q}</span>
-        {open
-          ? <Minus className="w-4 h-4 flex-shrink-0 text-white" />
-          : <Plus className="w-4 h-4 flex-shrink-0 text-blue-600" />
+        <span className="font-space font-bold text-sm sm:text-base pr-4 ">{item.q}</span>
+        {isOpen
+          ? <Minus className="w-4 h-4 flex-shrink-0 text-white cursor-pointer" />
+          : <Plus className="w-4 h-4 flex-shrink-0 text-blue-600 cursor-pointer" />
         }
       </button>
       <AnimatePresence initial={false}>
-        {open && (
+        {isOpen && (
           <motion.div
             key="content"
             initial={{ height: 0, opacity: 0 }}
@@ -67,6 +66,12 @@ function FAQItem({ item, index }) {
 }
 
 export default function FAQ() {
+  const [activeIndex, setActiveIndex] = useState(null)
+
+  const handleToggle = (index) => {
+    setActiveIndex(activeIndex === index ? null : index)
+  }
+
   return (
     <section id="faq" className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-white/70 backdrop-blur-sm">
       <div className="max-w-3xl mx-auto">
@@ -83,7 +88,13 @@ export default function FAQ() {
         {/* Accordion */}
         <div className="flex flex-col gap-3">
           {FAQS.map((item, i) => (
-            <FAQItem key={i} item={item} index={i} />
+            <FAQItem
+              key={i}
+              item={item}
+              index={i}
+              isOpen={activeIndex === i}
+              onToggle={() => handleToggle(i)}
+            />
           ))}
         </div>
       </div>

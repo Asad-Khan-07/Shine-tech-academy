@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { Link } from 'react-router-dom'
 import { CalendarDays, MapPin, ArrowRight, PartyPopper } from 'lucide-react'
 
 export default function UpcomingEvent() {
@@ -48,12 +49,12 @@ export default function UpcomingEvent() {
             </div>
 
             <div>
-              <a
-                href="#apply"
+              <Link
+                to="/apply"
                 className="inline-flex items-center gap-2 bg-white text-blue-700 font-bold text-sm px-7 py-3.5 rounded-full hover:bg-blue-50 transition-all hover:-translate-y-0.5 hover:shadow-lg shadow-md"
               >
                 Register Free <ArrowRight className="w-4 h-4" />
-              </a>
+              </Link>
             </div>
           </motion.div>
 
