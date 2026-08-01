@@ -3,10 +3,11 @@ import FaceDetectCrop from '../components/FaceDetectCrop'
 import { motion, AnimatePresence } from 'framer-motion'
 import { supabase } from '../lib/supabase'
 import {
-  User, Calendar, Mail, Phone, MapPin, Home, GraduationCap, BookOpen,
+  User, Users, Calendar, Mail, Phone, MapPin, Home, GraduationCap, BookOpen,
   Award, Briefcase, Code, Smartphone, Palette, PenTool, Megaphone, DollarSign,
   Globe, CheckCircle, ArrowLeft, ArrowRight, Loader, Camera, FileText, CreditCard, Hash,
-  Clock, Star, Target, ChevronDown, ChevronLeft, ChevronRight
+  Clock, Star, Target, ChevronDown, ChevronLeft, ChevronRight,
+  UserCircle, Mars, Venus, AlertCircle, X
 } from 'lucide-react'
 
 const COURSES = [
@@ -508,6 +509,7 @@ export default function AdmissionForm({ onBack }) {
   const [appId, setAppId] = useState('')
   const [showFaceCrop, setShowFaceCrop] = useState(false)
   const [rawImageSrc, setRawImageSrc] = useState(null)
+  const [genderOpen, setGenderOpen] = useState(false)
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -517,6 +519,8 @@ export default function AdmissionForm({ onBack }) {
     photo: null,
     photoPreview: '',
     fullName: '',
+    fatherName: '',
+    gender: '',
     dob: '',
     email: '',
     phone: '',
@@ -539,6 +543,8 @@ export default function AdmissionForm({ onBack }) {
     if (s === 0) {
       if (!form.photoPreview) err.photo = 'Student photo is required'
       if (!form.fullName.trim()) err.fullName = 'Full Name is required'
+      if (!form.fatherName.trim()) err.fatherName = 'Father Name is required'
+      if (!form.gender) err.gender = 'Please select your gender'
       if (!form.dob) err.dob = 'Date of Birth is required'
       if (!form.email.trim()) err.email = 'Email address is required'
       else if (!/\S+@\S+\.\S+/.test(form.email)) err.email = 'Please enter a valid email'
@@ -641,6 +647,8 @@ export default function AdmissionForm({ onBack }) {
         .insert([{
           app_id: newId,
           full_name: form.fullName,
+          father_name: form.fatherName,
+          gender: form.gender,
           dob: form.dob,
           email: form.email,
           phone: form.phone,
@@ -756,9 +764,9 @@ export default function AdmissionForm({ onBack }) {
                   <button
                     type="button"
                     onClick={handleRemovePhoto}
-                    className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs shadow-md hover:bg-red-600 transition-colors"
+                    className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center shadow-md hover:bg-red-600 transition-colors"
                   >
-                    ×
+                    <X className="w-3.5 h-3.5" />
                   </button>
                 )}
               </div>
@@ -781,7 +789,7 @@ export default function AdmissionForm({ onBack }) {
                 </button>
                 {errors.photo && (
                   <p className="text-red-500 text-xs mt-1.5 font-medium flex items-center gap-1">
-                    <span>⚠</span> {errors.photo}
+                    <AlertCircle className="w-3.5 h-3.5" /> {errors.photo}
                   </p>
                 )}
               </div>
@@ -794,6 +802,74 @@ export default function AdmissionForm({ onBack }) {
               onChange={(e) => setForm({ ...form, fullName: e.target.value })}
               error={errors.fullName}
             />
+            <FloatingInput
+              label="Father Name"
+              icon={User}
+              value={form.fatherName}
+              onChange={(e) => setForm({ ...form, fatherName: e.target.value })}
+              error={errors.fatherName}
+            />
+            {/* Gender Selector - Custom Dropdown */}
+            <div className="relative">
+              <div
+                onClick={() => setGenderOpen((prev) => !prev)}
+                className={`flex items-center gap-3 border rounded-2xl px-4 py-3.5 bg-white cursor-pointer transition-all duration-200 select-none ${
+                  errors.gender
+                    ? 'border-red-400 ring-1 ring-red-300'
+                    : genderOpen
+                    ? 'border-blue-500 ring-1 ring-blue-300'
+                    : 'border-slate-200 hover:border-blue-400'
+                }`}
+              >
+                <span className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 ${
+                  form.gender === 'Male' ? 'bg-blue-50 text-blue-600' : form.gender === 'Female' ? 'bg-pink-50 text-pink-500' : ''
+                }`}>
+                  {form.gender === 'Male' ? <Mars className="w-4 h-4" /> : form.gender === 'Female' ? <Venus className="w-4 h-4" /> : <Users className="w-4 h-4 text-slate-400" />}
+                </span>
+                <span className={`flex-1 text-sm font-semibold ${form.gender ? 'text-slate-800' : 'text-slate-400'}`}>
+                  {form.gender || 'Select Gender'}
+                </span>
+                {form.gender && (
+                  <span className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <CheckCircle className="w-3 h-3 text-white" />
+                  </span>
+                )}
+                <ChevronDown className={`w-4 h-4 flex-shrink-0 transition-transform duration-200 ${genderOpen ? 'rotate-180 text-blue-500' : 'text-slate-400'}`} />
+              </div>
+
+              {/* Dropdown Panel */}
+              {genderOpen && (
+                <div className="absolute left-0 right-0 top-full mt-1.5 bg-white border border-slate-200 rounded-2xl shadow-xl overflow-hidden z-50">
+                  {[
+                    { value: 'Male',   icon: Mars,  desc: 'Male' },
+                    { value: 'Female', icon: Venus, desc: 'Female' },
+                  ].map(({ value, icon: GenderIcon, desc }) => {
+                    const isSelected = form.gender === value
+                    return (
+                      <div
+                        key={value}
+                        onClick={() => { setForm({ ...form, gender: value }); setGenderOpen(false) }}
+                        className={`flex items-center gap-3 px-4 py-3 cursor-pointer transition-all duration-150 ${
+                          isSelected
+                            ? 'bg-blue-50 text-blue-700'
+                            : 'hover:bg-slate-50 text-slate-700'
+                        }`}
+                      >
+                        <GenderIcon className={`w-4 h-4 ${value === 'Male' ? 'text-blue-500' : 'text-pink-500'}`} />
+                        <span className="flex-1 text-sm font-semibold">{desc}</span>
+                        {isSelected && <CheckCircle className="w-4 h-4 text-blue-500" />}
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+
+              {errors.gender && (
+                <p className="text-red-500 text-xs mt-1.5 font-medium flex items-center gap-1">
+                  <AlertCircle className="w-3.5 h-3.5" /> {errors.gender}
+                </p>
+              )}
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <CustomDatePicker
                 label="Date of Birth"
@@ -962,6 +1038,13 @@ export default function AdmissionForm({ onBack }) {
         )
       case 4:
         const selectedNames = form.courses.map((id) => COURSES.find((c) => c.id === id)?.title).join(', ')
+        const detailRows = [
+          { label: 'ID NUMBER',    value: appId },
+          { label: 'FATHER NAME',  value: form.fatherName || '—' },
+          { label: 'DEPARTMENT',   value: 'Technology' },
+          { label: 'EMAIL',        value: form.email.length > 25 ? form.email.slice(0, 23) + '..' : form.email },
+          { label: 'PHONE',        value: form.phone },
+        ]
         return (
           <motion.div
             key="step5"
@@ -981,7 +1064,7 @@ export default function AdmissionForm({ onBack }) {
                   <img src={form.photoPreview} alt="Student" className="w-12 h-12 rounded-xl object-cover border border-slate-200" />
                   <div>
                     <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600">Passport Photo</span>
-                    <p className="text-xs font-bold text-slate-800">Attached ✓</p>
+                    <p className="text-xs font-bold text-slate-800 flex items-center gap-1">Attached <CheckCircle className="w-3.5 h-3.5 text-green-500" /></p>
                   </div>
                 </div>
               )}
@@ -990,6 +1073,8 @@ export default function AdmissionForm({ onBack }) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[
                 { label: 'Full Name', value: form.fullName, icon: User },
+                { label: 'Father Name', value: form.fatherName, icon: User },
+                { label: 'Gender', value: form.gender, icon: Users },
                 { label: 'Email Address', value: form.email, icon: Mail },
                 { label: 'Phone / WhatsApp', value: form.phone, icon: Phone },
                 { label: 'City', value: form.city || 'N/A', icon: MapPin },

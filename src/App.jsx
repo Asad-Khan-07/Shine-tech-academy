@@ -54,7 +54,7 @@ function MainApp() {
       <ThemeLightModeEnforcer />
       <AmbientBackground />
 
-      <div style={{ position: 'relative', zIndex: 1 }}>
+      <div style={{ position: 'relative', zIndex: 10 }}>
         <Routes>
           <Route
             path="/"

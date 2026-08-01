@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { motion, useInView, useMotionValue, animate } from 'framer-motion'
-import { Rocket, Sparkles, Star, BookOpen, Award, Users, CheckCircle } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { Rocket, Sparkles, Star, GraduationCap, CheckCircle } from 'lucide-react'
+import Galaxy from './animatedbg/bg'
 
 /* ── Animated floating card ── */
 function FloatCard({ children, className = '', delay = 0, yRange = [-8, 8] }) {
@@ -17,53 +18,6 @@ function FloatCard({ children, className = '', delay = 0, yRange = [-8, 8] }) {
       className={className}
     >
       {children}
-    </motion.div>
-  )
-}
-
-/* ── Count-up hook ── */
-function useCountUp(target, { decimals = 0, duration = 1.8, delay = 0 } = {}) {
-  const ref = useRef(null)
-  const inView = useInView(ref, { once: true, margin: '-60px' })
-  const motionVal = useMotionValue(0)
-  const [display, setDisplay] = useState('0')
-
-  useEffect(() => {
-    if (!inView) return
-    const controls = animate(motionVal, target, {
-      duration,
-      delay,
-      ease: 'easeOut',
-      onUpdate: (v) => setDisplay(decimals > 0 ? v.toFixed(decimals) : Math.round(v).toString()),
-    })
-    return controls.stop
-  }, [inView])
-
-  return { ref, display }
-}
-
-/* ── Animated stat pill with count-up ── */
-function StatPill({ icon: Icon, target, suffix = '', decimals = 0, label, delay = 0, isRating = false }) {
-  const { ref, display } = useCountUp(target, { decimals, duration: 1.6, delay })
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 24 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay, duration: 0.5 }}
-      whileHover={{ y: -5, scale: 1.04 }}
-      className="flex flex-col xs:flex-row items-center xs:items-start sm:items-center gap-2 xs:gap-3 bg-white/90 backdrop-blur-sm border border-blue-100 shadow-lg shadow-blue-500/8 rounded-2xl p-3 xs:p-4 sm:px-5 sm:py-4 min-w-0 flex-1"
-    >
-      <div className="w-9 h-9 xs:w-11 xs:h-11 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: '#0956fc' }}>
-        <Icon className="w-4.5 h-4.5 xs:w-5 xs:h-5 text-white" />
-      </div>
-      <div className="min-w-0 text-center xs:text-left">
-        <p className="text-slate-900 font-black text-xl xs:text-2xl sm:text-3xl leading-none tracking-tight flex items-center justify-center xs:justify-start gap-1">
-          <span>{display}{suffix}</span>
-          {isRating && <Star className="w-5 h-5 xs:w-6 xs:h-6 text-[#0956fc] fill-[#0956fc] inline-block align-middle" />}
-        </p>
-        <p className="text-slate-500 text-[10px] xs:text-xs sm:text-sm font-semibold mt-1 leading-tight break-words">{label}</p>
-      </div>
     </motion.div>
   )
 }
@@ -88,12 +42,184 @@ const TECH_TAGS = [
   'Data Science', 'Python', 'React.js', 'UI/UX Design', 'Ms Office',
 ]
 
-const STATS = [
-  { icon: Users,    target: 500, suffix: '+', decimals: 0, label: 'Students Enrolled',  delay: 0.7  },
-  { icon: Award,    target: 100, suffix: '%', decimals: 0, label: 'Internship Rate',    delay: 0.85 },
-  { icon: BookOpen, target: 10,  suffix: '+', decimals: 0, label: 'Courses Available',  delay: 1.0  },
-  { icon: Star,     target: 5.0, suffix: '',  decimals: 1, label: 'Student Rating',     delay: 1.15, isRating: true },
+/* ── Blinking terminal cursor ── */
+function BlinkCursor() {
+  return (
+    <motion.span
+      animate={{ opacity: [1, 1, 0, 0] }}
+      transition={{ duration: 1, repeat: Infinity, times: [0, 0.5, 0.5, 1] }}
+      className="inline-block w-[7px] h-[14px] align-middle ml-0.5"
+      style={{ background: '#0956fc' }}
+    />
+  )
+}
+
+/* ── Code lines for the typewriter, split into colored segments ── */
+const CODE_LINES = [
+  [{ t: 'const ', c: '#a855f7' }, { t: 'student', c: '#0956fc' }, { t: ' = ' }, { t: "'you'", c: '#16a34a' }, { t: ';' }],
+  [{ t: 'function ', c: '#a855f7' }, { t: 'buildCareer', c: '#0956fc' }, { t: '() {' }],
+  [{ t: '  learn(' }, { t: "'real projects'", c: '#16a34a' }, { t: ');' }],
+  [{ t: '  practice(' }, { t: "'with mentors'", c: '#16a34a' }, { t: ');' }],
+  [{ t: '  return ', c: '#a855f7' }, { t: "'dream job'", c: '#16a34a' }],
+  [{ t: '}' }],
 ]
+
+/* ── Typewriter — reveals the code lines character by character with
+     framer-motion driving the blinking cursor. Loops forever with a
+     brief pause after finishing and before restarting. ── */
+function TypewriterCode({
+  lines = CODE_LINES,
+  speed = 26,
+  startDelay = 700,
+  pauseAfterFinish = 1800,
+  pauseBeforeRestart = 400,
+}) {
+  const [typed, setTyped] = useState(0)
+  const fullLines = lines.map((segs) => segs.map((s) => s.t).join(''))
+  const totalChars = fullLines.reduce((sum, l) => sum + l.length, 0)
+
+  useEffect(() => {
+    let chars = 0
+    let typingInterval
+    let timeoutA
+    let timeoutB
+    let timeoutC
+
+    const startTyping = () => {
+      chars = 0
+      setTyped(0)
+
+      timeoutA = setTimeout(() => {
+        typingInterval = setInterval(() => {
+          chars += 1
+          setTyped(chars)
+          if (chars >= totalChars) {
+            clearInterval(typingInterval)
+            timeoutB = setTimeout(() => {
+              setTyped(0)
+              timeoutC = setTimeout(startTyping, pauseBeforeRestart)
+            }, pauseAfterFinish)
+          }
+        }, speed)
+      }, startDelay)
+    }
+
+    startTyping()
+
+    return () => {
+      clearTimeout(timeoutA)
+      clearTimeout(timeoutB)
+      clearTimeout(timeoutC)
+      clearInterval(typingInterval)
+    }
+  }, [])
+
+  let consumed = 0
+
+  return (
+    <div className="p-4 xs:p-5 sm:p-6 h-[190px] xs:h-[210px] sm:h-[240px] overflow-hidden font-mono text-[11px] xs:text-xs sm:text-sm leading-relaxed sm:leading-loose">
+      {lines.map((segs, li) => {
+        const lineFull = fullLines[li]
+        const lineStart = consumed
+        consumed += lineFull.length
+        const lineTyped = Math.max(0, Math.min(lineFull.length, typed - lineStart))
+        const isCurrentLine = typed >= lineStart && typed < lineStart + lineFull.length
+        let segConsumed = 0
+
+        return (
+          <p key={li}>
+            {segs.map((seg, si) => {
+              const segStart = segConsumed
+              segConsumed += seg.t.length
+              const visible = Math.max(0, Math.min(seg.t.length, lineTyped - segStart))
+              return (
+                <span key={si} style={seg.c ? { color: seg.c } : undefined}>
+                  {seg.t.slice(0, visible)}
+                </span>
+              )
+            })}
+            {isCurrentLine && <BlinkCursor />}
+          </p>
+        )
+      })}
+      {typed >= totalChars && (
+        <p><BlinkCursor /></p>
+      )}
+    </div>
+  )
+}
+
+/* ── Signature hero illustration — a mini code-editor mockup standing in
+     for "what STA teaches", with floating achievement chips around it.
+     Replaces the old stats grid. ── */
+function CodeEditorIllustration() {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay: 0.55 }}
+      className="relative w-full max-w-md mx-auto lg:mx-0 px-6 sm:px-8"
+    >
+      {/* Central editor mockup */}
+      <motion.div
+        whileHover={{ y: -4 }}
+        className="relative bg-white rounded-3xl border border-blue-100 shadow-2xl shadow-blue-500/10 overflow-hidden text-left"
+      >
+        {/* window chrome */}
+        <div className="flex items-center gap-1.5 px-4 py-3 border-b border-slate-100 bg-slate-50/70">
+          <span className="w-2.5 h-2.5 rounded-full bg-red-300" />
+          <span className="w-2.5 h-2.5 rounded-full bg-amber-300" />
+          <span className="w-2.5 h-2.5 rounded-full bg-green-300" />
+          <span className="ml-3 text-[10px] xs:text-xs text-slate-400 font-mono truncate">student-project.jsx</span>
+        </div>
+
+        {/* code lines — typed out with framer-motion driven cursor, looping */}
+        <TypewriterCode />
+      </motion.div>
+
+      {/* Floating chip — Certified */}
+      <FloatCard
+        delay={0.3}
+        yRange={[-6, 6]}
+        className="absolute -top-5 -left-2 xs:-left-6 sm:-left-10"
+      >
+        <div className="flex items-center gap-2 bg-white rounded-2xl border border-blue-100 shadow-lg shadow-blue-500/10 pl-2 pr-3.5 py-2">
+          <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: '#0956fc' }}>
+            <GraduationCap className="w-3.5 h-3.5 text-white" />
+          </div>
+          <span className="text-[11px] xs:text-xs font-bold text-slate-800 whitespace-nowrap">Certified Training</span>
+        </div>
+      </FloatCard>
+
+      {/* Floating chip — Job Ready */}
+      <FloatCard
+        delay={0.6}
+        yRange={[-8, 4]}
+        className="absolute -bottom-5 -right-2 xs:-right-6 sm:-right-10"
+      >
+        <div className="flex items-center gap-2 bg-white rounded-2xl border border-blue-100 shadow-lg shadow-blue-500/10 pl-2 pr-3.5 py-2">
+          <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: '#0956fc' }}>
+            <Rocket className="w-3.5 h-3.5 text-white" />
+          </div>
+          <span className="text-[11px] xs:text-xs font-bold text-slate-800 whitespace-nowrap">Job-Ready Skills</span>
+        </div>
+      </FloatCard>
+
+      {/* Floating chip — Rating (desktop only, keeps mobile calm) */}
+      <FloatCard
+        delay={0.9}
+        yRange={[-5, 9]}
+        className="hidden sm:block absolute top-1/2 -translate-y-1/2 -right-14"
+      >
+        <div className="flex items-center gap-1 bg-white rounded-full border border-blue-100 shadow-lg shadow-blue-500/10 px-3 py-1.5">
+          {[...Array(5)].map((_, i) => (
+            <Star key={i} className="w-3 h-3 fill-current" style={{ color: '#0956fc' }} />
+          ))}
+        </div>
+      </FloatCard>
+    </motion.div>
+  )
+}
 
 export default function Hero({ onApply }) {
   return (
@@ -101,9 +227,9 @@ export default function Hero({ onApply }) {
       id="hero"
       className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden pt-20 pb-10"
     >
-      {/* ── Background — pure CSS, zero JS overhead ── */}
+      {/* ── Background — Galaxy WebGL layer + soft wash for text legibility ── */}
       <div className="absolute inset-0 z-0 overflow-hidden">
-        {/* Base gradient */}
+        {/* Base gradient wash — keeps the light theme and text contrast */}
         <div
           className="absolute inset-0"
           style={{
@@ -112,85 +238,40 @@ export default function Hero({ onApply }) {
           }}
         />
 
-        {/* Subtle grid */}
-        <div
-          className="absolute inset-0 opacity-[0.035]"
-          style={{
-            backgroundImage:
-              'linear-gradient(#0956fc 1px, transparent 1px), linear-gradient(90deg, #0956fc 1px, transparent 1px)',
-            backgroundSize: '64px 64px',
-          }}
-        />
-
-        {/* Blob 1 — top-left, large, very soft */}
-        <div
-          className="hero-blob-1 absolute rounded-full blur-[110px] pointer-events-none"
-          style={{
-            width: 520, height: 520,
-            top: '-12%', left: '-8%',
-            background: 'rgba(9,86,252,0.09)',
-          }}
-        />
-
-        {/* Blob 2 — bottom-right */}
-        <div
-          className="hero-blob-2 absolute rounded-full blur-[90px] pointer-events-none"
-          style={{
-            width: 400, height: 400,
-            bottom: '-5%', right: '-5%',
-            background: 'rgba(99,102,241,0.07)',
-          }}
-        />
-
-        {/* Blob 3 — center-right, smallest */}
-        <div
-          className="hero-blob-3 absolute rounded-full blur-[70px] pointer-events-none"
-          style={{
-            width: 260, height: 260,
-            top: '35%', right: '12%',
-            background: 'rgba(59,130,246,0.07)',
-          }}
-        />
-
-        {/* Slow-rotating dashed ring */}
-        <div
-          className="hero-ring absolute pointer-events-none opacity-[0.06]"
-          style={{
-            width: 500, height: 500,
-            top: '50%', left: '50%',
-            marginTop: -250, marginLeft: -250,
-            borderRadius: '50%',
-            border: '1.5px dashed #0956fc',
-          }}
-        />
-
-        {/* Floating particles — 6 dots, pure CSS */}
-        {[
-          { size: 5,  left: '18%', top: '70%', dur: '9s',  del: '0s'   },
-          { size: 4,  left: '75%', top: '80%', dur: '12s', del: '2s'   },
-          { size: 6,  left: '40%', top: '85%', dur: '10s', del: '1s'   },
-          { size: 3,  left: '60%', top: '75%', dur: '8s',  del: '3.5s' },
-          { size: 5,  left: '85%', top: '60%', dur: '11s', del: '0.5s' },
-          { size: 4,  left: '28%', top: '90%', dur: '13s', del: '4s'   },
-        ].map((p, i) => (
-          <div
-            key={i}
-            className="hero-particle absolute rounded-full pointer-events-none"
-            style={{
-              width: p.size, height: p.size,
-              left: p.left, top: p.top,
-              background: '#0956fc',
-              opacity: 0,
-              animationDuration: p.dur,
-              animationDelay: p.del,
-            }}
+        {/* Galaxy starfield — tuned to the STA blue palette, kept light & smooth */}
+        <div className="absolute inset-0 opacity-70">
+          <Galaxy
+            density={1.3}
+            hueShift={215}
+            saturation={0.85}
+            glowIntensity={0.22}
+            twinkleIntensity={0.3}
+            rotationSpeed={0.02}
+            speed={0.3}
+            starSpeed={0.25}
+            alphaLow={0.12}
+            alphaHigh={0.5}
+            mouseInteraction
+            mouseRepulsion
+            repulsionStrength={1.1}
+            transparent
           />
-        ))}
+        </div>
+
+        {/* Soft fade at the bottom so the starfield doesn't fight the content below the fold */}
+        <div
+          className="absolute inset-x-0 bottom-0 h-40 pointer-events-none"
+          style={{ background: 'linear-gradient(to bottom, transparent, #f8faff)' }}
+        />
       </div>
 
 
       {/* ── Main content ── */}
-      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 flex flex-col items-center text-center gap-8">
+      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-10 items-center">
+
+        {/* ── Left column: text ── */}
+        <div className="flex flex-col items-center lg:items-start text-center lg:text-left gap-8">
 
         {/* Live badge */}
         <motion.div
@@ -219,12 +300,6 @@ export default function Hero({ onApply }) {
           <h1 className="font-space font-extrabold text-slate-900 text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.08] tracking-tight">
             Launch Your{' '}
             <span className="text-[#0956fc] "
-              // style={{
-              //   WebkitTextFillColor: 'transparent',
-              //   WebkitBackgroundClip: 'text',
-              //   backgroundClip: 'text',
-              //   backgroundImage: 'linear-gradient(135deg, #0956fc 0%, #3b82f6 50%, #6366f1 100%)',
-              // }}
             >
               Tech Career
             </span>
@@ -232,12 +307,6 @@ export default function Hero({ onApply }) {
             <span className="relative inline-block">
               <span className="text-slate-900">with</span>{' '}
               <span className='text-[#0956fc]'
-                // style={{
-                //   WebkitTextFillColor: 'transparent',
-                //   WebkitBackgroundClip: 'text',
-                //   backgroundClip: 'text',
-                //   backgroundImage: '#0956fc',
-                // }}
               >
                 STA
               </span>
@@ -283,7 +352,7 @@ export default function Hero({ onApply }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.35 }}
-          className="flex flex-wrap justify-center gap-2 max-w-2xl"
+          className="flex flex-wrap justify-center lg:justify-start gap-2 max-w-2xl"
         >
           {TECH_TAGS.map((tag, i) => (
             <TechTag key={tag} label={tag} delay={0.4 + i * 0.06} />
@@ -317,24 +386,12 @@ export default function Hero({ onApply }) {
           </motion.button>
         </motion.div>
 
-        {/* Stats grid */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-3 w-full max-w-3xl px-2 xs:px-0"
-        >
-          {STATS.map((stat) => (
-            <StatPill key={stat.label} {...stat} />
-          ))}
-        </motion.div>
-
         {/* Social proof avatars */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.85 }}
-          className="flex flex-wrap items-center justify-center gap-3"
+          className="flex flex-wrap items-center justify-center lg:justify-start gap-3"
         >
           <div className="flex -space-x-2.5">
             {[
@@ -372,6 +429,14 @@ export default function Hero({ onApply }) {
           </div>
         </motion.div>
 
+        </div>
+
+        {/* ── Right column: code illustration ── */}
+        <div className="flex justify-center lg:justify-end">
+          <CodeEditorIllustration />
+        </div>
+
+        </div>
       </div>
     </section>
   )

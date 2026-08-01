@@ -31,6 +31,7 @@ const LIVE_COURSES = [
       'Typing & Productivity Tools',
       'Introduction to Programming Logic',
       'Cyber Safety & Digital Citizenship',
+      'Basic Troubleshooting & Tech Support',
       'Final Project & Presentation',
     ],
   },
@@ -52,6 +53,7 @@ const LIVE_COURSES = [
       'Ethics & Bias in AI',
       'Hands-on with AI Tools',
       'Building a Simple AI Model',
+      'Career Opportunities in AI',
       'Final Project: AI Solution Prototype',
     ],
   },
@@ -73,6 +75,7 @@ const LIVE_COURSES = [
       'AI for Data Analysis & Reports',
       'Automating Workflows with AI',
       'AI Tools for Developers & Designers',
+      'Building Custom GPTs & AI Agents',
       'Capstone: AI Productivity System',
     ],
   },
@@ -94,6 +97,7 @@ const LIVE_COURSES = [
       'Google Ads & Facebook Ads',
       'Email Marketing & Automation',
       'Personal Branding on LinkedIn',
+      'Analytics & Performance Tracking',
       'Final Project: Full Campaign Plan',
     ],
   },
@@ -115,19 +119,20 @@ const LIVE_COURSES = [
       'MongoDB — Database Design & CRUD',
       'Authentication & Authorization',
       'RESTful APIs & Deployment',
+      'Version Control with Git & GitHub',
       'Capstone: Full-Stack MERN Application',
     ],
   },
 ]
 
 const COMING_SOON = [
-  { id: 'ai-advanced',  title: 'Artificial Intelligence (Advanced)',  level: 'Advanced Diploma', duration: '4 Months', mode: 'Online & Onsite', curriculum: ['Advanced Machine Learning', 'Deep Learning & Neural Networks', 'Computer Vision', 'Natural Language Processing', 'Reinforcement Learning', 'AI Model Deployment', 'Research & Development', 'Final AI Project'] },
-  { id: 'agentic-ai',  title: 'Agentic AI',                         level: 'Advanced Diploma', duration: '4 Months', mode: 'Online & Onsite', curriculum: ['Foundations of Agentic AI', 'Autonomous Agents & Planning', 'Multi-Agent Systems', 'Tool Use & Function Calling', 'Memory & Reasoning', 'Safety & Alignment', 'Building AI Assistants', 'Capstone: AI Agent Application'] },
+  { id: 'ai-advanced',  title: 'Artificial Intelligence (Advanced)',  level: 'Advanced Diploma', duration: '4 Months', mode: 'Online & Onsite', curriculum: ['Advanced Machine Learning', 'Deep Learning & Neural Networks', 'Computer Vision', 'Natural Language Processing', 'Reinforcement Learning', 'AI Model Deployment', 'AI Model Optimization', 'Research & Development', 'Final AI Project'] },
+  { id: 'agentic-ai',  title: 'Agentic AI',                         level: 'Advanced Diploma', duration: '4 Months', mode: 'Online & Onsite', curriculum: ['Foundations of Agentic AI', 'Autonomous Agents & Planning', 'Multi-Agent Systems', 'Tool Use & Function Calling', 'Memory & Reasoning', 'Safety & Alignment', 'Building AI Assistants', 'Real-World Agentic AI Case Studies', 'Capstone: AI Agent Application'] },
   // { id: 'data-science', title: 'Data Science',                       level: 'Advanced Diploma', duration: '4 Months', mode: 'Online & Onsite', curriculum: ['Python for Data Science', 'Statistics & Probability', 'Data Wrangling & Cleaning', 'Data Visualization', 'Machine Learning Algorithms', 'SQL & Big Data', 'Data Storytelling', 'Final Data Science Project'] },
   // { id: 'cyber',        title: 'Cyber Security',                     level: 'Advanced Diploma', duration: '4 Months', mode: 'Online & Onsite', curriculum: ['Network Security Fundamentals', 'Ethical Hacking & Penetration Testing', 'Cryptography Basics', 'Security Operations (SOC)', 'Incident Response', 'Web Application Security', 'Digital Forensics', 'Final Security Assessment'] },
   // { id: 'flutter',      title: 'Flutter App Development',            level: 'Intermediate',     duration: '3 Months', mode: 'Online & Onsite', curriculum: ['Dart Programming Basics', 'Flutter Widgets & UI', 'State Management', 'Navigation & Routing', 'API Integration', 'Firebase & Backend', 'App Store Deployment', 'Final Mobile App Project'] },
-  { id: 'graphic-d',    title: 'Professional Graphic Designing',     level: 'Intermediate',     duration: '3 Months', mode: 'Online & Onsite', curriculum: ['Design Principles & Color Theory', 'Adobe Photoshop Mastery', 'Adobe Illustrator Basics', 'Typography & Layout', 'Logo & Brand Identity', 'Social Media Graphics', 'Portfolio Development', 'Final Design Project'] },
-  { id: 'video-e',      title: 'Professional Video Editing',         level: 'Intermediate',     duration: '3 Months', mode: 'Online & Onsite', curriculum: ['Video Editing Fundamentals', 'Adobe Premiere Pro', 'Motion Graphics in After Effects', 'Color Grading & Audio', 'Storytelling through Video', 'YouTube & Short-form Content', 'CapCut Advanced Techniques', 'Final Video Portfolio'] },
+  { id: 'graphic-d',    title: 'Professional Graphic Designing',     level: 'Intermediate',     duration: '3 Months', mode: 'Online & Onsite', curriculum: ['Design Principles & Color Theory', 'Adobe Photoshop Mastery', 'Adobe Illustrator Basics', 'Typography & Layout', 'Logo & Brand Identity', 'Social Media Graphics', 'Print & Packaging Design Basics', 'Portfolio Development', 'Final Design Project'] },
+  { id: 'video-e',      title: 'Professional Video Editing',         level: 'Intermediate',     duration: '3 Months', mode: 'Online & Onsite', curriculum: ['Video Editing Fundamentals', 'Adobe Premiere Pro', 'Motion Graphics in After Effects', 'Color Grading & Audio', 'Sound Design & Audio Mixing', 'Storytelling through Video', 'YouTube & Short-form Content', 'CapCut Advanced Techniques', 'Final Video Portfolio'] },
   // { id: 'ecommerce',    title: 'E-Commerce & Shopify',               level: 'Intermediate',     duration: '3 Months', mode: 'Online & Onsite', curriculum: ['E-Commerce Business Models', 'Shopify Store Setup & Design', 'Product Listing & Optimization', 'Payment Gateways & Shipping', 'Marketing & SEO for Stores', 'Customer Service & Retention', 'Analytics & Growth', 'Final E-Commerce Launch'] },
 ]
 
@@ -238,33 +243,35 @@ function CourseCard({ course, live, onViewCurriculum, onApply }) {
         </div>
       )}
       {live && (
-        <div className="absolute top-3 left-3 z-10 flex items-center gap-1 bg-green-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-md">
+        <div className="absolute top-3 right-3 z-10 flex items-center gap-1 bg-green-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-md">
           <Sparkles className="w-3 h-3" />
           Admissions Open
         </div>
       )}
 
-      {/* Image */}
-      <div className="relative h-36 overflow-hidden">
+      {/* Image Block: w-full, landscape aspect-ratio so it isn't overly tall on mobile */}
+      <div className="relative w-full aspect-[16/10] overflow-hidden bg-slate-50 border-b border-slate-100">
         <img
           src={course.image || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&q=80&fit=crop'}
           alt={course.imageAlt || course.title}
-          className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           loading="lazy"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-        <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between gap-2">
-          <h3 className="text-white font-space font-extrabold text-sm drop-shadow-sm leading-tight flex-1">
-            {course.title}
-          </h3>
-          {/* <span className={`${levelStyle.bg} ${levelStyle.text} text-[10px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap flex-shrink-0`}>
-            {course.level}
-          </span> */}
-        </div>
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-slate-900/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       </div>
 
       {/* Content */}
-      <div className="p-4 flex flex-col flex-1 gap-3">
+      <div className="p-5 flex flex-col flex-1 gap-4">
+        {/* Title and Level */}
+        <div>
+          <span className={`${levelStyle.bg} ${levelStyle.text} text-[10px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap inline-block mb-2`}>
+            {course.level}
+          </span>
+          <h3 className="text-slate-900 font-space font-extrabold text-lg leading-snug">
+            {course.title}
+          </h3>
+        </div>
+
         {/* Info Grid */}
         <div className="grid grid-cols-2 gap-2">
           <div className="flex items-center gap-2 bg-slate-50 rounded-lg px-3 py-2">

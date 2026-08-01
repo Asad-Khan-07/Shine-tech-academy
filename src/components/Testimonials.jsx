@@ -34,22 +34,22 @@ const REVIEWS = [
     avatar: 'SK',
     color: 'bg-rose-600',
   },
-  {
-    name: 'Bilal Hassan',
-    role: 'Freelancing Student',
-    rating: 5,
-    text: 'After completing the Freelancing course, I landed my first Fiverr order within 2 weeks. The guidance on proposals is gold.',
-    avatar: 'BH',
-    color: 'bg-amber-600',
-  },
-  {
-    name: 'Nadia Malik',
-    role: 'Video Editing Student',
-    rating: 5,
-    text: 'The video editing course is extremely thorough. From Premiere Pro to CapCut, I learned everything I needed to start earning.',
-    avatar: 'NM',
-    color: 'bg-pink-600',
-  },
+  // {
+  //   name: 'Bilal Hassan',
+  //   role: 'Freelancing Student',
+  //   rating: 5,
+  //   text: 'After completing the Freelancing course, I landed my first Fiverr order within 2 weeks. The guidance on proposals is gold.',
+  //   avatar: 'BH',
+  //   color: 'bg-amber-600',
+  // },
+  // {
+  //   name: 'Nadia Malik',
+  //   role: 'Video Editing Student',
+  //   rating: 5,
+  //   text: 'The video editing course is extremely thorough. From Premiere Pro to CapCut, I learned everything I needed to start earning.',
+  //   avatar: 'NM',
+  //   color: 'bg-pink-600',
+  // },
 ]
 
 const container = {
@@ -82,7 +82,7 @@ export default function Testimonials() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: '-80px' }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
         >
           {REVIEWS.map((r) => (
             <motion.div

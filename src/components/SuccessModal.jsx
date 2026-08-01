@@ -158,10 +158,11 @@ export default function SuccessModal({ appId, form, onClose, primaryCourseName }
 
     // Details table
     const detailRows = [
-      { label: 'ID NUMBER',  value: appId },
-      { label: 'DEPARTMENT', value: 'Technology' },
-      { label: 'EMAIL',      value: form.email.length > 25 ? form.email.slice(0, 23) + '..' : form.email },
-      { label: 'PHONE',      value: form.phone },
+      { label: 'ID NUMBER',   value: appId },
+      { label: 'FATHER NAME', value: form.fatherName || '—' },
+      { label: 'DEPARTMENT',  value: 'Technology' },
+      { label: 'EMAIL',       value: form.email.length > 25 ? form.email.slice(0, 23) + '..' : form.email },
+      { label: 'PHONE',       value: form.phone },
     ]
 
     pdf.setFont('helvetica', 'bold')
@@ -470,6 +471,11 @@ export default function SuccessModal({ appId, form, onClose, primaryCourseName }
                         <span style={{ display: 'inline-block', minWidth: '78px', color: '#94a3b8', fontWeight: 'bold', textTransform: 'uppercase', flexShrink: 0 }}>ID Number</span>
                         <span style={{ color: '#94a3b8', fontWeight: 'bold', marginRight: '5px', flexShrink: 0 }}>:</span>
                         <span style={{ fontFamily: 'Arial, Helvetica, sans-serif', fontWeight: 'bold', color: '#1e293b' }}>{appId}</span>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', fontSize: '10px' }}>
+                        <span style={{ display: 'inline-block', minWidth: '78px', color: '#94a3b8', fontWeight: 'bold', textTransform: 'uppercase', flexShrink: 0 }}>Father Name</span>
+                        <span style={{ color: '#94a3b8', fontWeight: 'bold', marginRight: '5px', flexShrink: 0 }}>:</span>
+                        <span style={{ fontWeight: 'bold', color: '#1e293b' }}>{form.fatherName || '—'}</span>
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', fontSize: '10px' }}>
                         <span style={{ display: 'inline-block', minWidth: '78px', color: '#94a3b8', fontWeight: 'bold', textTransform: 'uppercase', flexShrink: 0 }}>Department</span>

@@ -341,11 +341,11 @@ export default function FaceDetectCrop({ imageSrc, onCropComplete, onCancel }) {
               </div>
 
               {/* Crop area */}
-              <div className="p-4">
+              <div className="p-4 flex justify-center">
                 <div
                   ref={containerRef}
-                  className="relative rounded-xl overflow-hidden bg-slate-900 select-none touch-none"
-                  style={{ cursor: 'crosshair', aspectRatio: '1/1', maxHeight: 300 }}
+                  className="relative rounded-xl overflow-hidden bg-slate-900 select-none touch-none mx-auto"
+                  style={{ cursor: 'crosshair', aspectRatio: '1/1', maxHeight: 300, width: '100%', maxWidth: 300 }}
                   onMouseDown={onMouseDown}
                   onMouseMove={onMouseMove}
                   onMouseUp={onMouseUp}

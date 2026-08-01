@@ -74,7 +74,8 @@ export default function Contact() {
                 {
                   icon: MapPin,
                   label: 'Campus Address',
-                  value: 'Bungalow No. 306, Unit No. 9, Latifabad No. 9, Hyderabad, Sindh, Visit our campus for counseling & Admissions.',
+                  value: 'Bungalow No. 306, Unit No. 9, Latifabad No. 9, Hyderabad, Sindh.',
+                  note: 'Visit our campus for counseling & Admissions.',
                   href: '#',
                   color: 'bg-red-100 text-red-600',
                 },
@@ -94,6 +95,9 @@ export default function Contact() {
                     <div>
                       <p className="text-slate-500 text-xs font-semibold uppercase tracking-wide">{item.label}</p>
                       <p className="text-slate-900 font-semibold text-sm mt-0.5 group-hover:text-blue-600 transition-colors">{item.value}</p>
+                      {item.note && (
+                        <p className="text-slate-500 text-xs mt-1 group-hover:text-blue-500 transition-colors">{item.note}</p>
+                      )}
                     </div>
                   </a>
                 )
@@ -296,4 +300,3 @@ function CustomDropdown({ value, onChange, options, placeholder }) {
     </div>
   )
 }
-

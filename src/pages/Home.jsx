@@ -14,6 +14,7 @@ import Footer from '../components/Footer'
 import GetAdmitCardModal from '../components/GetAdmitCardModal'
 import { useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
+import Partners from '../components/Partner'
 
 export default function Home({ onOpenApply, onOpenAdmitCard }) {
   return (
@@ -23,6 +24,7 @@ export default function Home({ onOpenApply, onOpenAdmitCard }) {
       <main>
         <Hero onApply={onOpenApply} />
         <Stats />
+        <Partners />
         <Courses onApply={onOpenApply} />
         <Admission />
         <LearningJourney />
