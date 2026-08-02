@@ -1,30 +1,55 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Phone, Mail, MapPin, Send, CheckCircle, ChevronDown } from 'lucide-react'
+import { Phone, Mail, MapPin, Send, CheckCircle, ChevronDown, AlertCircle } from 'lucide-react'
+import { supabase } from '../lib/supabase'
 
 const COURSES_LIST = [
-  'AI Productivity',
-  'Web Development',
-  'Graphic Design',
-  'Digital Marketing',
-  'Video Editing',
-  'Freelancing',
+  'Computer & IT Fundamentals (CIT)',
+  'AI for Everyone',
+  'AI Productivity & Prompt Engineering',
+  'Digital Marketing & Personal Branding',
+  'Professional Diploma in Modern MERN Stack Engineering',
+  'Full Stack Web Development',
+  'Robotics & AI Automation',
+  'Microsoft Office Professional',
+  'Graphic Designing & Visual Communication',
+  'Professional English for Career & Freelancing',
 ]
 
 export default function Contact() {
   const [form, setForm] = useState({ name: '', phone: '', email: '', course: '', message: '' })
   const [sent, setSent] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value })
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
+    setError('')
     setLoading(true)
-    setTimeout(() => {
-      setLoading(false)
-      setSent(true)
-    }, 1200)
+
+    const { error: insertError } = await supabase
+      .from('contact_messages')
+      .insert([
+        {
+          name: form.name,
+          phone: form.phone,
+          email: form.email,
+          course: form.course || null,
+          message: form.message || null,
+        },
+      ])
+
+    setLoading(false)
+
+    if (insertError) {
+      console.error('Supabase insert error:', insertError)
+      setError("Something went wrong sending your message. Please try again or contact us on WhatsApp.")
+      return
+    }
+
+    setSent(true)
   }
 
   return (
@@ -60,8 +85,8 @@ export default function Contact() {
                 {
                   icon: Phone,
                   label: 'WhatsApp',
-                  value: '+92 300 1234567',
-                  href: 'https://wa.me/923001234567',
+                  value: '+92 335 1866930',
+                  href: 'https://wa.me/92 335 1866930',
                   color: 'bg-green-100 text-green-600',
                 },
                 {
@@ -74,7 +99,7 @@ export default function Contact() {
                 {
                   icon: MapPin,
                   label: 'Campus Address',
-                  value: 'Bungalow No. 306, Unit No. 9, Latifabad No. 9, Hyderabad, Sindh.',
+                  value: 'Bungalow No. 306, Unit No. 9, Latifabad, Hyderabad',
                   note: 'Visit our campus for counseling & Admissions.',
                   href: '#',
                   color: 'bg-red-100 text-red-600',
@@ -143,6 +168,13 @@ export default function Contact() {
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4 h-full justify-between">
                   <div>
                     <h3 className="font-space font-extrabold text-xl text-slate-900 mb-4">Send a Message</h3>
+
+                    {error && (
+                      <div className="flex items-start gap-2 bg-red-50 border border-red-200 text-red-700 text-xs font-medium rounded-xl px-3.5 py-3 mb-4">
+                        <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                        <span>{error}</span>
+                      </div>
+                    )}
 
                     <div className="flex flex-col gap-4">
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

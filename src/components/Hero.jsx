@@ -38,8 +38,8 @@ function TechTag({ label, delay }) {
 }
 
 const TECH_TAGS = [
-  'Web Development', 'Graphic Design', 'SEO Marketing',
-  'Data Science', 'Python', 'React.js', 'UI/UX Design', 'Ms Office',
+  'Artificial Intelligence', 'Software Development', 'UI UX Designing',
+  'Digital Marketing', 'Academic Coaching', 'English Language', 'programing language ', 'Robotics',
 ]
 
 /* ── Blinking terminal cursor ── */

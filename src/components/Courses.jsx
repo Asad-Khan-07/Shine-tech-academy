@@ -19,8 +19,8 @@ const LIVE_COURSES = [
     level: 'Foundation',
     duration: '3 Months',
     mode: 'Online & Onsite',
-    admissionFee: 'Rs. 1,000',
-    monthlyFee: 'Rs. 1,999/mo',
+    admissionFee: 'Rs. 999',
+    monthlyFee: 'Rs. 1,500/mo',
     image: 'https://images.unsplash.com/photo-1533022139390-e31c488d69e2?w=600&q=80&fit=crop',
     imageAlt: 'Computer fundamentals and IT skills',
     curriculum: [
@@ -41,8 +41,8 @@ const LIVE_COURSES = [
     level: 'Beginner',
     duration: '3 Months',
     mode: 'Online & Onsite',
-    admissionFee: 'Rs. 1,000',
-    monthlyFee: 'Rs. 2,499/mo',
+    admissionFee: 'Rs. 999',
+    monthlyFee: 'Rs. 2,000/mo',
     image: 'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=600&q=80&fit=crop',
     imageAlt: 'Artificial Intelligence for everyone',
     curriculum: [
@@ -61,10 +61,10 @@ const LIVE_COURSES = [
     id: 'ai-productivity',
     title: 'AI Productivity & Prompt Engineering',
     level: 'Intermediate',
-    duration: '3 Months',
+    duration: '4 Months',
     mode: 'Online & Onsite',
-    admissionFee: 'Rs. 1,000',
-    monthlyFee: 'Rs. 2,999/mo',
+    admissionFee: 'Rs. 999',
+    monthlyFee: 'Rs. 2,500/mo',
     image: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&q=80&fit=crop',
     imageAlt: 'AI productivity tools and prompt engineering',
     curriculum: [
@@ -85,8 +85,8 @@ const LIVE_COURSES = [
     level: 'Intermediate',
     duration: '3 Months',
     mode: 'Online & Onsite',
-    admissionFee: 'Rs. 1,000',
-    monthlyFee: 'Rs. 2,999/mo',
+    admissionFee: 'Rs. 999',
+    monthlyFee: 'Rs. 2,000/mo',
     image: 'https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?w=600&q=80&fit=crop',
     imageAlt: 'Digital marketing and personal branding',
     curriculum: [
@@ -105,10 +105,10 @@ const LIVE_COURSES = [
     id: 'mern',
     title: 'Professional Diploma in Modern MERN Stack Engineering',
     level: 'Advanced Diploma',
-    duration: '4 Months',
+    duration: '8 Months',
     mode: 'Online & Onsite',
-    admissionFee: 'Rs. 1,000',
-    monthlyFee: 'Rs. 4,999/mo',
+    admissionFee: 'Rs. 999',
+    monthlyFee: 'Rs. 3,500/mo',
     image: 'https://images.unsplash.com/photo-1593720213428-28a5b9e94613?w=600&q=80&fit=crop',
     imageAlt: 'MERN stack web development',
     curriculum: [
@@ -121,6 +121,121 @@ const LIVE_COURSES = [
       'RESTful APIs & Deployment',
       'Version Control with Git & GitHub',
       'Capstone: Full-Stack MERN Application',
+    ],
+  },
+  {
+    id: 'full-stack-web',
+    title: 'Full Stack Web Development',
+    level: 'Advanced Diploma',
+    duration: '6 Months',
+    mode: 'Online & Onsite',
+    admissionFee: 'Rs. 999',
+    monthlyFee: 'Rs. 3,000/mo',
+    image: 'https://images.unsplash.com/photo-1517180102446-f3ece451e9d8?w=600&q=80&fit=crop',
+    imageAlt: 'Full stack web development',
+    curriculum: [
+      'HTML5, CSS3 & Responsive Design',
+      'JavaScript (ES6+) Programming',
+      'Frontend Frameworks (React.js)',
+      'Backend Development with Node.js & Express',
+      'Database Design (MongoDB & SQL)',
+      'REST APIs & Authentication',
+      'Version Control with Git & GitHub',
+      'Deployment & Hosting',
+      'Capstone: Full-Stack Web Application',
+    ],
+  },
+  {
+    id: 'robotics-ai',
+    title: 'Robotics & AI Automation',
+    level: 'Intermediate',
+    duration: '3 Months',
+    mode: 'Online & Onsite',
+    admissionFee: 'Rs. 999',
+    monthlyFee: 'Rs. 2,000/mo',
+    image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=600&q=80&fit=crop',
+    imageAlt: 'Robotics and AI automation',
+    curriculum: [
+      'Introduction to Robotics & Electronics',
+      'Arduino & Microcontroller Programming',
+      'Sensors & Actuators',
+      'Robotic Process Automation (RPA) Basics',
+      'AI Integration in Robotics',
+      'Python for Automation',
+      'IoT Fundamentals',
+      'Building Autonomous Systems',
+      'Capstone: Robotics Automation Project',
+    ],
+  },
+  {
+    id: 'ms-office',
+    title: 'Microsoft Office Professional',
+    level: 'Foundation',
+    duration: '2 Months',
+    mode: 'Online & Onsite',
+    admissionFee: 'Rs. 999',
+    monthlyFee: 'Rs. 1,500/mo',
+    image: 'https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=600&q=80&fit=crop',
+    imageAlt: 'Microsoft Office professional training',
+    curriculum: [
+      'MS Word — Document Creation & Formatting',
+      'MS Excel — Formulas, Functions & Data Analysis',
+      'MS PowerPoint — Professional Presentations',
+      'MS Outlook — Email & Calendar Management',
+      'Excel Pivot Tables & Charts',
+      'Mail Merge & Templates',
+      'Office Productivity Shortcuts',
+      'Final Project & Certification Assessment',
+    ],
+  },
+  {
+    id: 'graphic-design-live',
+    title: 'Graphic Designing & Visual Communication',
+    level: 'Intermediate',
+    duration: '4 Months',
+    mode: 'Online & Onsite',
+    admissionFee: 'Rs. 999',
+    monthlyFee: 'Rs. 2,000/mo',
+    image: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?w=600&q=80&fit=crop',
+    imageAlt: 'Graphic designing and visual communication',
+    curriculum: [
+      'Design Principles & Color Theory',
+      'Adobe Photoshop Mastery',
+      'Adobe Illustrator Basics',
+      'Typography & Layout Design',
+      'Logo & Brand Identity Design',
+      'Social Media Graphics',
+      'Print & Packaging Design Basics',
+      'Portfolio Development',
+      'Final Design Project',
+    ],
+  },
+  {
+    id: 'pro-english',
+    title: 'Professional English for Career & Freelancing',
+    level: 'Beginner',
+    duration: '12 Months',
+    mode: 'Online & Onsite',
+    admissionFee: 'Rs. 999',
+    monthlyFee: 'Rs. 1,200/mo',
+    image: 'https://images.unsplash.com/photo-1521791136064-7986c2920216?w=600&q=80&fit=crop',
+    imageAlt: 'Professional English communication and public speaking',
+    curriculum: [
+      'Spoken English Fluency',
+      'Grammar & Vocabulary',
+      'Professional Communication',
+      'Business English',
+      'Email Writing',
+      'Interview Preparation',
+      'Public Speaking',
+      'Presentation Skills',
+      'Client Communication',
+      'Freelancing Communication',
+      'Workplace Etiquette',
+      'Confidence Building',
+      'Phase 1: Foundation (4 Months)',
+      'Phase 2: Intermediate (4 Months)',
+      'Phase 3: Professional (4 Months)',
     ],
   },
 ]
@@ -174,10 +289,10 @@ function CurriculumModal({ course, onClose, onApply }) {
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ duration: 0.25 }}
             onClick={(e) => e.stopPropagation()}
-            style={{ background: '#ffffff', borderRadius: '1.25rem', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)', maxWidth: '520px', width: '95vw', maxHeight: '85vh', overflowY: 'auto' }}
+            style={{ background: '#ffffff', borderRadius: '1.25rem', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)', maxWidth: '520px', width: '95vw', maxHeight: '85vh', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}
           >
-            {/* Header */}
-            <div style={{ position: 'sticky', top: 0, background: '#ffffff', borderBottom: '1px solid #e2e8f0', padding: '1rem 1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderRadius: '1.25rem 1.25rem 0 0', zIndex: 10 }}>
+            {/* Header — fixed, does not scroll */}
+            <div style={{ flexShrink: 0, background: '#ffffff', borderBottom: '1px solid #e2e8f0', padding: '1rem 1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div>
                 <h3 style={{ fontFamily: 'Space Grotesk, sans-serif', fontWeight: 800, color: '#0f172a', fontSize: '1.05rem', margin: 0, lineHeight: 1.3 }}>{course.title}</h3>
                 <p style={{ color: '#2563eb', fontSize: '0.8rem', fontWeight: 700, marginTop: '0.25rem' }}>{course.level} &bull; {course.duration}</p>
@@ -190,8 +305,8 @@ function CurriculumModal({ course, onClose, onApply }) {
               </button>
             </div>
 
-            {/* Curriculum List */}
-            <div style={{ padding: '1.5rem' }}>
+            {/* Curriculum List — the only scrollable area, clipped inside the box */}
+            <div style={{ padding: '1.5rem', overflowY: 'auto', flex: '1 1 auto', minHeight: 0 }}>
               <p style={{ color: '#64748b', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '1rem' }}>Course Curriculum</p>
               <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
                 {course.curriculum?.map((item, i) => (
@@ -203,8 +318,8 @@ function CurriculumModal({ course, onClose, onApply }) {
               </ul>
             </div>
 
-            {/* Footer */}
-            <div style={{ borderTop: '1px solid #e2e8f0', padding: '1.25rem 1.5rem', display: 'flex', gap: '0.75rem', background: '#f8fafc', borderRadius: '0 0 1.25rem 1.25rem' }}>
+            {/* Footer — fixed, does not scroll */}
+            <div style={{ flexShrink: 0, borderTop: '1px solid #e2e8f0', padding: '1.25rem 1.5rem', display: 'flex', gap: '0.75rem', background: '#f8fafc' }}>
               <button
                 onClick={onClose}
                 style={{ flex: 1, background: '#ffffff', color: '#475569', fontWeight: 700, fontSize: '0.875rem', padding: '0.75rem 1rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1', cursor: 'pointer' }}
@@ -250,7 +365,7 @@ function CourseCard({ course, live, onViewCurriculum, onApply }) {
       )}
 
       {/* Image Block: w-full, landscape aspect-ratio so it isn't overly tall on mobile */}
-      <div className="relative w-full aspect-[16/10] overflow-hidden bg-slate-50 border-b border-slate-100">
+      <div className="relative w-full aspect-[16/9] overflow-hidden bg-slate-50 border-b border-slate-100">
         <img
           src={course.image || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&q=80&fit=crop'}
           alt={course.imageAlt || course.title}
@@ -261,10 +376,10 @@ function CourseCard({ course, live, onViewCurriculum, onApply }) {
       </div>
 
       {/* Content */}
-      <div className="p-5 flex flex-col flex-1 gap-4">
+      <div className="p-4 flex flex-col flex-1 gap-3">
         {/* Title and Level */}
         <div>
-          <span className={`${levelStyle.bg} ${levelStyle.text} text-[10px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap inline-block mb-2`}>
+          <span className={`${levelStyle.bg} ${levelStyle.text} text-[10px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap inline-block mb-1.5`}>
             {course.level}
           </span>
           <h3 className="text-slate-900 font-space font-extrabold text-lg leading-snug">
@@ -273,15 +388,15 @@ function CourseCard({ course, live, onViewCurriculum, onApply }) {
         </div>
 
         {/* Info Grid */}
-        <div className="grid grid-cols-2 gap-2">
-          <div className="flex items-center gap-2 bg-slate-50 rounded-lg px-3 py-2">
+        <div className="grid grid-cols-2 gap-1.5">
+          <div className="flex items-center gap-2 bg-slate-50 rounded-lg px-2.5 py-1.5">
             <Clock className="w-3.5 h-3.5 text-blue-500 flex-shrink-0" />
             <div>
               <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wide">Duration</p>
               <p className="text-xs font-bold text-slate-800">{course.duration}</p>
             </div>
           </div>
-          <div className="flex items-center gap-2 bg-slate-50 rounded-lg px-3 py-2">
+          <div className="flex items-center gap-2 bg-slate-50 rounded-lg px-2.5 py-1.5">
             <Monitor className="w-3.5 h-3.5 text-blue-500 flex-shrink-0" />
             <div>
               <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wide">Mode</p>
@@ -289,7 +404,7 @@ function CourseCard({ course, live, onViewCurriculum, onApply }) {
             </div>
           </div>
           {live && course.admissionFee && (
-            <div className="flex items-center gap-2 bg-slate-50 rounded-lg px-3 py-2">
+            <div className="flex items-center gap-2 bg-slate-50 rounded-lg px-2.5 py-1.5">
               <ShieldCheck className="w-3.5 h-3.5 text-blue-500 flex-shrink-0" />
               <div>
                 <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wide">Admission Fee</p>
@@ -298,7 +413,7 @@ function CourseCard({ course, live, onViewCurriculum, onApply }) {
             </div>
           )}
           {live && course.monthlyFee && (
-            <div className="flex items-center gap-2 bg-slate-50 rounded-lg px-3 py-2">
+            <div className="flex items-center gap-2 bg-slate-50 rounded-lg px-2.5 py-1.5">
               <DollarSign className="w-3.5 h-3.5 text-blue-500 flex-shrink-0" />
               <div>
                 <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wide">Monthly Fee</p>
@@ -310,7 +425,7 @@ function CourseCard({ course, live, onViewCurriculum, onApply }) {
 
         {/* FREE Demo Badge */}
         {live && (
-          <div className="flex items-center gap-1.5 bg-green-50 border border-green-200 rounded-lg px-3 py-1.5">
+          <div className="flex items-center gap-1.5 bg-green-50 border border-green-200 rounded-lg px-3 py-1">
             <Sparkles className="w-3.5 h-3.5 text-green-600 flex-shrink-0" />
             <span className="text-[11px] font-bold text-green-700">100% FREE Demo Class</span>
           </div>
@@ -324,7 +439,7 @@ function CourseCard({ course, live, onViewCurriculum, onApply }) {
               e.stopPropagation()
               onViewCurriculum(course)
             }}
-            className="flex-1 flex items-center justify-center gap-1.5 border border-blue-200 text-blue-600 font-bold text-xs py-2.5 rounded-xl hover:bg-blue-50 transition-all cursor-pointer relative z-20"
+            className="flex-1 flex items-center justify-center gap-1.5 border border-blue-200 text-blue-600 font-bold text-xs py-2 rounded-xl hover:bg-blue-50 transition-all cursor-pointer relative z-20"
           >
             <BookOpen className="w-3.5 h-3.5" />
             View Curriculum
@@ -336,12 +451,12 @@ function CourseCard({ course, live, onViewCurriculum, onApply }) {
                 e.stopPropagation()
                 if (onApply) onApply()
               }}
-              className="flex-1 flex items-center justify-center gap-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold text-xs py-2.5 rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all shadow-sm shadow-blue-200 cursor-pointer relative z-20"
+              className="flex-1 flex items-center justify-center gap-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold text-xs py-2 rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all shadow-sm shadow-blue-200 cursor-pointer relative z-20"
             >
               Enroll Now <ArrowRight className="w-3.5 h-3.5" />
             </button>
           ) : (
-            <button type="button" className="flex-1 flex items-center justify-center gap-1.5 bg-slate-200 text-slate-500 font-bold text-xs py-2.5 rounded-xl cursor-not-allowed">
+            <button type="button" className="flex-1 flex items-center justify-center gap-1.5 bg-slate-200 text-slate-500 font-bold text-xs py-2 rounded-xl cursor-not-allowed">
               Notify Me
             </button>
           )}

@@ -1,4 +1,4 @@
-import { MessageCircle, Mail, MapPin, ArrowRight } from 'lucide-react'
+import { MessageCircle, Mail, MapPin, ArrowRight, CopyIcon, Copyright, Phone, PhoneCall } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 const SOCIAL_LINKS = [
@@ -24,6 +24,31 @@ const COURSES_LIST = [
   'AI Productivity & Prompt Engineering',
   'Digital Marketing & Personal Branding',
   'Professional Diploma in MERN Stack Engineering',
+]
+
+// Every phone/WhatsApp entry shown in the footer's Contact column
+const PHONE_LINKS = [
+  {
+    id: 'whatsapp',
+    label: '+92 335 1866930',
+    note: 'WhatsApp',
+    href: 'https://wa.me/923351866930',
+    icon: MessageCircle,
+  },
+  {
+    id: 'emergency',
+    label: '+92 315 3021306',
+    note: 'Call & Emergency',
+    href: 'tel:+923153021306',
+    icon: PhoneCall,
+  },
+  {
+    id: 'info',
+    label: '+92 323 3205730',
+    note: 'More Information',
+    href: 'tel:+923233205730',
+    icon: Phone,
+  },
 ]
 
 export default function Footer() {
@@ -98,12 +123,25 @@ export default function Footer() {
           <div>
             <h4 className="font-space font-bold text-slate-900 mb-5 text-sm tracking-widest uppercase">Contact</h4>
             <ul className="flex flex-col gap-4">
-              <li>
-                <a href="https://wa.me/923000000000" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-slate-500 hover:text-blue-600 text-sm transition-colors">
-                  <MessageCircle className="w-4 h-4 text-blue-600 flex-shrink-0" />
-                  +92 300 0000000
-                </a>
-              </li>
+              {PHONE_LINKS.map((p) => {
+                const Icon = p.icon
+                return (
+                  <li key={p.id}>
+                    <a
+                      href={p.href}
+                      target={p.href.startsWith('http') ? '_blank' : '_self'}
+                      rel="noopener noreferrer"
+                      className="flex items-start gap-3 text-slate-500 hover:text-blue-600 text-sm transition-colors group"
+                    >
+                      <Icon className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
+                      <span className="flex flex-col">
+                        <span className="font-medium">{p.label}</span>
+                        <span className="text-[11px] text-slate-400 group-hover:text-blue-400">{p.note}</span>
+                      </span>
+                    </a>
+                  </li>
+                )
+              })}
               <li>
                 <a href="mailto:info@shinetechacademy.com" className="flex items-center gap-3 text-slate-500 hover:text-blue-600 text-sm transition-colors">
                   <Mail className="w-4 h-4 text-blue-600 flex-shrink-0" />
@@ -112,7 +150,7 @@ export default function Footer() {
               </li>
               <li className="flex items-start gap-3 text-slate-500 text-sm">
                 <MapPin className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
-                Bungalow No. 306, Unit No. 9, Latifabad No. 9, Hyderabad, Sindh
+            Bungalow No. 306, Unit No. 9, Latifabad, Hyderabad
               </li>
             </ul>
             <div className="mt-6">
@@ -125,8 +163,8 @@ export default function Footer() {
 
         {/* Bottom */}
         <div className="border-t border-slate-200 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-slate-500 text-xs text-center sm:text-left">
-            © {new Date().getFullYear()} Shine Tech Academy (STA). All rights reserved.
+          <p className="text-slate-500 text-xs flex items-center gap-1 justify-center text-center sm:text-left">
+            <Copyright size={15}/> {new Date().getFullYear()} Shine Tech Academy (STA). All rights reserved.
           </p>
           <div className="flex gap-4 text-slate-600 text-xs">
             <Link to="/privacy" className="hover:text-blue-600 transition-colors font-medium">Privacy Policy</Link>

@@ -7,17 +7,22 @@ import {
   Award, Briefcase, Code, Smartphone, Palette, PenTool, Megaphone, DollarSign,
   Globe, CheckCircle, ArrowLeft, ArrowRight, Loader, Camera, FileText, CreditCard, Hash,
   Clock, Star, Target, ChevronDown, ChevronLeft, ChevronRight,
-  UserCircle, Mars, Venus, AlertCircle, X
+  UserCircle, Mars, Venus, AlertCircle, X,
+  Monitor, Sparkles, Bot, Server, Cpu, FileSpreadsheet, Languages
 } from 'lucide-react'
 
 const COURSES = [
-  { id: 'web',      icon: Code,        title: 'Web Development',         desc: 'HTML, CSS, JS, React, Node.js & More' },
-  { id: 'mobile',   icon: Smartphone,  title: 'Mobile App Development',  desc: 'Flutter, React Native, iOS & Android' },
-  { id: 'uiux',     icon: Palette,     title: 'UI/UX Design',            desc: 'Figma, Adobe XD, User Research & Prototyping' },
-  { id: 'graphic',  icon: PenTool,     title: 'Graphic Designing',       desc: 'Photoshop, Illustrator, CorelDRAW & Canva' },
-  { id: 'marketing', icon: Megaphone,  title: 'Digital Marketing',        desc: 'SEO, Social Media, Google Ads & Analytics' },
-  { id: 'freelance', icon: DollarSign, title: 'Freelancing & Entrepreneurship', desc: 'Fiverr, Upwork, Proposals & Client Mgmt' },
-  { id: 'other',    icon: Star,        title: 'Other Course',            desc: 'Tell us what you want to learn' },
+  { id: 'cit',               icon: Monitor,        title: 'Computer & IT Fundamentals (CIT)',                       desc: 'Computer Basics, MS Office, Internet & Digital Literacy' },
+  { id: 'ai-everyone',       icon: Sparkles,        title: 'AI for Everyone',                                        desc: 'AI Basics, Machine Learning & Everyday AI Tools' },
+  { id: 'ai-productivity',   icon: Bot,             title: 'AI Productivity & Prompt Engineering',                    desc: 'ChatGPT, Claude, Gemini & Advanced Prompt Engineering' },
+  { id: 'digital-marketing', icon: Megaphone,       title: 'Digital Marketing & Personal Branding',                   desc: 'SEO, Social Media, Google Ads & Personal Branding' },
+  { id: 'mern',              icon: Server,          title: 'Professional Diploma in Modern MERN Stack Engineering',  desc: 'MongoDB, Express.js, React.js & Node.js' },
+  { id: 'full-stack',        icon: Code,            title: 'Full Stack Web Development',                             desc: 'Frontend, Backend, Databases & Deployment' },
+  { id: 'robotics',          icon: Cpu,             title: 'Robotics & AI Automation',                                desc: 'Arduino, Sensors, RPA & Autonomous Systems' },
+  { id: 'ms-office',         icon: FileSpreadsheet, title: 'Microsoft Office Professional',                           desc: 'Word, Excel, PowerPoint & Outlook Mastery' },
+  { id: 'graphic-design',    icon: PenTool,         title: 'Graphic Designing & Visual Communication',                desc: 'Photoshop, Illustrator, Branding & Typography' },
+  { id: 'pro-english',       icon: Languages,       title: 'Professional English for Career & Freelancing',          desc: 'Spoken English, Business Communication & Interview Prep' },
+  // { id: 'other',             icon: Star,            title: 'Other Course',                                            desc: 'Tell us what you want to learn' },
 ]
 
 function generateAppId(courseId) {
@@ -27,12 +32,16 @@ function generateAppId(courseId) {
   const randSlice = Math.floor(10 + Math.random() * 90).toString() // 2-digit random (10-99)
   const unique = tsSlice + randSlice
   const suffixes = {
-    web: 'WD',
-    mobile: 'MD',
-    uiux: 'UX',
-    graphic: 'GD',
-    marketing: 'DM',
-    freelance: 'FE',
+    cit: 'CT',
+    'ai-everyone': 'AE',
+    'ai-productivity': 'AP',
+    'digital-marketing': 'DM',
+    mern: 'MN',
+    'full-stack': 'FS',
+    robotics: 'RA',
+    'ms-office': 'MO',
+    'graphic-design': 'GD',
+    'pro-english': 'PE',
     other: 'OC'
   }
   const suffix = courseId ? `-${suffixes[courseId] || 'OC'}` : ''
