@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { useEffect, useState, useRef } from 'react'
+import { motion, useInView } from 'framer-motion'
 import { Rocket, Sparkles, Star, GraduationCap, CheckCircle } from 'lucide-react'
 import Galaxy from './animatedbg/bg'
 
@@ -222,8 +221,12 @@ function CodeEditorIllustration() {
 }
 
 export default function Hero({ onApply }) {
+  const sectionRef = useRef(null)
+  const heroInView = useInView(sectionRef, { margin: '100px 0px' })
+
   return (
     <section
+      ref={sectionRef}
       id="hero"
       className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden pt-20 pb-10"
     >
@@ -241,6 +244,7 @@ export default function Hero({ onApply }) {
         {/* Galaxy starfield — tuned to the STA blue palette, kept light & smooth */}
         <div className="absolute inset-0 opacity-70">
           <Galaxy
+            paused={!heroInView}
             density={1.3}
             hueShift={215}
             saturation={0.85}
@@ -285,7 +289,7 @@ export default function Hero({ onApply }) {
             <span className="absolute inset-0 w-1.5 xs:w-2 h-1.5 xs:h-2 rounded-full bg-blue-400 animate-ping opacity-70" />
           </span>
           <span className="text-blue-700 text-[10px] xs:text-xs font-bold uppercase tracking-widest truncate-mobile">
-            Admissions Open — August 2026 Intake
+            Admissions Open August 2026 Intake
           </span>
           <Sparkles className="w-3 xs:w-3.5 h-3 xs:h-3.5 text-blue-500 flex-shrink-0" />
         </motion.div>
@@ -327,7 +331,7 @@ export default function Hero({ onApply }) {
                 <defs>
                   <linearGradient id="hero-grad" x1="0%" y1="0%" x2="100%" y2="0%">
                     <stop offset="0%" stopColor="#0956fc" />
-                    <stop offset="100%" stopColor="#6366f1" />
+                    <stop offset="100%" stopColor="#0956fc" />
                   </linearGradient>
                 </defs>
               </svg>
@@ -343,7 +347,7 @@ export default function Hero({ onApply }) {
           className="text-slate-500 text-base sm:text-lg md:text-xl leading-relaxed max-w-2xl"
         >
           Industry-focused courses, real-world projects, and dedicated career support
-          — all in one place to help you land your{' '}
+           all in one place to help you land your{' '}
           <span className="text-slate-800 font-semibold">first tech job</span>.
         </motion.p>
 
@@ -367,13 +371,13 @@ export default function Hero({ onApply }) {
           className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center w-full sm:w-auto px-4 sm:px-0"
         >
           <motion.div whileHover={{ scale: 1.05, y: -3 }} whileTap={{ scale: 0.97 }} className="w-full sm:w-auto">
-            <Link
-              to="/apply"
+            <a
+              href="#apply"
               className="btn-primary px-8 py-4 rounded-full text-base font-bold shadow-xl shadow-blue-500/30 flex items-center justify-center gap-2 w-full"
             >
               <Rocket className="w-5 h-5" />
-              Enroll Now — It's Free
-            </Link>
+              Enroll Now It's Free
+            </a>
           </motion.div>
           <motion.button
             whileHover={{ scale: 1.04, y: -3 }}
@@ -396,9 +400,9 @@ export default function Hero({ onApply }) {
           <div className="flex -space-x-2.5">
             {[
               { initials: 'AR', bg: '#0956fc' },
-              { initials: 'HZ', bg: '#1a6aff' },
-              { initials: 'UA', bg: '#3b82f6' },
-              { initials: 'SK', bg: '#60a5fa' },
+              { initials: 'HZ', bg: '#0956fc' },
+              { initials: 'UA', bg: '#0956fc' },
+              { initials: 'SK', bg: '#0956fc' },
             ].map((s, i) => (
               <motion.div
                 key={i}

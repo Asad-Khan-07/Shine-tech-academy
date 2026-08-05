@@ -37,29 +37,29 @@ export default function Stats() {
               <motion.div
                 key={s.label}
                 variants={item}
-                className={`stat-card-glow glow-border flex flex-col items-center text-center gap-2 group cursor-default bg-white/5 border border-white/10 rounded-2xl p-4 sm:p-5
+                className={`stat-card-glow glow-border flex flex-col items-center text-center gap-2 group cursor-default bg-white/10 border border-white/20 rounded-2xl p-4 sm:p-5
                   ${isLast ? 'col-span-2 sm:col-span-1' : ''}`}
               >
                 {/* Icon with glow ring */}
                 <div className="relative mb-1">
-                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-white/8 border border-white/10 flex items-center justify-center group-hover:bg-blue-600 group-hover:border-blue-500 transition-all duration-400">
-                    <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-blue-400 group-hover:text-white transition-colors duration-300" />
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-white/15 border border-white/25 flex items-center justify-center group-hover:bg-white group-hover:border-white transition-all duration-400">
+                    <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-white group-hover:text-blue-600 transition-colors duration-300" />
                   </div>
-                  <div className="absolute inset-0 rounded-2xl bg-blue-500/0 group-hover:bg-blue-500/20 blur-xl transition-all duration-400" />
+                  <div className="absolute inset-0 rounded-2xl bg-white/0 group-hover:bg-white/25 blur-xl transition-all duration-400" />
                 </div>
 
                 <p className="text-white font-space font-extrabold text-xl sm:text-2xl lg:text-3xl leading-none tracking-tight">
                   {s.value}
                 </p>
-                <p className="text-blue-300 text-[10px] font-bold uppercase tracking-widest leading-tight">
+                <p className="text-blue-50 text-[10px] font-bold uppercase tracking-widest leading-tight">
                   {s.label}
                 </p>
-                <p className="text-slate-500 text-[10px] sm:text-[11px] leading-tight hidden sm:block">
+                <p className="text-blue-100 text-[10px] sm:text-[11px] leading-tight hidden sm:block">
                   {s.desc}
                 </p>
 
                 {/* Bottom shimmer line */}
-                <div className="w-0 group-hover:w-full h-0.5 bg-gradient-to-r from-blue-500 to-blue-300 rounded-full transition-all duration-500 mt-1" />
+                <div className="w-0 group-hover:w-full h-0.5 bg-white/80 rounded-full transition-all duration-500 mt-1" />
               </motion.div>
             )
           })}

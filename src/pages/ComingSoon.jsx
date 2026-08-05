@@ -177,7 +177,7 @@ export default function ComingSoon() {
             <span
               className="relative inline-block"
               style={{ WebkitTextFillColor: 'transparent', WebkitBackgroundClip: 'text', backgroundClip: 'text',
-                backgroundImage: `linear-gradient(135deg, ${BRAND} 0%, #60a5fa 50%, ${BRAND} 100%)`,
+                backgroundImage: `linear-gradient(135deg, ${BRAND} 0%, ${BRAND} 50%, ${BRAND} 100%)`,
                 backgroundSize: '200% 200%' }}
             >
               <motion.span
@@ -185,7 +185,7 @@ export default function ComingSoon() {
                 transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
                 style={{ display: 'block',
                   WebkitTextFillColor: 'transparent', WebkitBackgroundClip: 'text', backgroundClip: 'text',
-                  backgroundImage: `linear-gradient(135deg, #60a5fa 0%, ${BRAND} 50%, #60a5fa 100%)`,
+                  backgroundImage: `linear-gradient(135deg, ${BRAND} 0%, ${BRAND} 50%, ${BRAND} 100%)`,
                   backgroundSize: '200% 200%' }}
               >
                 Launching Soon
@@ -227,7 +227,7 @@ export default function ComingSoon() {
           <div className="h-2 rounded-full overflow-hidden" style={{ background: 'rgba(9,86,252,0.1)' }}>
             <motion.div
               className="h-full rounded-full"
-              style={{ background: `linear-gradient(90deg, ${BRAND}, #60a5fa)` }}
+              style={{ background: BRAND }}
               initial={{ width: 0 }}
               animate={{ width: '75%' }}
               transition={{ delay: 0.7, duration: 1.2, ease: 'easeOut' }}

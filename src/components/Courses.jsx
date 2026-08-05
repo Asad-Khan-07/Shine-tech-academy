@@ -295,7 +295,7 @@ function CurriculumModal({ course, onClose, onApply }) {
             <div style={{ flexShrink: 0, background: '#ffffff', borderBottom: '1px solid #e2e8f0', padding: '1rem 1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div>
                 <h3 style={{ fontFamily: 'Space Grotesk, sans-serif', fontWeight: 800, color: '#0f172a', fontSize: '1.05rem', margin: 0, lineHeight: 1.3 }}>{course.title}</h3>
-                <p style={{ color: '#2563eb', fontSize: '0.8rem', fontWeight: 700, marginTop: '0.25rem' }}>{course.level} &bull; {course.duration}</p>
+                <p style={{ color: '#0956fc', fontSize: '0.8rem', fontWeight: 700, marginTop: '0.25rem' }}>{course.level} &bull; {course.duration}</p>
               </div>
               <button
                 onClick={onClose}
@@ -311,7 +311,7 @@ function CurriculumModal({ course, onClose, onApply }) {
               <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
                 {course.curriculum?.map((item, i) => (
                   <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
-                    <CheckCircle style={{ width: '1.1rem', height: '1.1rem', color: '#2563eb', marginTop: '0.1rem', flexShrink: 0 }} />
+                    <CheckCircle style={{ width: '1.1rem', height: '1.1rem', color: '#0956fc', marginTop: '0.1rem', flexShrink: 0 }} />
                     <span style={{ color: '#1e293b', fontSize: '0.9rem', fontWeight: 500, lineHeight: 1.4 }}>{item}</span>
                   </li>
                 ))}
@@ -331,7 +331,7 @@ function CurriculumModal({ course, onClose, onApply }) {
                   onClose()
                   if (onApply) onApply()
                 }}
-                style={{ flex: 1, background: 'linear-gradient(135deg, #2563eb, #1d4ed8)', color: '#ffffff', fontWeight: 700, fontSize: '0.875rem', padding: '0.75rem 1rem', borderRadius: '0.75rem', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', boxShadow: '0 4px 14px rgba(37,99,235,0.35)' }}
+                style={{ flex: 1, background: '#0956fc', color: '#ffffff', fontWeight: 700, fontSize: '0.875rem', padding: '0.75rem 1rem', borderRadius: '0.75rem', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', boxShadow: '0 4px 14px rgba(9,86,252,0.35)' }}
               >
                 Enroll Now <ArrowRight style={{ width: '1rem', height: '1rem' }} />
               </button>

@@ -13,18 +13,16 @@ import { AnimatePresence } from 'framer-motion'
 function AmbientBackground() {
   return (
     <div
+      aria-hidden
       style={{
         position: 'fixed',
         inset: 0,
         zIndex: 0,
         pointerEvents: 'none',
-        overflow: 'hidden',
+        background:
+          'radial-gradient(ellipse 70% 50% at 50% -10%, rgba(9,86,252,0.05) 0%, transparent 60%)',
       }}
-    >
-      <div className="bg-orb bg-orb-1" />
-      <div className="bg-orb bg-orb-2 animate-pulse" />
-      <div className="bg-orb bg-orb-3" />
-    </div>
+    />
   )
 }
 

@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import {
   Shield, FileText, Users, CreditCard, Clock, Star,
   Award, Briefcase, Lock, Globe, AlertTriangle, RefreshCw,
-  Scale, Mail, Phone, MapPin, Home, ArrowLeft
+  Scale, Mail, Phone, MapPin, Home, ArrowLeft, ArrowUp
 } from 'lucide-react'
 
 const BRAND = '#0956fc'
@@ -51,7 +51,7 @@ export default function TermsAndConditions({ onBack }) {
   }, [])
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 font-sans">
+    <div className="min-h-screen bg-white text-slate-900 font-space">
 
       {/* ── Hero Banner ─────────────────────────── */}
       <div
@@ -171,7 +171,7 @@ export default function TermsAndConditions({ onBack }) {
                 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                 className="mt-4 w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-slate-200 text-slate-500 text-sm font-semibold transition-all hover:border-[#0956fc] hover:text-[#0956fc]"
               >
-                ↑ Back to Top
+                <ArrowUp className="w-3.5 h-3.5" /> Back to Top
               </button>
             </div>
           </aside>
@@ -300,8 +300,8 @@ export default function TermsAndConditions({ onBack }) {
                 <div className="grid sm:grid-cols-2 gap-4">
                   <ContactCard icon={Globe}  label="Academy" value="Shine Tech Academy" />
                   <ContactCard icon={Mail}   label="Email"   value="info@shinetechacademy.com" href="mailto:info@shinetechacademy.com" />
-                  <ContactCard icon={Phone}  label="Phone"   value="+92 300 0000000" href="tel:+923000000000" />
-                  <ContactCard icon={MapPin} label="Address" value="Bungalow No. 306, Unit No. 9, Latifabad No. 9, Hyderabad, Sindh, Pakistan" />
+                  <ContactCard icon={Phone}  label="Phone"   value="+92 335 1866930" href="https://wa.me/923351866930" />
+                  <ContactCard icon={MapPin} label="Address" value="Bungalow No. 306, Unit No. 9, Latifabad, Hyderabad" />
                 </div>
               </div>
             </motion.div>

@@ -458,13 +458,13 @@ export default function SuccessModal({ appId, form, onClose, primaryCourseName }
                         clipPath="url(#avatarClip)"
                         preserveAspectRatio="xMidYMid slice"
                       />
-                      <circle cx="52.5" cy="52.5" r="49" fill="none" stroke="#2563eb" strokeWidth="3" />
+                      <circle cx="52.5" cy="52.5" r="49" fill="none" stroke="#0956fc" strokeWidth="3" />
                     </svg>
                   </div>
 
                   <div style={{ marginTop: '16px', textAlign: 'center', paddingLeft: '16px', paddingRight: '16px', position: 'relative', zIndex: 10, flex: 1, display: 'flex', flexDirection: 'column' }}>
                     <h4 style={{ fontFamily: 'Arial, Helvetica, sans-serif', fontWeight: 800, fontSize: '17px', color: '#0f172a', lineHeight: 1.2, margin: 0 }}>{form.fullName}</h4>
-                    <p style={{ color: '#2563eb', fontWeight: 'bold', fontSize: '11px', marginTop: '2px', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '2px 0 0 0' }}>{courseTitle}</p>
+                    <p style={{ color: '#0956fc', fontWeight: 'bold', fontSize: '11px', marginTop: '2px', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '2px 0 0 0' }}>{courseTitle}</p>
 
                     <div style={{ marginTop: '20px', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '7px', width: 'fit-content', maxWidth: '100%', alignSelf: 'center' }}>
                       <div style={{ display: 'flex', alignItems: 'center', fontSize: '10px' }}>
@@ -495,7 +495,7 @@ export default function SuccessModal({ appId, form, onClose, primaryCourseName }
                     </div>
                   </div>
 
-                  <div style={{ marginTop: 'auto', position: 'relative', zIndex: 10, height: '56px', background: 'linear-gradient(135deg, #2563eb, #1d4ed8)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div style={{ marginTop: 'auto', position: 'relative', zIndex: 10, height: '56px', background: '#0956fc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <span style={{ color: '#ffffff', fontFamily: 'Arial, Helvetica, sans-serif', fontWeight: 800, fontSize: '9px', textTransform: 'uppercase', letterSpacing: '0.15em' }}>
                       EMPOWERING FUTURE TECH LEADERS
                     </span>
@@ -526,19 +526,19 @@ export default function SuccessModal({ appId, form, onClose, primaryCourseName }
                     boxSizing: 'border-box'
                   }}
                 >
-                  <div style={{ backgroundColor: '#ffffff', paddingTop: '16px', paddingBottom: '14px', paddingLeft: '20px', paddingRight: '20px', textAlign: 'center', position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', borderBottom: '2px solid #2563eb' }}>
+                  <div style={{ backgroundColor: '#ffffff', paddingTop: '16px', paddingBottom: '14px', paddingLeft: '20px', paddingRight: '20px', textAlign: 'center', position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', borderBottom: '2px solid #0956fc' }}>
                     {logoDataUrl ? (
                       <img src={logoDataUrl} alt="STA Logo" style={{ height: '42px', width: 'auto', objectFit: 'contain' }} />
                     ) : (
                       <div style={{ height: '42px', width: '100px', backgroundColor: '#f1f5f9', borderRadius: '6px' }} />
                     )}
-                    <span style={{ fontSize: '7px', fontWeight: 'bold', color: '#2563eb', textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: '6px' }}>
+                    <span style={{ fontSize: '7px', fontWeight: 'bold', color: '#0956fc', textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: '6px' }}>
                       EMPOWERING FUTURE TECH LEADERS
                     </span>
                   </div>
 
                   <div style={{ paddingLeft: '24px', paddingRight: '24px', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                    <span style={{ fontSize: '9px', fontWeight: 800, color: '#ffffff', backgroundColor: '#2563eb', padding: '4px 12px', borderRadius: '6px', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1, marginBottom: '12px' }}>
+                    <span style={{ fontSize: '9px', fontWeight: 800, color: '#ffffff', backgroundColor: '#0956fc', padding: '4px 12px', borderRadius: '6px', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1, marginBottom: '12px' }}>
                       <span style={{ position: 'relative', top: '-1px' }}>Terms &amp; Conditions</span>
                     </span>
                     <ul style={{ fontSize: '8px', color: '#64748b', margin: 0, paddingLeft: '14px', fontWeight: 600, lineHeight: 1.7, listStyleType: 'disc', width: '100%' }}>

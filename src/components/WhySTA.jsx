@@ -35,8 +35,8 @@ const REASONS = [
     icon: FlaskConical,
     title: ' Modern Computer Labs',
     desc: 'Practice in a comfortable, well-equipped learning environment with high-performance systems.',
-    color: 'from-cyan-500 to-blue-600',
-    glow: 'rgba(6, 182, 212, 0.3)',
+    color: 'from-blue-600 to-blue-600',
+    glow: 'rgba(9, 86, 252, 0.3)',
   },
   {
     icon: Users,

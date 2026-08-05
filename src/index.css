@@ -2,16 +2,16 @@
 @import "tailwindcss";
 
 @theme {
-  --color-blue-50: #edf2ff;
-  --color-blue-100: #d1e0ff;
-  --color-blue-200: #a8c5ff;
-  --color-blue-300: #75a2ff;
-  --color-blue-400: #3d7cff;
-  --color-blue-500: #1863fe;
+  --color-blue-50: #eef3ff;
+  --color-blue-100: #dce8ff;
+  --color-blue-200: #b9d1ff;
+  --color-blue-300: #96baff;
+  --color-blue-400: #0956fc;
+  --color-blue-500: #0956fc;
   --color-blue-600: #0956fc;
-  --color-blue-700: #0045d6;
-  --color-blue-800: #0038b0;
-  --color-blue-900: #002f94;
+  --color-blue-700: #0956fc;
+  --color-blue-800: #0956fc;
+  --color-blue-900: #0956fc;
 }
 
 /* ─── Base ──────────────────────────────────────────────── */
@@ -45,7 +45,7 @@ body {
 
 /* ─── Gradient Text ──────────────────────────────────────── */
 .text-gradient-blue {
-  background: linear-gradient(135deg, #0956fc 0%, #3d7cff 100%);
+  background: #0956fc;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -53,7 +53,7 @@ body {
 
 /* ─── Buttons ────────────────────────────────────────────── */
 .btn-primary {
-  background: linear-gradient(135deg, #0956fc 0%, #3d7cff 100%);
+  background: #0956fc;
   color: #ffffff;   
   font-weight: 700;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -133,13 +133,13 @@ body {
   position: absolute;
   inset: 0;
   border-radius: 100px;
-  background: linear-gradient(135deg, rgba(9, 86, 252, 0.05) 0%, rgba(61, 124, 255, 0.08) 100%);
+  background: rgba(9, 86, 252, 0.06);
 }
 
 .section-tag-white {
   /* display: inline-block; */
   background: rgba(255,255,255,0.08);
-  color: #75a2ff;
+  color: #0956fc;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -188,9 +188,10 @@ body {
 
 /* ─── Dark sections ──────────────────────────────────────── */
 .dark-section {
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #002f94 100%);
+  background: #0956fc;
   position: relative;
   overflow: hidden;
+  
 }
 
 .dark-section::before {
@@ -199,12 +200,12 @@ body {
   inset: 0;
   background: 
     radial-gradient(ellipse 80% 60% at 50% 0%, rgba(9, 86, 252, 0.12) 0%, transparent 60%),
-    radial-gradient(ellipse 40% 40% at 80% 80%, rgba(61, 124, 255, 0.08) 0%, transparent 50%);
+    radial-gradient(ellipse 40% 40% at 80% 80%, rgba(9, 86, 252, 0.08) 0%, transparent 50%);
   pointer-events: none;
 }
 
 .dark-navy {
-  background: #0b1329;
+  background: #0956fc;
   position: relative;
   overflow: hidden;
 }
@@ -215,19 +216,19 @@ body {
   inset: 0;
   background: 
     radial-gradient(ellipse 60% 50% at 20% 50%, rgba(9, 86, 252, 0.07) 0%, transparent 60%),
-    radial-gradient(ellipse 40% 40% at 80% 20%, rgba(61, 124, 255, 0.05) 0%, transparent 50%);
+    radial-gradient(ellipse 40% 40% at 80% 20%, rgba(9, 86, 252, 0.05) 0%, transparent 50%);
   pointer-events: none;
 }
 
 .event-bg {
-  background: linear-gradient(135deg, #002f94 0%, #1e293b 60%, #0f172a 100%);
+  background: linear-gradient(135deg, #0956fc 0%, #1e293b 60%, #0f172a 100%);
 }
 
 /* ─── Step connector ─────────────────────────────────────── */
 .step-line {
   flex: 1;
   height: 2px;
-  background: linear-gradient(90deg, #0956fc, #75a2ff);
+  background: #0956fc;
   position: relative;
   overflow: hidden;
 }
@@ -284,7 +285,7 @@ body {
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #0956fc, #3d7cff, #75a2ff);
+  background: #0956fc;
   transform: scaleX(0);
   transition: transform 0.4s ease;
   transform-origin: left;
@@ -327,7 +328,7 @@ body {
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: #f1f5f9; }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #0956fc, #3d7cff);
+  background: #0956fc;
   border-radius: 3px;
 }
 
@@ -373,7 +374,7 @@ body {
 .bg-orb-2 {
   width: 500px;
   height: 500px;
-  background: radial-gradient(circle, rgba(61, 124, 255, 0.06) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(9, 86, 252, 0.06) 0%, transparent 70%);
   bottom: 10%;
   left: -150px;
   animation-delay: -5s;
@@ -383,7 +384,7 @@ body {
 .bg-orb-3 {
   width: 350px;
   height: 350px;
-  background: radial-gradient(circle, rgba(117, 162, 255, 0.05) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(9, 86, 252, 0.05) 0%, transparent 70%);
   top: 40%;
   right: 15%;
   animation-delay: -9s;
@@ -514,7 +515,7 @@ body {
   inset: -1px;
   border-radius: inherit;
   padding: 1px;
-  background: linear-gradient(135deg, #0956fc, #75a2ff, #0956fc);
+  background: #0956fc;
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
@@ -582,7 +583,7 @@ body {
   left: 0;
   width: 0;
   height: 2px;
-  background: linear-gradient(90deg, #0956fc, #75a2ff);
+  background: #0956fc;
   border-radius: 2px;
   transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -603,7 +604,7 @@ body {
   transform: translateX(-50%);
   width: 0;
   height: 2px;
-  background: linear-gradient(90deg, #0956fc, #75a2ff);
+  background: #0956fc;
   border-radius: 2px;
   transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }

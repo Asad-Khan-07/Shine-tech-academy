@@ -1063,11 +1063,6 @@ export default function AdmissionForm({ onBack }) {
             className="flex flex-col gap-6"
           >
             <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-space font-extrabold text-slate-800 text-lg">Review Information</h3>
-                <p className="text-xs text-slate-400 mt-1">Please double check your credentials before submitting.</p>
-              </div>
-
               {form.photoPreview && (
                 <div className="flex items-center gap-3 bg-slate-50 border border-slate-200/80 rounded-2xl p-2 pr-4 shadow-sm">
                   <img src={form.photoPreview} alt="Student" className="w-12 h-12 rounded-xl object-cover border border-slate-200" />
@@ -1077,6 +1072,11 @@ export default function AdmissionForm({ onBack }) {
                   </div>
                 </div>
               )}
+              <div>
+                <h3 className="font-space font-extrabold text-slate-800 text-lg">Review Information</h3>
+                <p className="text-xs text-slate-400 mt-1">Please double check your credentials before submitting.</p>
+              </div>
+
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

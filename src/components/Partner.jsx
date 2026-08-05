@@ -12,13 +12,13 @@ import { Handshake, BadgeCheck } from 'lucide-react'
 */
 const PARTNERS = [
   { name: 'TechNova',          mark: 'TN', tag: 'Hiring Partner',     desc: 'Places top graduates into full-stack engineering roles.',        color: '#0956fc' },
-  { name: 'CodeSphere',        mark: 'CS', tag: 'Training Partner',   desc: 'Co-designs our MERN stack curriculum with senior engineers.',     color: '#1a6aff' },
-  { name: 'Pixel Works',       mark: 'PW', tag: 'Design Partner',     desc: 'Mentors students through real client design briefs.',             color: '#3b82f6' },
-  { name: 'Bright Minds Ed.',  mark: 'BM', tag: 'Education Partner',  desc: 'Provides scholarships for underprivileged tech learners.',        color: '#60a5fa' },
+  { name: 'CodeSphere',        mark: 'CS', tag: 'Training Partner',   desc: 'Co-designs our MERN stack curriculum with senior engineers.',     color: '#0956fc' },
+  { name: 'Pixel Works',       mark: 'PW', tag: 'Design Partner',     desc: 'Mentors students through real client design briefs.',             color: '#0956fc' },
+  { name: 'Bright Minds Ed.',  mark: 'BM', tag: 'Education Partner',  desc: 'Provides scholarships for underprivileged tech learners.',        color: '#0956fc' },
   { name: 'Nexus Labs',        mark: 'NL', tag: 'Tech Partner',       desc: 'Opens its sandbox environments for student AI projects.',         color: '#0956fc' },
-  { name: 'Quantum Edge',      mark: 'QE', tag: 'Hiring Partner',     desc: 'Runs quarterly hiring drives exclusively for STA alumni.',        color: '#1a6aff' },
-  { name: 'Skyline Solutions', mark: 'SS', tag: 'Internship Partner', desc: 'Offers paid internships to our top-performing cohorts.',          color: '#3b82f6' },
-  { name: 'Vertex Group',      mark: 'VG', tag: 'Tech Partner',       desc: 'Sponsors cloud credits for every student capstone project.',      color: '#60a5fa' },
+  { name: 'Quantum Edge',      mark: 'QE', tag: 'Hiring Partner',     desc: 'Runs quarterly hiring drives exclusively for STA alumni.',        color: '#0956fc' },
+  { name: 'Skyline Solutions', mark: 'SS', tag: 'Internship Partner', desc: 'Offers paid internships to our top-performing cohorts.',          color: '#0956fc' },
+  { name: 'Vertex Group',      mark: 'VG', tag: 'Tech Partner',       desc: 'Sponsors cloud credits for every student capstone project.',      color: '#0956fc' },
 ]
 
 // Duplicate the list so the marquee track can loop seamlessly (50% width shift)
@@ -33,7 +33,7 @@ function PartnerCard({ partner }) {
       <div className="flex items-center justify-between gap-3">
         <div
           className="w-12 h-12 rounded-xl flex items-center justify-center text-white font-space font-extrabold text-base shadow-md transition-transform duration-300 group-hover:scale-105 flex-shrink-0"
-          style={{ background: `linear-gradient(135deg, ${partner.color}, #0045d6)` }}
+          style={{ background: '#0956fc' }}
         >
           {/* Swap this tile for a real logo once available:
               <img src={partner.logo} alt={partner.name} className="w-full h-full object-contain rounded-xl" /> */}

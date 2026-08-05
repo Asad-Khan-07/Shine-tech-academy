@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Menu, X, Rocket, ChevronDown, CreditCard } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Link } from 'react-router-dom'
+
 
 const NAV_LINKS = [
   { label: 'Home',       href: '#hero' },
@@ -17,8 +17,17 @@ export default function Navbar({ onApply, onGetCard }) {
   const [menuOpen,  setMenuOpen]  = useState(false)
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40)
-    window.addEventListener('scroll', onScroll)
+    let ticking = false
+    const onScroll = () => {
+      if (ticking) return
+      ticking = true
+      requestAnimationFrame(() => {
+        setScrolled(window.scrollY > 40)
+        ticking = false
+      })
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    onScroll()
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
@@ -72,13 +81,13 @@ export default function Navbar({ onApply, onGetCard }) {
               <CreditCard className="w-3.5 h-3.5" />
               <span>Get Admit Card</span>
             </motion.button>
-            <Link
-              to="/apply"
+            <a
+              href="#apply"
               className="btn-primary px-6 py-2.5 rounded-full text-sm shadow-lg shadow-blue-500/25 flex items-center gap-2 relative overflow-hidden"
             >
               <Rocket className="w-4 h-4 relative z-10" />
               <span className="relative z-10">Apply Now</span>
-            </Link>
+            </a>
           </div>
 
           {/* Mobile Hamburger */}
@@ -139,14 +148,14 @@ export default function Navbar({ onApply, onGetCard }) {
                   <CreditCard className="w-4 h-4 flex-shrink-0" />
                   Get Admit Card
                 </button>
-                <Link
-                  to="/apply"
+                <a
+                  href="#apply"
                   onClick={() => setMenuOpen(false)}
                   className="btn-primary flex-1 text-center text-xs xs:text-sm font-bold py-3 rounded-full flex items-center justify-center gap-1.5 shadow-lg shadow-blue-500/20 whitespace-nowrap"
                 >
                   <Rocket className="w-4 h-4 relative z-10 flex-shrink-0" />
                   <span className="relative z-10">Apply Now</span>
-                </Link>
+                </a>
               </motion.div>
             </div>
           </motion.div>

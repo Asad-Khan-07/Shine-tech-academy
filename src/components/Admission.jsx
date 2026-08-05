@@ -1,7 +1,6 @@
-import { useRef } from 'react'
-import { Link } from 'react-router-dom'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { FileText, Mic, CreditCard, PartyPopper, Rocket, GraduationCap, ChevronRight } from 'lucide-react'
+import { revealContainer, revealItem, revealFade, scrollViewport } from '../utils/scrollReveal'
 
 const STEPS = [
   {
@@ -41,35 +40,18 @@ const STEPS = [
   },
 ]
 
-const container = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.12 } },
-}
-const card = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
-}
-
 export default function Admission() {
-  const timelineRef = useRef(null)
-  const { scrollYProgress } = useScroll({
-    target: timelineRef,
-    offset: ["start 70%", "end 60%"]
-  })
-  
-  const heightProgress = useTransform(scrollYProgress, [0, 1], ["0%", "100%"])
-
   return (
-    <section id="admission" className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-slate-50/60 backdrop-blur-sm relative overflow-hidden">
+    <section id="admission" className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-slate-50 relative overflow-hidden">
       <div className="absolute bottom-0 right-1/2 w-80 h-80 bg-blue-500/5 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          variants={revealFade}
+          initial="hidden"
+          whileInView="visible"
+          viewport={scrollViewport}
           className="text-center mb-12 sm:mb-16"
         >
           <span className="inline-block text-blue-600 text-xs sm:text-sm font-semibold tracking-widest uppercase mb-4 px-4 py-1.5 rounded-full border border-blue-500/30 bg-blue-500/5">
@@ -85,16 +67,16 @@ export default function Admission() {
 
         {/* Steps — Desktop horizontal */}
         <motion.div
-          variants={container}
+          variants={revealContainer}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: '-60px' }}
+          viewport={scrollViewport}
           className="hidden lg:flex items-start gap-0"
         >
           {STEPS.map((step, i) => {
             const Icon = step.icon
             return (
-              <motion.div key={step.num} variants={card} className="flex items-stretch flex-1 self-stretch">
+              <motion.div key={step.num} variants={revealItem} className="flex items-stretch flex-1 self-stretch">
                 <div className="bg-white rounded-2xl p-6 flex flex-col gap-3 group flex-1 border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 h-full">
                   <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${step.color} flex items-center justify-center text-white font-space font-black text-sm shadow-lg group-hover:scale-110 transition-transform duration-300`}>
                     {step.num}
@@ -116,35 +98,24 @@ export default function Admission() {
           })}
         </motion.div>
 
-        {/* Steps — Mobile/Tablet vertical with scroll progress line */}
-        <div className="lg:hidden relative" ref={timelineRef}>
-          {/* Static Background track */}
-          <div 
-            className="absolute left-6 w-0.5 bg-slate-200" 
+        {/* Steps — Mobile/Tablet vertical */}
+        <div className="lg:hidden relative">
+          <div
+            className="absolute left-6 w-0.5 bg-blue-500/40"
             style={{ top: '24px', bottom: '24px', transform: 'translateX(-50%)' }}
-          />
-          {/* Dynamic Progress indicator */}
-          <motion.div 
-            className="absolute left-6 w-0.5 bg-gradient-to-b from-blue-500 to-indigo-500 z-10" 
-            style={{ 
-              top: '24px', 
-              height: heightProgress,
-              transform: 'translateX(-50%)',
-              boxShadow: '0 0 10px rgba(59, 130, 246, 0.5)'
-            }}
           />
 
           <motion.div
-            variants={container}
+            variants={revealContainer}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: '-40px' }}
+            viewport={scrollViewport}
             className="flex flex-col gap-0"
           >
             {STEPS.map((step, i) => {
               const Icon = step.icon
               return (
-                <motion.div key={step.num} variants={card} className="flex gap-4 relative z-20">
+                <motion.div key={step.num} variants={revealItem} className="flex gap-4 relative z-20">
                   <div className="flex flex-col items-center flex-shrink-0">
                     <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${step.color} flex items-center justify-center text-white font-space font-black text-sm shadow-lg flex-shrink-0`}>
                       {step.num}
@@ -166,20 +137,20 @@ export default function Admission() {
 
         {/* CTA */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.3 }}
+          variants={revealFade}
+          initial="hidden"
+          whileInView="visible"
+          viewport={scrollViewport}
           className="text-center mt-10 sm:mt-12"
         >
-          <Link
-            to="/apply"
+          <a
+            href="#apply"
             id="admission-apply-btn"
             className="btn-primary px-8 sm:px-10 py-3.5 sm:py-4 rounded-2xl text-sm sm:text-base font-bold inline-flex items-center gap-2"
           >
             <GraduationCap className="w-5 h-5" />
             Start Your Application
-          </Link>
+          </a>
         </motion.div>
 
         <div className="section-divider mt-16" />

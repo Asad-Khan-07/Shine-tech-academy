@@ -1,11 +1,10 @@
-import { Link } from 'react-router-dom'
 import { Sparkles, GraduationCap, Percent, Monitor } from 'lucide-react'
 
 export default function TopBanner() {
   return (
     <div
       className="relative z-40 py-2 px-3 text-center overflow-hidden"
-      style={{ background: 'linear-gradient(90deg, #002f94 0%, #0956fc 50%, #002f94 100%)' }}
+      style={{ background: '#0956fc' }}
     >
       <p className="relative flex items-center justify-center gap-x-2 gap-y-1 text-white flex-wrap">
         {/* Item 1 */}
@@ -31,13 +30,13 @@ export default function TopBanner() {
         </span>
 
         {/* CTA */}
-        <Link
-          to="/apply"
+        <a
+          href="#apply"
           className="inline-flex items-center gap-1 bg-white text-blue-700 text-[10px] sm:text-xs font-bold px-2.5 py-1 rounded-full hover:bg-blue-50 transition-colors ml-1 flex-shrink-0"
         >
           <Sparkles className="w-3 h-3" />
           Apply Today 
-        </Link>
+        </a>
       </p>
     </div>
   )

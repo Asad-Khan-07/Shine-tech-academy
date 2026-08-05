@@ -189,6 +189,7 @@ export default function Galaxy({
   rotationSpeed = 0.1,
   autoCenterRepulsion = 0,
   transparent = true,
+  paused = false,
   // New: control how aggressively faint/murky glow is cut away.
   // Raise alphaLow / alphaHigh for a cleaner, lighter look on light backgrounds.
   alphaLow = 0.2,
@@ -200,6 +201,8 @@ export default function Galaxy({
   const smoothMousePos = useRef({ x: 0.5, y: 0.5 });
   const targetMouseActive = useRef(0.0);
   const smoothMouseActive = useRef(0.0);
+  const pausedRef = useRef(paused);
+  pausedRef.current = paused;
 
   useEffect(() => {
     if (!ctnDom.current) return;
@@ -271,6 +274,8 @@ export default function Galaxy({
 
     function update(t) {
       animateId = requestAnimationFrame(update);
+      if (pausedRef.current) return;
+
       if (!disableAnimation) {
         program.uniforms.uTime.value = t * 0.001;
         program.uniforms.uStarSpeed.value = (t * 0.001 * starSpeed) / 10.0;
@@ -342,7 +347,8 @@ export default function Galaxy({
     autoCenterRepulsion,
     transparent,
     alphaLow,
-    alphaHigh
+    alphaHigh,
+    paused
   ]);
 
   return <div ref={ctnDom} className="w-full h-full relative" {...rest} />;

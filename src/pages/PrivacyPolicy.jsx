@@ -47,7 +47,7 @@ export default function PrivacyPolicy({ onBack }) {
   }, [])
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 font-sans">
+    <div className="min-h-screen bg-white text-slate-900 font-space">
 
       {/* ── Hero Banner ─────────────────────────── */}
       <div
@@ -269,7 +269,7 @@ export default function PrivacyPolicy({ onBack }) {
                 <div className="grid sm:grid-cols-2 gap-4">
                   <ContactCard icon={Globe}  label="Academy" value="Shine Tech Academy" />
                   <ContactCard icon={Mail}   label="Email"   value="info@shinetechacademy.com" href="mailto:info@shinetechacademy.com" />
-                  <ContactCard icon={MapPin} label="Address" value="Bungalow No. 306, Unit No. 9, Latifabad No. 9, Hyderabad, Sindh, Pakistan" />
+                  <ContactCard icon={MapPin} label="Address" value="Bungalow No. 306, Unit No. 9, Latifabad, Hyderabad" />
                 </div>
               </div>
             </motion.div>
@@ -279,7 +279,7 @@ export default function PrivacyPolicy({ onBack }) {
               style={{ background: '#f8faff', borderColor: '#dce8ff' }}>
               <div>
                 <p className="text-slate-700 font-semibold text-sm">Last updated: July 31, 2026</p>
-                <p className="text-slate-400 text-xs mt-0.5">Shine Tech Academy — Empowering Future Tech Leaders</p>
+                <p className="text-slate-400 text-xs mt-0.5">Shine Tech Academy Empowering Future Tech Leaders</p>
               </div>
               <button
                 onClick={onBack}
