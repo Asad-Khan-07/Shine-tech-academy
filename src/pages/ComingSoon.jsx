@@ -20,7 +20,7 @@ const YoutubeIcon = () => (
     <polygon fill="#040c1f" points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" />
   </svg>
 )
-import { Link } from 'react-router-dom'
+
 
 const BRAND = '#0956fc'
 const LAUNCH_DATE = new Date('2026-09-01T00:00:00')
@@ -193,25 +193,8 @@ export default function ComingSoon() {
             </span>
           </h1>
           <p className="text-slate-500 text-base sm:text-lg max-w-xl mx-auto leading-relaxed">
-            Shine Tech Academy is preparing something extraordinary. Join us for an upgraded learning experience launching{' '}
-            <span className="text-slate-900 font-semibold">September 2026</span>.
+          Building the next generation of developers, creators, and technology leaders. Coming Soon.
           </p>
-        </motion.div>
-
-        {/* Countdown */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.6 }}
-          className="flex items-start gap-4 sm:gap-6 lg:gap-8"
-        >
-          <TimeBlock value={days}    label="Days"    />
-          <div className="text-3xl sm:text-4xl font-black mt-5 sm:mt-6" style={{ color: BRAND }}>:</div>
-          <TimeBlock value={hours}   label="Hours"   />
-          <div className="text-3xl sm:text-4xl font-black mt-5 sm:mt-6" style={{ color: BRAND }}>:</div>
-          <TimeBlock value={minutes} label="Minutes" />
-          <div className="text-3xl sm:text-4xl font-black mt-5 sm:mt-6" style={{ color: BRAND }}>:</div>
-          <TimeBlock value={seconds} label="Seconds" />
         </motion.div>
 
         {/* Progress bar */}
@@ -343,14 +326,6 @@ export default function ComingSoon() {
               {icon}
             </motion.a>
           ))}
-          <div className="w-px h-5 bg-slate-200" />
-          <Link
-            to="/"
-            className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-blue-600 transition-colors font-medium"
-          >
-            <Rocket className="w-3.5 h-3.5" />
-            Visit Homepage
-          </Link>
         </motion.div>
 
         {/* Footer note */}
