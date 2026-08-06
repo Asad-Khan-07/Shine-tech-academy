@@ -341,22 +341,20 @@ export default function ComingSoon() {
         </motion.div>
 
         {/* Footer note */}
-        <motion.p
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1 }}
-          className="text-slate-400 text-xs text-center"
+          className="text-center space-y-1 px-6 sm:px-8"
         >
-          Bungalow No. 306-E, Airport Road, Unit No. 09, Latifabad, Hyderabad
-        </motion.p>
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.1 }}
-          className="text-slate-400 flex items-center gap-1.5 text-xs text-center mt-1"
-        >
-          <Copyright size={14}/> {new Date().getFullYear()} Shine Tech Academy  Empowering Future Tech Leaders
-        </motion.p>
+          <p className="text-slate-400 text-[11px] sm:text-xs leading-relaxed">
+            Bungalow No. 306-E, Airport Road, Unit No. 09, Latifabad, Hyderabad
+          </p>
+          <p className="text-slate-400 text-[10px] sm:text-xs flex items-center justify-center gap-1 whitespace-nowrap">
+            <Copyright size={12} className="flex-shrink-0"/>
+            <span>{new Date().getFullYear()} Shine Tech Academy Empowering Future Tech Leaders</span>
+          </p>
+        </motion.div>
       </div>
     </div>
   )
