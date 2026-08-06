@@ -138,7 +138,7 @@ function CustomDropdown({ label, options, value, onChange, error }) {
 
   return (
     <div className="relative flex flex-col gap-1.5" ref={dropdownRef}>
-      <label className="text-xs text-slate-400 font-bold uppercase tracking-wider ml-1">{label}</label>
+      <label className="text-xs text-slate-400 font-medium uppercase tracking-wider ml-1">{label}</label>
       
       <button
         type="button"
@@ -935,11 +935,17 @@ export default function AdmissionForm({ onBack }) {
             className="flex flex-col gap-5"
           >
             <h3 className="font-space font-extrabold text-slate-800 text-lg">Academic / Background Info</h3>
-            <FloatingInput
-              label="Last Qualification (e.g. Matric, Inter, BS, etc.)"
-              icon={GraduationCap}
+            <CustomDropdown
+              label="Last Qualification"
+              options={[
+                { value: 'matric', label: 'Matric' },
+                { value: 'intermediate', label: 'Intermediate' },
+                { value: 'graduated', label: 'Graduated' },
+                { value: 'undergraduate', label: 'Under Graduate' },
+                { value: 'other', label: 'Other' },
+              ]}
               value={form.qualification}
-              onChange={(e) => setForm({ ...form, qualification: e.target.value })}
+              onChange={(val) => setForm({ ...form, qualification: val })}
               error={errors.qualification}
             />
             <FloatingInput

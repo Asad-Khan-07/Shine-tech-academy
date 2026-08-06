@@ -2,6 +2,8 @@ import { useEffect, useState, useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { Rocket, Sparkles, Star, GraduationCap, CheckCircle } from 'lucide-react'
 import Galaxy from './animatedbg/bg'
+import AcidSquares from './animatedbg/Acidsquare'
+import Particles from './animatedbg/Particales'
 
 /* ── Animated floating card ── */
 function FloatCard({ children, className = '', delay = 0, yRange = [-8, 8] }) {
@@ -243,7 +245,7 @@ export default function Hero({ onApply }) {
 
         {/* Galaxy starfield — tuned to the STA blue palette, kept light & smooth */}
         <div className="absolute inset-0 opacity-70">
-          <Galaxy
+          {/* <Galaxy
             paused={!heroInView}
             density={1.3}
             hueShift={215}
@@ -259,7 +261,18 @@ export default function Hero({ onApply }) {
             mouseRepulsion
             repulsionStrength={1.1}
             transparent
-          />
+          /> */}
+<Particles
+  particleColors={["#0956fc", "#4f8dfd", "#0956fc"]}
+  particleCount={500}
+  particleSpread={10}
+  speed={0.1}
+  particleBaseSize={80}
+  moveParticlesOnHover
+  alphaParticles={false}
+  disableRotation={false}
+  pixelRatio={1}
+/>
         </div>
 
         {/* Soft fade at the bottom so the starfield doesn't fight the content below the fold */}

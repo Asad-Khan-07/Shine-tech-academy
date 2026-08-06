@@ -280,9 +280,9 @@ export default function ComingSoon() {
               </motion.form>
             )}
           </AnimatePresence>
-          <p className="flex items-center justify-center gap-1.5 text-slate-600 text-xs text-center mt-3">
-            <Lock className="w-3 h-3" /> Secure Unsubscribe anytime.
-          </p>
+          {/* <p className="flex items-center justify-center gap-1.5 text-slate-600 text-xs text-center mt-3">
+            <Lock className="w-3 h-3" /> Secure. subscribe anytime.
+          </p> */}
         </motion.div>
 
         {/* Features preview */}
