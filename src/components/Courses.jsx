@@ -18,7 +18,7 @@ const LIVE_COURSES = [
     title: 'Computer & IT Fundamentals (CIT)',
     level: 'Foundation',
     duration: '3 Months',
-    mode: 'Online & Onsite',
+    mode: 'Onsite',
     admissionFee: 'Rs. 999',
     monthlyFee: 'Rs. 1,500/mo',
     image: 'https://images.unsplash.com/photo-1533022139390-e31c488d69e2?w=600&q=80&fit=crop',
@@ -40,7 +40,7 @@ const LIVE_COURSES = [
     title: 'AI for Everyone',
     level: 'Beginner',
     duration: '3 Months',
-    mode: 'Online & Onsite',
+    mode: 'Onsite',
     admissionFee: 'Rs. 999',
     monthlyFee: 'Rs. 2,000/mo',
     image: 'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=600&q=80&fit=crop',
@@ -62,7 +62,7 @@ const LIVE_COURSES = [
     title: 'AI Productivity & Prompt Engineering',
     level: 'Intermediate',
     duration: '4 Months',
-    mode: 'Online & Onsite',
+    mode: 'Onsite',
     admissionFee: 'Rs. 999',
     monthlyFee: 'Rs. 2,500/mo',
     image: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&q=80&fit=crop',
@@ -84,7 +84,7 @@ const LIVE_COURSES = [
     title: 'Digital Marketing & Personal Branding',
     level: 'Intermediate',
     duration: '3 Months',
-    mode: 'Online & Onsite',
+    mode: 'Onsite',
     admissionFee: 'Rs. 999',
     monthlyFee: 'Rs. 2,000/mo',
     image: 'https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?w=600&q=80&fit=crop',
@@ -106,7 +106,7 @@ const LIVE_COURSES = [
     title: 'Professional Diploma in Modern MERN Stack Engineering',
     level: 'Advanced Diploma',
     duration: '8 Months',
-    mode: 'Online & Onsite',
+    mode: 'Onsite',
     admissionFee: 'Rs. 999',
     monthlyFee: 'Rs. 3,500/mo',
     image: 'https://images.unsplash.com/photo-1593720213428-28a5b9e94613?w=600&q=80&fit=crop',
@@ -128,7 +128,7 @@ const LIVE_COURSES = [
     title: 'Full Stack Web Development',
     level: 'Advanced Diploma',
     duration: '6 Months',
-    mode: 'Online & Onsite',
+    mode: 'Onsite',
     admissionFee: 'Rs. 999',
     monthlyFee: 'Rs. 3,000/mo',
     image: 'https://images.unsplash.com/photo-1517180102446-f3ece451e9d8?w=600&q=80&fit=crop',
@@ -150,7 +150,7 @@ const LIVE_COURSES = [
     title: 'Robotics & AI Automation',
     level: 'Intermediate',
     duration: '3 Months',
-    mode: 'Online & Onsite',
+    mode: 'Onsite',
     admissionFee: 'Rs. 999',
     monthlyFee: 'Rs. 2,000/mo',
     image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=600&q=80&fit=crop',
@@ -172,7 +172,7 @@ const LIVE_COURSES = [
     title: 'Microsoft Office Professional',
     level: 'Foundation',
     duration: '2 Months',
-    mode: 'Online & Onsite',
+    mode: 'Onsite',
     admissionFee: 'Rs. 999',
     monthlyFee: 'Rs. 1,500/mo',
     image: 'https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=600&q=80&fit=crop',
@@ -193,7 +193,7 @@ const LIVE_COURSES = [
     title: 'Graphic Designing & Visual Communication',
     level: 'Intermediate',
     duration: '4 Months',
-    mode: 'Online & Onsite',
+    mode: ' Onsite',
     admissionFee: 'Rs. 999',
     monthlyFee: 'Rs. 2,000/mo',
     image: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?w=600&q=80&fit=crop',
@@ -215,7 +215,7 @@ const LIVE_COURSES = [
     title: 'Professional English for Career & Freelancing',
     level: 'Beginner',
     duration: '12 Months',
-    mode: 'Online & Onsite',
+    mode: 'Onsite',
     admissionFee: 'Rs. 999',
     monthlyFee: 'Rs. 1,200/mo',
     image: 'https://images.unsplash.com/photo-1521791136064-7986c2920216?w=600&q=80&fit=crop',
@@ -403,15 +403,16 @@ function CourseCard({ course, live, onViewCurriculum, onApply }) {
               <p className="text-xs font-bold text-slate-800">{course.mode}</p>
             </div>
           </div>
-          {live && course.admissionFee && (
+
+          {/* {live && course.admissionFee && (
             <div className="flex items-center gap-2 bg-slate-50 rounded-lg px-2.5 py-1.5">
-              <ShieldCheck className="w-3.5 h-3.5 text-blue-500 flex-shrink-0" />
-              <div>
-                <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wide">Admission Fee</p>
-                <p className="text-xs font-bold text-slate-800">{course.admissionFee}</p>
-              </div>
+            <ShieldCheck className="w-3.5 h-3.5 text-blue-500 flex-shrink-0" />
+            <div>
+            <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wide">Admission Fee</p>
+            <p className="text-xs font-bold text-slate-800">{course.admissionFee}</p>
             </div>
-          )}
+            </div>
+            )} */}
           {live && course.monthlyFee && (
             <div className="flex items-center gap-2 bg-slate-50 rounded-lg px-2.5 py-1.5">
               <DollarSign className="w-3.5 h-3.5 text-blue-500 flex-shrink-0" />
@@ -421,16 +422,16 @@ function CourseCard({ course, live, onViewCurriculum, onApply }) {
               </div>
             </div>
           )}
+          {live && (
+         <div className="flex items-center gap-1.5 bg-green-50 border border-green-200 rounded-lg px-3 py-1">
+           <Sparkles className="w-3.5 h-3.5 text-green-600 flex-shrink-0" />
+           <span className="text-[11px] font-bold text-green-700">100% FREE Demo Class</span>
+         </div>
+       )}
         </div>
 
         {/* FREE Demo Badge */}
-        {live && (
-          <div className="flex items-center gap-1.5 bg-green-50 border border-green-200 rounded-lg px-3 py-1">
-            <Sparkles className="w-3.5 h-3.5 text-green-600 flex-shrink-0" />
-            <span className="text-[11px] font-bold text-green-700">100% FREE Demo Class</span>
-          </div>
-        )}
-
+       
         {/* Actions */}
         <div className="flex items-center gap-2 pt-1 mt-auto relative z-20">
           <button

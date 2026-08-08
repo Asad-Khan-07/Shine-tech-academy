@@ -3,6 +3,7 @@ import Navbar from '../components/Navbar'
 import Hero from '../components/Hero'
 import Stats from '../components/Stats'
 import Courses from '../components/Courses'
+import FoundingBatch from '../components/FoundingBatch'
 import Admission from '../components/Admission'
 import LearningJourney from '../components/LearningJourney'
 import Internship from '../components/Internship'
@@ -25,6 +26,7 @@ export default function Home({ onOpenApply, onOpenAdmitCard }) {
         <Hero onApply={onOpenApply} />
         <Stats />
         <Partners />
+        <FoundingBatch />
         <Courses onApply={onOpenApply} />
         <Admission />
         <LearningJourney />

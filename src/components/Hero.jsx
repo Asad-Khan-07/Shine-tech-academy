@@ -1,8 +1,8 @@
 import { useEffect, useState, useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { Rocket, Sparkles, Star, GraduationCap, CheckCircle } from 'lucide-react'
-import Galaxy from './animatedbg/bg'
-import AcidSquares from './animatedbg/Acidsquare'
+// import Galaxy from './animatedbg/bg'
+// import AcidSquares from './animatedbg/Acidsquare'
 import Particles from './animatedbg/Particales'
 
 /* ── Animated floating card ── */
