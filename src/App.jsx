@@ -32,7 +32,7 @@ function AmbientBackground() {
   );
 }
 
-// Small helper component to ensure html has no 'dark' class
+
 function ThemeLightModeEnforcer() {
   useEffect(() => {
     document.documentElement.classList.remove("dark");
