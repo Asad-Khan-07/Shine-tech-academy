@@ -1,21 +1,21 @@
-import TopBanner from '../components/TopBanner'
-import Navbar from '../components/Navbar'
-import Hero from '../components/Hero'
-import Stats from '../components/Stats'
-import Courses from '../components/Courses'
-import FoundingBatch from '../components/FoundingBatch'
-import Admission from '../components/Admission'
-import LearningJourney from '../components/LearningJourney'
-import Internship from '../components/Internship'
-import Testimonials from '../components/Testimonials'
-import FAQ from '../components/FAQ'
-import CTASection from '../components/CTASection'
-import Contact from '../components/Contact'
-import Footer from '../components/Footer'
-import GetAdmitCardModal from '../components/GetAdmitCardModal'
-import { useState } from 'react'
-import { AnimatePresence } from 'framer-motion'
-import Partners from '../components/Partner'
+import TopBanner from "../components/TopBanner";
+import Navbar from "../components/Navbar";
+import Hero from "../components/Hero";
+import Stats from "../components/Stats";
+import Courses from "../components/Courses";
+import FoundingBatch from "../components/FoundingBatch";
+import Admission from "../components/Admission";
+import LearningJourney from "../components/LearningJourney";
+import Internship from "../components/Internship";
+import Testimonials from "../components/Testimonials";
+import FAQ from "../components/FAQ";
+import CTASection from "../components/CTASection";
+import Contact from "../components/Contact";
+import Footer from "../components/Footer";
+import GetAdmitCardModal from "../components/GetAdmitCardModal";
+import { useState } from "react";
+import { AnimatePresence } from "framer-motion";
+import Partners from "../components/Partner";
 
 export default function Home({ onOpenApply, onOpenAdmitCard }) {
   return (
@@ -27,7 +27,7 @@ export default function Home({ onOpenApply, onOpenAdmitCard }) {
         <Stats />
         <Partners />
         <FoundingBatch />
-        <Courses onApply={onOpenApply} />
+        {/* <Courses onApply={onOpenApply} /> */}
         <Admission />
         <LearningJourney />
         <Internship />
@@ -38,5 +38,5 @@ export default function Home({ onOpenApply, onOpenAdmitCard }) {
       </main>
       <Footer />
     </>
-  )
+  );
 }

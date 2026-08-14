@@ -1,13 +1,19 @@
-import { useState, useEffect } from 'react'
-import { HashRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom'
-import Home from './pages/Home'
-import AdmissionForm from './pages/AdmissionForm'
-import TermsAndConditions from './pages/TermsAndConditions'
-import PrivacyPolicy from './pages/PrivacyPolicy'
-import ComingSoon from './pages/ComingSoon'
-import GetAdmitCardModal from './components/GetAdmitCardModal'
-import SuccessModal from './components/SuccessModal'
-import { AnimatePresence } from 'framer-motion'
+import { useState, useEffect } from "react";
+import {
+  HashRouter as Router,
+  Routes,
+  Route,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
+import Home from "./pages/Home";
+import AdmissionForm from "./pages/AdmissionForm";
+import TermsAndConditions from "./pages/TermsAndConditions";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import ComingSoon from "./pages/ComingSoon";
+import GetAdmitCardModal from "./components/GetAdmitCardModal";
+import SuccessModal from "./components/SuccessModal";
+import { AnimatePresence } from "framer-motion";
 
 /* ─── Ambient Glow Background ───────────────────────────────── */
 function AmbientBackground() {
@@ -15,50 +21,50 @@ function AmbientBackground() {
     <div
       aria-hidden
       style={{
-        position: 'fixed',
+        position: "fixed",
         inset: 0,
         zIndex: 0,
-        pointerEvents: 'none',
+        pointerEvents: "none",
         background:
-          'radial-gradient(ellipse 70% 50% at 50% -10%, rgba(9,86,252,0.05) 0%, transparent 60%)',
+          "radial-gradient(ellipse 70% 50% at 50% -10%, rgba(9,86,252,0.05) 0%, transparent 60%)",
       }}
     />
-  )
+  );
 }
 
 // Small helper component to ensure html has no 'dark' class
 function ThemeLightModeEnforcer() {
   useEffect(() => {
-    document.documentElement.classList.remove('dark')
-    localStorage.removeItem('theme')
-  }, [])
-  return null
+    document.documentElement.classList.remove("dark");
+    localStorage.removeItem("theme");
+  }, []);
+  return null;
 }
 
 function MainApp() {
-  const [showAdmitModal, setShowAdmitModal] = useState(false)
-  const [successData, setSuccessData] = useState(null)
-  const navigate = useNavigate()
-  const location = useLocation()
+  const [showAdmitModal, setShowAdmitModal] = useState(false);
+  const [successData, setSuccessData] = useState(null);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   // Clear scrollbar lock when routing changes
   useEffect(() => {
-    document.body.style.overflow = ''
-    window.scrollTo(0, 0)
-  }, [location.pathname])
+    document.body.style.overflow = "";
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   return (
     <div className="min-h-screen bg-white text-slate-900 transition-colors duration-500 relative">
       <ThemeLightModeEnforcer />
       <AmbientBackground />
 
-      <div style={{ position: 'relative', zIndex: 10 }}>
+      <div style={{ position: "relative", zIndex: 10 }}>
         <Routes>
-          {/* <Route
-            path="/home"
+          <Route
+            path="/"
             element={
               <Home
-                onOpenApply={() => navigate('/apply')}
+                onOpenApply={() => navigate("/apply")}
                 onOpenAdmitCard={() => setShowAdmitModal(true)}
               />
             }
@@ -68,9 +74,9 @@ function MainApp() {
             element={
               <AdmissionForm
                 onBack={(appId, form) => {
-                  navigate('/')
+                  navigate("/");
                   if (appId && form) {
-                    setSuccessData({ appId, form })
+                    setSuccessData({ appId, form });
                   }
                 }}
               />
@@ -78,16 +84,17 @@ function MainApp() {
           />
           <Route
             path="/terms"
-            element={<TermsAndConditions onBack={() => navigate('/')} />}
+            element={<TermsAndConditions onBack={() => navigate("/")} />}
           />
           <Route
             path="/privacy"
-            element={<PrivacyPolicy onBack={() => navigate('/')} />}
-          /> */}
-          <Route
+            element={<PrivacyPolicy onBack={() => navigate("/")} />}
+          />
+
+          {/* <Route
             path="/"
             element={<ComingSoon />}
-          />
+          /> */}
         </Routes>
       </div>
 
@@ -108,13 +115,13 @@ function MainApp() {
             primaryCourseName={
               successData.form?.courses?.[0] ||
               successData.form?.customCourse ||
-              'Tech Program'
+              "Tech Program"
             }
           />
         )}
       </AnimatePresence>
     </div>
-  )
+  );
 }
 
 export default function App() {
@@ -122,5 +129,5 @@ export default function App() {
     <Router>
       <MainApp />
     </Router>
-  )
+  );
 }
