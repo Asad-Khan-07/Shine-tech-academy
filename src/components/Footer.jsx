@@ -246,9 +246,13 @@ export default function Footer() {
         {/* Bottom */}
         <div className="border-t border-slate-200 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-slate-500 text-xs flex items-center gap-1 justify-center text-center sm:text-left">
-            <Copyright size={15} /> {new Date().getFullYear()} Shine Tech
-            Academy (STA). All rights reserved.
+            <Copyright size={15} /> {new Date().getFullYear()}{" "}
+            <span className="text-[#0956FC] font-semibold">
+              Shine Tech Academy
+            </span>{" "}
+            — STA. All rights reserved.
           </p>
+
           <div className="flex gap-4 text-slate-600 text-xs">
             <a
               href="#privacy"
