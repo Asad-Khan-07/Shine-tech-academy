@@ -6,13 +6,17 @@ import {
   useNavigate,
   useLocation,
 } from "react-router-dom";
+
 import Home from "./pages/Home";
 import AdmissionForm from "./pages/AdmissionForm";
 import TermsAndConditions from "./pages/TermsAndConditions";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import ComingSoon from "./pages/ComingSoon";
+
 import GetAdmitCardModal from "./components/GetAdmitCardModal";
 import SuccessModal from "./components/SuccessModal";
+import Loader from "./components/Loader";
+
 import { AnimatePresence } from "framer-motion";
 
 /* ─── Ambient Glow Background ───────────────────────────────── */
@@ -32,22 +36,37 @@ function AmbientBackground() {
   );
 }
 
-
+/* ─── Force Light Mode ──────────────────────────────────────── */
 function ThemeLightModeEnforcer() {
   useEffect(() => {
     document.documentElement.classList.remove("dark");
     localStorage.removeItem("theme");
   }, []);
+
   return null;
 }
 
+/* ─── Main Application ──────────────────────────────────────── */
 function MainApp() {
   const [showAdmitModal, setShowAdmitModal] = useState(false);
   const [successData, setSuccessData] = useState(null);
+
+  // Initial website loader
+  const [isLoading, setIsLoading] = useState(true);
+
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Clear scrollbar lock when routing changes
+  /* ─── Initial Loader ─────────────────────────────────────── */
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1200);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  /* ─── Clear scrollbar lock when routing changes ───────────── */
   useEffect(() => {
     document.body.style.overflow = "";
     window.scrollTo(0, 0);
@@ -55,11 +74,16 @@ function MainApp() {
 
   return (
     <div className="min-h-screen bg-white text-slate-900 transition-colors duration-500 relative">
+      {/* ─── Initial Loader ─────────────────────────────────── */}
+      <AnimatePresence>{isLoading && <Loader />}</AnimatePresence>
+
       <ThemeLightModeEnforcer />
+
       <AmbientBackground />
 
       <div style={{ position: "relative", zIndex: 10 }}>
         <Routes>
+          {/* ─── Home ────────────────────────────────────────── */}
           <Route
             path="/"
             element={
@@ -69,12 +93,15 @@ function MainApp() {
               />
             }
           />
+
+          {/* ─── Admission Form ─────────────────────────────── */}
           <Route
             path="/apply"
             element={
               <AdmissionForm
                 onBack={(appId, form) => {
                   navigate("/");
+
                   if (appId && form) {
                     setSuccessData({ appId, form });
                   }
@@ -82,30 +109,37 @@ function MainApp() {
               />
             }
           />
+
+          {/* ─── Terms & Conditions ─────────────────────────── */}
           <Route
             path="/terms"
             element={<TermsAndConditions onBack={() => navigate("/")} />}
           />
+
+          {/* ─── Privacy Policy ──────────────────────────────── */}
           <Route
             path="/privacy"
             element={<PrivacyPolicy onBack={() => navigate("/")} />}
           />
 
-          {/* <Route
-            path="/"
+          {/* ─── Coming Soon ─────────────────────────────────── */}
+          {/* 
+          <Route
+            path="/coming-soon"
             element={<ComingSoon />}
-          /> */}
+          />
+          */}
         </Routes>
       </div>
 
-      {/* Get Admit Card Modal */}
+      {/* ─── Get Admit Card Modal ────────────────────────────── */}
       <AnimatePresence>
         {showAdmitModal && (
           <GetAdmitCardModal onClose={() => setShowAdmitModal(false)} />
         )}
       </AnimatePresence>
 
-      {/* Admission Success Modal */}
+      {/* ─── Admission Success Modal ─────────────────────────── */}
       <AnimatePresence>
         {successData && (
           <SuccessModal
@@ -124,6 +158,7 @@ function MainApp() {
   );
 }
 
+/* ─── App ────────────────────────────────────────────────────── */
 export default function App() {
   return (
     <Router>

@@ -5,9 +5,9 @@ import { motion, AnimatePresence } from "framer-motion";
 const NAV_LINKS = [
   { label: "Home", href: "#hero" },
   // { label: "About", href: "#why-sta" },
-  { label: "Courses", href: "#courses" },
+  { label: "Courses", href: "#founding-batch" },
   { label: "Admissions", href: "#admission" },
-  { label: "Instructors", href: "#instructors" },
+  { label: "Our Partners", href: "#our-partners" },
   { label: "Contact", href: "#contact" },
 ];
 

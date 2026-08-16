@@ -248,7 +248,7 @@ export default function Footer() {
           <p className="text-slate-500 text-xs flex items-center gap-1 justify-center text-center sm:text-left">
             <Copyright size={15} /> {new Date().getFullYear()}{" "}
             <span className="text-[#0956FC] font-semibold">
-              Shine Tech Academy
+              www.shinetechacademy.com
             </span>{" "}
             — STA. All rights reserved.
           </p>

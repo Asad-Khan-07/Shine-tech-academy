@@ -90,7 +90,7 @@ function PartnerCard({ partner }) {
 export default function Partners() {
   return (
     <section
-      id="partners"
+      id="our-partners"
       className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-slate-50 relative overflow-hidden"
     >
       {/* Marquee keyframes + edge fade mask */}

@@ -598,7 +598,7 @@ export default function FoundingBatch() {
 
   return (
     <section
-      className="relative py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-slate-50 border-b border-slate-200/60 overflow-hidden"
+      className="relative i py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-slate-50 border-b border-slate-200/60 overflow-hidden"
       id="founding-batch"
     >
       {/* Background ambient light blobs */}
