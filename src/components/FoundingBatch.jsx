@@ -6,6 +6,7 @@ import {
   useInView,
   useMotionValue,
   useSpring,
+  useReducedMotion,
 } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import {
@@ -20,6 +21,8 @@ import {
   Trophy,
   Flame,
 } from "lucide-react";
+
+const EASE = [0.22, 1, 0.36, 1]; // same "expo-out" curve used across the site's loader — keeps motion feeling like one system
 
 const LEVEL_STYLES = {
   Foundation: {
@@ -322,7 +325,7 @@ const cardAnim = {
     opacity: 1,
     y: 0,
     scale: 1,
-    transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
+    transition: { duration: 0.55, ease: EASE },
   },
 };
 
@@ -351,8 +354,27 @@ function CountUp({ value, suffix = "", duration = 1.4 }) {
   );
 }
 
+// ── Soft "alive" status dot — smooth scale+fade instead of the harsh default ping ──
+function PulseDot({ className = "" }) {
+  const reduceMotion = useReducedMotion();
+  return (
+    <span className={`relative flex h-1.5 w-1.5 ${className}`}>
+      <motion.span
+        className="absolute inline-flex h-full w-full rounded-full bg-white"
+        animate={
+          reduceMotion ? {} : { scale: [1, 2.2, 1], opacity: [0.75, 0, 0.75] }
+        }
+        transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-white" />
+    </span>
+  );
+}
+
 // ── Curriculum Modal ─────────────────────────────────────────────────────
 function CurriculumModal({ course, onClose, onApply }) {
+  const reduceMotion = useReducedMotion();
+
   useEffect(() => {
     if (course) document.body.style.overflow = "hidden";
     else document.body.style.overflow = "";
@@ -369,6 +391,7 @@ function CurriculumModal({ course, onClose, onApply }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
+          transition={{ duration: 0.25, ease: EASE }}
           style={{
             position: "fixed",
             inset: 0,
@@ -384,16 +407,25 @@ function CurriculumModal({ course, onClose, onApply }) {
         >
           <motion.div
             key="modal-box"
-            initial={{ opacity: 0, scale: 0.92, y: 20 }}
+            initial={{ opacity: 0, scale: 0.94, y: 16 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.92, y: 20 }}
-            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+            exit={{ opacity: 0, scale: 0.96, y: 10 }}
+            transition={{ duration: reduceMotion ? 0.15 : 0.35, ease: EASE }}
             onClick={(e) => e.stopPropagation()}
             className="relative bg-white rounded-2xl shadow-2xl border border-slate-200/80 max-w-lg w-full max-h-[85vh] overflow-hidden flex flex-col"
           >
             {/* Header */}
             <div className="relative flex-shrink-0 bg-[#0956fc] px-6 py-5 overflow-hidden">
-              <div className="absolute -right-8 -top-10 w-40 h-40 rounded-full bg-white/10 blur-2xl pointer-events-none" />
+              <motion.div
+                aria-hidden
+                className="absolute -right-8 -top-10 w-40 h-40 rounded-full bg-white/10 blur-2xl pointer-events-none"
+                animate={reduceMotion ? {} : { opacity: [0.6, 1, 0.6] }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              />
               <div className="relative flex items-center justify-between gap-4">
                 <div>
                   <h3 className="font-space font-extrabold text-white text-lg leading-snug">
@@ -424,8 +456,9 @@ function CurriculumModal({ course, onClose, onApply }) {
                     initial={{ opacity: 0, x: -8 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{
-                      delay: Math.min(i * 0.03, 0.6),
+                      delay: reduceMotion ? 0 : Math.min(i * 0.025, 0.5),
                       duration: 0.3,
+                      ease: EASE,
                     }}
                     className="flex items-start gap-3"
                   >
@@ -476,15 +509,12 @@ function CourseCard({ course, onViewCurriculum, onApply }) {
     <motion.div
       variants={cardAnim}
       whileHover={{ y: -8 }}
-      transition={{ type: "spring", stiffness: 300, damping: 22 }}
-      className="group relative bg-white rounded-2xl border border-slate-200/80 hover:border-[#0956fc] overflow-hidden flex flex-col shadow-sm hover:shadow-xl hover:shadow-blue-500/10 transition-all duration-300"
+      transition={{ type: "spring", stiffness: 300, damping: 24 }}
+      className="group relative bg-white rounded-2xl border border-slate-200/80 hover:border-[#0956fc] overflow-hidden flex flex-col shadow-sm hover:shadow-xl hover:shadow-blue-500/10 transition-[box-shadow,border-color] duration-300"
     >
       {/* Admissions Open badge */}
       <div className="absolute top-3 right-3 z-10 flex items-center gap-1.5 bg-emerald-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-md">
-        <span className="relative flex h-1.5 w-1.5">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
-          <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-white" />
-        </span>
+        <PulseDot />
         Admissions Open
       </div>
 
@@ -513,7 +543,6 @@ function CourseCard({ course, onViewCurriculum, onApply }) {
             {course.title}
           </h3>
         </div>
-
         {/* Info Grid */}
         <div className="grid grid-cols-2 gap-2">
           <div className="flex items-center gap-2 bg-slate-50 border border-slate-100 rounded-xl px-2.5 py-2">
@@ -540,11 +569,16 @@ function CourseCard({ course, onViewCurriculum, onApply }) {
             </div>
           </div>
 
-          <div className="flex items-center gap-1.5 bg-emerald-50 border border-emerald-200/60 rounded-xl px-2.5 py-2">
-            <Sparkles className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
-            <span className="text-[11px] font-extrabold text-emerald-700">
-              FREE
-            </span>
+          <div className="flex items-center gap-2 bg-amber-50 border border-amber-200/60 rounded-xl px-2.5 py-2">
+            <Sparkles className="w-3.5 h-3.5 text-amber-600 flex-shrink-0" />
+            <div>
+              <p className="text-[9px] text-amber-600/80 font-bold uppercase tracking-wider">
+                Reg. Fee
+              </p>
+              <p className="text-xs font-extrabold text-amber-800">
+                PKR 1,999 ONLY
+              </p>
+            </div>
           </div>
 
           <div className="flex items-center gap-2 bg-slate-50 border border-slate-100 rounded-xl px-2.5 py-2">
@@ -579,9 +613,12 @@ function CourseCard({ course, onViewCurriculum, onApply }) {
               e.stopPropagation();
               if (onApply) onApply();
             }}
-            className="flex-1 flex items-center justify-center gap-1.5 bg-[#0956fc] hover:bg-blue-700 text-white font-bold text-xs py-2.5 rounded-xl shadow-sm shadow-blue-500/20 hover:shadow-md transition-all cursor-pointer"
+            className="relative flex-1 flex items-center justify-center gap-1.5 bg-[#0956fc] hover:bg-blue-700 text-white font-bold text-xs py-2.5 rounded-xl shadow-sm shadow-blue-500/20 hover:shadow-md transition-all cursor-pointer overflow-hidden"
           >
-            Enroll Now <ArrowRight className="w-3.5 h-3.5" />
+            <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out bg-gradient-to-r from-transparent via-white/25 to-transparent" />
+            <span className="relative flex items-center gap-1.5">
+              Enroll Now <ArrowRight className="w-3.5 h-3.5" />
+            </span>
           </button>
         </div>
       </div>
@@ -593,17 +630,33 @@ function CourseCard({ course, onViewCurriculum, onApply }) {
 export default function FoundingBatch() {
   const [selectedCourse, setSelectedCourse] = useState(null);
   const navigate = useNavigate();
+  const reduceMotion = useReducedMotion();
 
   const handleApply = () => navigate("/apply");
 
   return (
     <section
-      className="relative i py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-slate-50 border-b border-slate-200/60 overflow-hidden"
+      className="relative py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-slate-50 border-b border-slate-200/60 overflow-hidden"
       id="founding-batch"
     >
-      {/* Background ambient light blobs */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-600/5 rounded-full blur-3xl pointer-events-none" />
+      {/* Background ambient light blobs — soft breathing, matches the loader's motion language */}
+      <motion.div
+        aria-hidden
+        className="absolute top-0 left-1/4 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl pointer-events-none"
+        animate={reduceMotion ? {} : { opacity: [0.7, 1, 0.7] }}
+        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        aria-hidden
+        className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-600/5 rounded-full blur-3xl pointer-events-none"
+        animate={reduceMotion ? {} : { opacity: [0.5, 0.9, 0.5] }}
+        transition={{
+          duration: 7,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 0.8,
+        }}
+      />
 
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Header */}
@@ -611,22 +664,32 @@ export default function FoundingBatch() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
+          transition={{ duration: 0.6, ease: EASE }}
           className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12"
         >
           <div>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-blue-50 border border-blue-200/80 text-[#0956fc] mb-3">
-              <Sparkles className="w-3.5 h-3.5" />
-              Founding Batch · 2026
+            {/* Status Pill */}
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 border border-blue-200/80 text-[#0956fc] mb-3">
+              <Sparkles className="w-3.5 h-3.5 animate-pulse" />
+              Admissions Open · 2026
             </span>
-            <h2 className="font-space font-black text-3xl sm:text-4xl md:text-5xl text-slate-900 tracking-tight">
-              Founding Batch 2026 —{" "}
-              <span className="text-[#0956fc]">Admissions Open</span>
+
+            {/* Main Heading */}
+            <h2 className="font-space font-black text-3xl sm:text-4xl md:text-5xl text-slate-900 tracking-tight leading-[1.15]">
+              Founding Batch —{" "}
+              <span className="bg-gradient-to-r from-[#0956fc] to-blue-600 bg-clip-text text-transparent">
+                Shape The Future
+              </span>
             </h2>
-            <p className="text-slate-600 mt-2.5 max-w-xl text-sm sm:text-base leading-relaxed">
-              Be part of our founding batch and kick-start your tech career.
-              Enroll in any of our industry-focused programs Available &amp;
-              Onsite with FREE classes.
+
+            {/* Subtitle */}
+            <p className="text-slate-600 mt-3 max-w-xl text-sm sm:text-base leading-relaxed font-normal">
+              Kick-start your tech career with our inaugural cohort. Enroll in
+              industry-focused programs with{" "}
+              <span className="font-semibold text-slate-800">
+                FREE 2 Months Course
+              </span>{" "}
+              & Onsite learning.
             </p>
           </div>
 

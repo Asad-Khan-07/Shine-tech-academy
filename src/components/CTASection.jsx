@@ -1,14 +1,22 @@
 import { useEffect, useRef, useState } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 import { ArrowRight, MessageCircle, Rocket, Sparkles } from "lucide-react";
+
+const EASE = [0.22, 1, 0.36, 1]; // same curve used site-wide
 
 function CountUp({ end, suffix = "", duration = 2 }) {
   const [count, setCount] = useState(0);
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
+  const reduceMotion = useReducedMotion();
 
   useEffect(() => {
     if (!isInView) return;
+
+    if (reduceMotion) {
+      setCount(end);
+      return;
+    }
 
     let startTime = null;
     let animationFrameId;
@@ -31,7 +39,7 @@ function CountUp({ end, suffix = "", duration = 2 }) {
     animationFrameId = requestAnimationFrame(updateCounter);
 
     return () => cancelAnimationFrame(animationFrameId);
-  }, [isInView, end, duration]);
+  }, [isInView, end, duration, reduceMotion]);
 
   return (
     <span ref={ref}>
@@ -42,6 +50,8 @@ function CountUp({ end, suffix = "", duration = 2 }) {
 }
 
 export default function CTASection() {
+  const reduceMotion = useReducedMotion();
+
   const scrollToContact = () => {
     const contactSection = document.querySelector("#contact");
     if (contactSection) {
@@ -54,25 +64,40 @@ export default function CTASection() {
       id="cta"
       className="py-20 sm:py-28 px-4 sm:px-6 lg:px-8 bg-slate-50/80 backdrop-blur-sm relative overflow-hidden"
     >
-      {/* Decorative Background Accents */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-5xl h-80 bg-gradient-to-r from-blue-500/10 via-indigo-500/10 to-blue-500/10 blur-3xl rounded-full pointer-events-none" />
-      <div className="absolute -top-24 -right-24 w-96 h-96 bg-blue-400/10 rounded-full blur-2xl pointer-events-none" />
+      {/* Decorative Background Accents — soft breathing, matches the rest of the site's motion language */}
+      <motion.div
+        aria-hidden
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-5xl h-80 bg-gradient-to-r from-blue-500/10 via-blue-400/10 to-blue-500/10 blur-3xl rounded-full pointer-events-none"
+        animate={reduceMotion ? {} : { opacity: [0.7, 1, 0.7] }}
+        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        aria-hidden
+        className="absolute -top-24 -right-24 w-96 h-96 bg-blue-400/10 rounded-full blur-2xl pointer-events-none"
+        animate={reduceMotion ? {} : { opacity: [0.5, 0.9, 0.5] }}
+        transition={{
+          duration: 7,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 0.6,
+        }}
+      />
 
       <div className="max-w-4xl mx-auto text-center relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.6, ease: EASE }}
           className="flex flex-col items-center gap-7 sm:gap-8"
         >
           {/* Badge */}
           <motion.span
-            className="inline-flex items-center gap-2 text-blue-600 text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-full border border-blue-500/20 bg-blue-500/10 shadow-xs"
+            className="inline-flex items-center gap-2 text-[#0956fc] text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-full border border-blue-500/20 bg-blue-500/10 shadow-xs"
             initial={{ scale: 0.9, opacity: 0 }}
             whileInView={{ scale: 1, opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.1, duration: 0.4 }}
+            transition={{ delay: 0.1, duration: 0.4, ease: EASE }}
           >
             <Sparkles className="w-3.5 h-3.5" />
             Start Your Journey Today
@@ -83,13 +108,16 @@ export default function CTASection() {
             Build Your Future with
             <br />
             <span className="relative inline-block mt-1">
-              <span className="text-blue-600">Shine Tech Academy</span>
+              <span className="text-[#0956fc]">Shine Tech Academy</span>
               <motion.span
-                className="absolute -bottom-2 left-0 h-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full"
+                className="absolute -bottom-2 left-0 h-1.5 rounded-full"
+                style={{
+                  background: "linear-gradient(90deg, #0956fc, #60a5fa)",
+                }}
                 initial={{ width: 0 }}
                 whileInView={{ width: "100%" }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 0.4 }}
+                transition={{ duration: 0.8, delay: 0.4, ease: EASE }}
               />
             </span>
           </h2>
@@ -106,23 +134,26 @@ export default function CTASection() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 sm:gap-4 w-full sm:w-auto mt-2">
             <motion.a
               href="#apply"
-              whileHover={{ scale: 1.03, y: -2 }}
+              whileHover={reduceMotion ? {} : { scale: 1.03, y: -2 }}
               whileTap={{ scale: 0.97 }}
-              className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-8 sm:px-9 py-4 rounded-full text-sm sm:text-base font-bold shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2.5 w-full sm:w-auto transition-all hover:shadow-blue-500/40 hover:from-blue-700 hover:to-blue-800 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-blue-500"
+              transition={{ duration: 0.2, ease: EASE }}
+              className="group relative bg-[#0956fc] hover:bg-blue-700 text-white px-8 sm:px-9 py-4 rounded-full text-sm sm:text-base font-bold shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2.5 w-full sm:w-auto transition-[background-color,box-shadow] hover:shadow-blue-500/40 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-blue-500 overflow-hidden"
             >
-              <Rocket className="w-5 h-5" />
-              <span>Apply for Admission</span>
-              <ArrowRight className="w-5 h-5" />
+              <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out bg-gradient-to-r from-transparent via-white/25 to-transparent" />
+              <Rocket className="relative w-5 h-5" />
+              <span className="relative">Apply for Admission</span>
+              <ArrowRight className="relative w-5 h-5" />
             </motion.a>
 
             <motion.button
               type="button"
-              whileHover={{ scale: 1.03, y: -2 }}
+              whileHover={reduceMotion ? {} : { scale: 1.03, y: -2 }}
               whileTap={{ scale: 0.97 }}
+              transition={{ duration: 0.2, ease: EASE }}
               onClick={scrollToContact}
-              className="border-2 border-slate-200/90 bg-white/80 text-slate-700 px-8 sm:px-9 py-3.5 rounded-full text-sm sm:text-base font-bold flex items-center justify-center gap-2.5 w-full sm:w-auto transition-all hover:border-blue-500/40 hover:text-blue-600 hover:bg-white focus:outline-hidden focus-visible:ring-2 focus-visible:ring-blue-500 cursor-pointer"
+              className="group border-2 border-slate-200/90 bg-white/80 text-slate-700 px-8 sm:px-9 py-3.5 rounded-full text-sm sm:text-base font-bold flex items-center justify-center gap-2.5 w-full sm:w-auto transition-all hover:border-blue-500/40 hover:text-[#0956fc] hover:bg-white focus:outline-hidden focus-visible:ring-2 focus-visible:ring-blue-500 cursor-pointer"
             >
-              <MessageCircle className="w-5 h-5 text-slate-500 group-hover:text-blue-600" />
+              <MessageCircle className="w-5 h-5 text-slate-500 group-hover:text-[#0956fc] transition-colors" />
               Contact Our Team
             </motion.button>
           </div>
@@ -137,10 +168,10 @@ export default function CTASection() {
               <motion.div
                 key={s.label}
                 className="text-center group"
-                whileHover={{ y: -2 }}
-                transition={{ duration: 0.2 }}
+                whileHover={reduceMotion ? {} : { y: -2 }}
+                transition={{ duration: 0.2, ease: EASE }}
               >
-                <p className="text-slate-900 font-space font-extrabold text-2xl sm:text-3xl lg:text-4xl group-hover:text-blue-600 transition-colors">
+                <p className="text-slate-900 font-space font-extrabold text-2xl sm:text-3xl lg:text-4xl group-hover:text-[#0956fc] transition-colors">
                   <CountUp end={s.end} suffix={s.suffix} />
                 </p>
                 <p className="text-slate-500 text-[10px] sm:text-xs font-semibold uppercase tracking-wider mt-1 group-hover:text-slate-700 transition-colors">
