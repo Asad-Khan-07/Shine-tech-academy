@@ -7,12 +7,21 @@ import {
   useLocation,
 } from "react-router-dom";
 
+// ── Pages ──
 import Home from "./pages/Home";
 import AdmissionForm from "./pages/AdmissionForm";
 import TermsAndConditions from "./pages/TermsAndConditions";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import ComingSoon from "./pages/ComingSoon";
+import { CreateAdminUser } from "./components/CreateAdminUser";
 
+// ── Admin Components ──
+import { AuthProvider } from "./context/AuthContext";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import { AdminLogin } from "./components/AdminLogin";
+import { AdminDashboard } from "./components/AdminDashboard";
+
+// ── Other Components ──
 import GetAdmitCardModal from "./components/GetAdmitCardModal";
 import SuccessModal from "./components/SuccessModal";
 import Loader from "./components/Loader";
@@ -83,7 +92,7 @@ function MainApp() {
 
       <div style={{ position: "relative", zIndex: 10 }}>
         <Routes>
-          {/* ─── Home ────────────────────────────────────────── */}
+          {/* ─── Public Routes ────────────────────────────────── */}
           <Route
             path="/"
             element={
@@ -94,14 +103,12 @@ function MainApp() {
             }
           />
 
-          {/* ─── Admission Form ─────────────────────────────── */}
           <Route
             path="/apply"
             element={
               <AdmissionForm
                 onBack={(appId, form) => {
                   navigate("/");
-
                   if (appId && form) {
                     setSuccessData({ appId, form });
                   }
@@ -109,17 +116,39 @@ function MainApp() {
               />
             }
           />
-
-          {/* ─── Terms & Conditions ─────────────────────────── */}
+          <Route path="/create-admin" element={<CreateAdminUser />} />
           <Route
             path="/terms"
             element={<TermsAndConditions onBack={() => navigate("/")} />}
           />
 
-          {/* ─── Privacy Policy ──────────────────────────────── */}
           <Route
             path="/privacy"
             element={<PrivacyPolicy onBack={() => navigate("/")} />}
+          />
+
+          {/* ─── Admin Routes ────────────────────────────────── */}
+          {/* Login – public */}
+          <Route path="/admin/login" element={<AdminLogin />} />
+
+          {/* Dashboard – protected */}
+          <Route
+            path="/admin/dashboard"
+            element={
+              <ProtectedRoute>
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* /admin redirects to dashboard (protected) */}
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute>
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
           />
 
           {/* ─── Coming Soon ─────────────────────────────────── */}
@@ -162,7 +191,9 @@ function MainApp() {
 export default function App() {
   return (
     <Router>
-      <MainApp />
+      <AuthProvider>
+        <MainApp />
+      </AuthProvider>
     </Router>
   );
 }
