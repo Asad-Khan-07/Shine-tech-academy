@@ -27,7 +27,7 @@ export default function Home({ onOpenApply, onOpenAdmitCard }) {
         <Stats />
         <Partners />
         <FoundingBatch />
-        {/* <Courses onApply={onOpenApply} /> */}
+        <Courses onApply={onOpenApply} />
         <Admission />
         <LearningJourney />
         <Internship />

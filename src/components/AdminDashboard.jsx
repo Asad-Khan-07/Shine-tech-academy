@@ -1,3 +1,4 @@
+// src/components/AdminDashboard.jsx
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "../context/AuthContext";
 import { supabase } from "../lib/supabase";
@@ -36,12 +37,17 @@ import {
   Copy,
   Check,
   AlertTriangle,
+  TrendingUp,
+  PieChart,
+  Award,
+  Gift,
+  Rocket,
 } from "lucide-react";
 
 const ITEMS_PER_PAGE = 10;
 const EASE = [0.22, 1, 0.36, 1];
 
-/* ─── Helper Functions ───────────────────────────────────────────── */
+// ─── Helper Functions ─────────────────────────────────────────────
 const formatDate = (dateString) => {
   if (!dateString) return "N/A";
   try {
@@ -106,6 +112,29 @@ const SkeletonRow = () => (
 
 // ─── Sub-Components ───────────────────────────────────────────────
 
+// Program Type Badge
+function ProgramTypeBadge({ type }) {
+  if (!type) return <span className="text-xs text-slate-400">—</span>;
+  const isFounding = type.toLowerCase() === "founding";
+  return (
+    <span
+      className={`inline-flex items-center gap-1 text-[10px] font-extrabold px-2.5 py-1 rounded-full border shadow-sm ${
+        isFounding
+          ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+          : "bg-purple-50 text-purple-700 border-purple-200"
+      }`}
+    >
+      {isFounding ? (
+        <Gift className="w-3 h-3" />
+      ) : (
+        <Rocket className="w-3 h-3" />
+      )}
+      {isFounding ? "Founding Batch" : "Career Program"}
+    </span>
+  );
+}
+
+// Stats Card with gradient
 function StatCard({
   label,
   value,
@@ -114,6 +143,7 @@ function StatCard({
   className = "",
   trend,
   trendLabel,
+  subtext,
 }) {
   const colorMap = {
     blue: "from-blue-500 to-blue-600",
@@ -121,13 +151,8 @@ function StatCard({
     emerald: "from-emerald-500 to-emerald-600",
     rose: "from-rose-500 to-rose-600",
     indigo: "from-indigo-500 to-indigo-600",
-  };
-  const bgMap = {
-    blue: "bg-blue-50/80",
-    amber: "bg-amber-50/80",
-    emerald: "bg-emerald-50/80",
-    rose: "bg-rose-50/80",
-    indigo: "bg-indigo-50/80",
+    purple: "from-purple-500 to-purple-600",
+    teal: "from-teal-500 to-teal-600",
   };
   return (
     <motion.div
@@ -145,6 +170,11 @@ function StatCard({
           <p className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">
             {value}
           </p>
+          {subtext && (
+            <p className="text-[10px] text-slate-500 font-medium mt-0.5">
+              {subtext}
+            </p>
+          )}
           {trend !== undefined && (
             <p
               className={`text-[10px] font-bold mt-0.5 ${trend > 0 ? "text-emerald-600" : "text-rose-600"}`}
@@ -339,6 +369,7 @@ export function AdminDashboard() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [filterStatus, setFilterStatus] = useState("all");
+  const [filterType, setFilterType] = useState("all");
   const [selectedIds, setSelectedIds] = useState([]);
   const [selectedApp, setSelectedApp] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -350,13 +381,19 @@ export function AdminDashboard() {
   const [sortOrder, setSortOrder] = useState("desc");
   const [lastRefreshed, setLastRefreshed] = useState(new Date());
 
+  // Stats state
   const [stats, setStats] = useState({
     total: 0,
     pending: 0,
     approved: 0,
     rejected: 0,
     today: 0,
+    founding: 0,
+    career: 0,
   });
+
+  // Course enrollment stats
+  const [courseStats, setCourseStats] = useState([]);
 
   // Debounce Search
   useEffect(() => {
@@ -366,7 +403,7 @@ export function AdminDashboard() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchDebounced, filterStatus, sortField, sortOrder]);
+  }, [searchDebounced, filterStatus, filterType, sortField, sortOrder]);
 
   const buildQuery = useCallback(
     (query) => {
@@ -377,6 +414,9 @@ export function AdminDashboard() {
         } else {
           q = q.eq("status", filterStatus);
         }
+      }
+      if (filterType !== "all") {
+        q = q.eq("program_type", filterType);
       }
       if (searchDebounced) {
         const searchLower = searchDebounced.toLowerCase();
@@ -389,7 +429,7 @@ export function AdminDashboard() {
       }
       return q;
     },
-    [filterStatus, searchDebounced],
+    [filterStatus, filterType, searchDebounced],
   );
 
   const fetchApplications = useCallback(async () => {
@@ -422,28 +462,45 @@ export function AdminDashboard() {
     try {
       const startOfDay = new Date();
       startOfDay.setHours(0, 0, 0, 0);
-      const [totalRes, pendingRes, approvedRes, rejectedRes, todayRes] =
-        await Promise.allSettled([
-          supabase
-            .from("admissions")
-            .select("id", { count: "exact", head: true }),
-          supabase
-            .from("admissions")
-            .select("id", { count: "exact", head: true })
-            .or("status.eq.pending,status.is.null"),
-          supabase
-            .from("admissions")
-            .select("id", { count: "exact", head: true })
-            .eq("status", "approved"),
-          supabase
-            .from("admissions")
-            .select("id", { count: "exact", head: true })
-            .eq("status", "rejected"),
-          supabase
-            .from("admissions")
-            .select("id", { count: "exact", head: true })
-            .gte("created_at", startOfDay.toISOString()),
-        ]);
+
+      const [
+        totalRes,
+        pendingRes,
+        approvedRes,
+        rejectedRes,
+        todayRes,
+        foundingRes,
+        careerRes,
+      ] = await Promise.allSettled([
+        supabase
+          .from("admissions")
+          .select("id", { count: "exact", head: true }),
+        supabase
+          .from("admissions")
+          .select("id", { count: "exact", head: true })
+          .or("status.eq.pending,status.is.null"),
+        supabase
+          .from("admissions")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "approved"),
+        supabase
+          .from("admissions")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "rejected"),
+        supabase
+          .from("admissions")
+          .select("id", { count: "exact", head: true })
+          .gte("created_at", startOfDay.toISOString()),
+        supabase
+          .from("admissions")
+          .select("id", { count: "exact", head: true })
+          .eq("program_type", "founding"),
+        supabase
+          .from("admissions")
+          .select("id", { count: "exact", head: true })
+          .eq("program_type", "career"),
+      ]);
+
       setStats({
         total: totalRes.status === "fulfilled" ? totalRes.value.count || 0 : 0,
         pending:
@@ -453,9 +510,60 @@ export function AdminDashboard() {
         rejected:
           rejectedRes.status === "fulfilled" ? rejectedRes.value.count || 0 : 0,
         today: todayRes.status === "fulfilled" ? todayRes.value.count || 0 : 0,
+        founding:
+          foundingRes.status === "fulfilled" ? foundingRes.value.count || 0 : 0,
+        career:
+          careerRes.status === "fulfilled" ? careerRes.value.count || 0 : 0,
       });
     } catch (err) {
       console.error("Stats fetch error:", err);
+    }
+  }, []);
+
+  const fetchCourseStats = useCallback(async () => {
+    try {
+      // Get all admissions with courses array
+      const { data, error } = await supabase
+        .from("admissions")
+        .select("courses, program_type");
+
+      if (error) throw error;
+
+      // Count enrollments per course
+      const courseCounts = {};
+      const foundingCounts = {};
+      const careerCounts = {};
+
+      (data || []).forEach((app) => {
+        const courses = app.courses || [];
+        const type = app.program_type || "unknown";
+        courses.forEach((course) => {
+          if (!courseCounts[course]) courseCounts[course] = 0;
+          courseCounts[course]++;
+
+          if (type === "founding") {
+            if (!foundingCounts[course]) foundingCounts[course] = 0;
+            foundingCounts[course]++;
+          } else if (type === "career") {
+            if (!careerCounts[course]) careerCounts[course] = 0;
+            careerCounts[course]++;
+          }
+        });
+      });
+
+      // Convert to array and sort
+      const sortedCourses = Object.keys(courseCounts)
+        .map((name) => ({
+          name,
+          total: courseCounts[name],
+          founding: foundingCounts[name] || 0,
+          career: careerCounts[name] || 0,
+        }))
+        .sort((a, b) => b.total - a.total);
+
+      setCourseStats(sortedCourses);
+    } catch (err) {
+      console.error("Course stats error:", err);
     }
   }, []);
 
@@ -465,14 +573,18 @@ export function AdminDashboard() {
 
   useEffect(() => {
     fetchStats();
-  }, [fetchStats]);
+    fetchCourseStats();
+  }, [fetchStats, fetchCourseStats]);
 
   const refreshAll = () => {
-    toast.promise(Promise.all([fetchApplications(), fetchStats()]), {
-      loading: "Refreshing data...",
-      success: "Data refreshed!",
-      error: "Refresh failed",
-    });
+    toast.promise(
+      Promise.all([fetchApplications(), fetchStats(), fetchCourseStats()]),
+      {
+        loading: "Refreshing data...",
+        success: "Data refreshed!",
+        error: "Refresh failed",
+      },
+    );
   };
 
   const handleSort = (field) => {
@@ -549,6 +661,7 @@ export function AdminDashboard() {
           courses: coursesArr,
           custom_course: editForm.custom_course,
           status: editForm.status || "pending",
+          program_type: editForm.program_type || "founding",
         })
         .eq("id", editForm.id);
 
@@ -650,6 +763,7 @@ export function AdminDashboard() {
         "City",
         "Qualification",
         "Courses",
+        "Program Type",
         "Status",
         "Submission Date",
         "Submission Time",
@@ -664,6 +778,7 @@ export function AdminDashboard() {
         a.city,
         a.qualification,
         (a.courses || []).join("; "),
+        a.program_type || "founding",
         a.status || "pending",
         formatDate(a.created_at),
         formatTime(a.created_at),
@@ -692,6 +807,12 @@ export function AdminDashboard() {
   };
 
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
+
+  // Maximum enrollment calculation for visualization scaling
+  const maxEnrollment = courseStats.reduce(
+    (max, c) => (c.total > max ? c.total : max),
+    1,
+  );
 
   return (
     <div className="min-h-screen bg-slate-50/60 font-sans antialiased">
@@ -783,7 +904,7 @@ export function AdminDashboard() {
 
         <div className="p-4 sm:p-8">
           {/* ── Stats Cards ── */}
-          <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 mb-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-6">
             <StatCard
               label="Total Applications"
               value={stats.total}
@@ -813,233 +934,276 @@ export function AdminDashboard() {
               value={stats.today}
               icon={Calendar}
               color="indigo"
-              className="col-span-2 lg:col-span-1"
+            />
+            <StatCard
+              label="🎓 Founding Batch"
+              value={stats.founding}
+              icon={Gift}
+              color="emerald"
+              subtext="Free 2-Month Courses"
+            />
+            <StatCard
+              label="💼 Career Programs"
+              value={stats.career}
+              icon={Rocket}
+              color="purple"
+              subtext="Professional Courses"
             />
           </div>
 
-          {/* ── Filter & Search Toolbar ── */}
+          {/* ── Course Enrollment Stats ── */}
           <div className="bg-white/80 backdrop-blur-md rounded-2xl border border-slate-200/80 p-4 mb-6 shadow-sm">
-            <div className="flex flex-col sm:flex-row gap-3">
-              <div className="flex-1 relative">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <h3 className="font-space font-extrabold text-slate-800 text-sm flex items-center gap-2">
+                  <PieChart className="w-4 h-4 text-[#0956fc]" />
+                  Course Enrollment Summary
+                </h3>
+                <p className="text-xs text-slate-400">
+                  Total students enrolled per course
+                </p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {courseStats.length === 0 ? (
+                <p className="text-xs text-slate-400 col-span-full text-center py-4">
+                  No course data available yet
+                </p>
+              ) : (
+                courseStats.map((course, idx) => {
+                  const percentage = Math.round(
+                    (course.total / maxEnrollment) * 100,
+                  );
+                  return (
+                    <div
+                      key={idx}
+                      className="bg-slate-50/70 rounded-xl p-3 border border-slate-100 hover:border-slate-200 transition-all"
+                    >
+                      <div className="flex justify-between items-start mb-1.5">
+                        <span className="font-bold text-xs text-slate-800 line-clamp-1">
+                          {course.name}
+                        </span>
+                        <span className="bg-blue-100 text-[#0956fc] font-extrabold text-[11px] px-2 py-0.5 rounded-full ml-2 flex-shrink-0">
+                          {course.total} Enrolled
+                        </span>
+                      </div>
+
+                      {/* Visual Bar Indicator */}
+                      <div className="w-full bg-slate-200 rounded-full h-1.5 mb-2 overflow-hidden">
+                        <div
+                          className="bg-[#0956fc] h-full rounded-full transition-all duration-500"
+                          style={{ width: `${percentage}%` }}
+                        />
+                      </div>
+
+                      {/* Founding vs Career Breakdown */}
+                      <div className="flex items-center justify-between text-[10px] text-slate-500 font-semibold pt-1 border-t border-slate-200/50">
+                        <span className="flex items-center gap-1 text-emerald-700">
+                          <Gift className="w-2.5 h-2.5" /> Founding:{" "}
+                          {course.founding}
+                        </span>
+                        <span className="flex items-center gap-1 text-purple-700">
+                          <Rocket className="w-2.5 h-2.5" /> Career:{" "}
+                          {course.career}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          </div>
+
+          {/* ── Table Toolbar & Filters ── */}
+          <div className="bg-white/80 backdrop-blur-md rounded-2xl border border-slate-200/80 p-4 mb-6 shadow-sm">
+            <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+              {/* Search Bar */}
+              <div className="relative w-full md:w-80">
+                <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
-                  placeholder="Search student name, email, ID, phone..."
+                  placeholder="Search name, email, ID, phone..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50/80 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0956fc] focus:bg-white transition-all"
+                  className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#0956fc]/20 focus:border-[#0956fc] transition-all font-medium"
                 />
+                {search && (
+                  <button
+                    onClick={() => setSearch("")}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
               </div>
-              <div className="flex gap-2 flex-wrap">
+
+              {/* Filters & Actions */}
+              <div className="flex flex-wrap items-center gap-2 w-full md:w-auto justify-end">
+                {/* Status Filter */}
                 <select
                   value={filterStatus}
                   onChange={(e) => setFilterStatus(e.target.value)}
-                  className="flex-1 sm:flex-none px-4 py-2.5 bg-slate-50/80 border border-slate-200 rounded-xl text-sm font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#0956fc] cursor-pointer"
+                  className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#0956fc]/20 cursor-pointer"
                 >
                   <option value="all">All Statuses</option>
                   <option value="pending">Pending</option>
                   <option value="approved">Approved</option>
                   <option value="rejected">Rejected</option>
                 </select>
+
+                {/* Program Type Filter */}
+                <select
+                  value={filterType}
+                  onChange={(e) => setFilterType(e.target.value)}
+                  className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#0956fc]/20 cursor-pointer"
+                >
+                  <option value="all">All Programs</option>
+                  <option value="founding">Founding Batch</option>
+                  <option value="career">Career Program</option>
+                </select>
+
+                {/* Refresh Button */}
                 <button
                   onClick={refreshAll}
-                  className="px-4 py-2.5 bg-gradient-to-r from-[#0956fc] to-indigo-600 text-white rounded-xl text-sm font-bold hover:from-blue-700 hover:to-indigo-700 transition-all flex items-center gap-2 cursor-pointer shadow-md hover:shadow-lg active:scale-95"
+                  className="p-2.5 text-slate-600 hover:text-[#0956fc] hover:bg-slate-100 rounded-xl transition-all border border-slate-200 cursor-pointer"
+                  title="Refresh Table"
                 >
-                  <RefreshCw
-                    className={`w-4 h-4 ${loading ? "animate-spin" : ""}`}
-                  />
-                  <span className="hidden sm:inline">Refresh</span>
+                  <RefreshCw className="w-4 h-4" />
                 </button>
               </div>
             </div>
 
-            {/* Bulk Actions Bar */}
-            <AnimatePresence>
-              {selectedIds.length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{
-                    duration: reduceMotion ? 0.05 : 0.2,
-                    ease: EASE,
-                  }}
-                  className="mt-3 pt-3 border-t border-slate-100 flex flex-wrap items-center gap-2 overflow-hidden"
-                >
-                  <span className="text-xs font-extrabold text-[#0956fc] bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-100">
-                    {selectedIds.length} Selected
-                  </span>
+            {/* Bulk Actions Panel */}
+            {selectedIds.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                className="mt-4 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3 bg-blue-50/50 p-3 rounded-xl border border-blue-100"
+              >
+                <span className="text-xs font-bold text-[#0956fc]">
+                  {selectedIds.length} application(s) selected
+                </span>
+                <div className="flex items-center gap-2">
                   <button
                     onClick={() => handleBulkStatus("approved")}
                     disabled={updating}
-                    className="px-3 py-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg text-xs font-bold hover:bg-emerald-100 transition-colors disabled:opacity-50 cursor-pointer"
+                    className="px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-bold hover:bg-emerald-700 transition-colors shadow-sm cursor-pointer disabled:opacity-50"
                   >
-                    Approve All
+                    Approve Selected
                   </button>
                   <button
                     onClick={() => handleBulkStatus("rejected")}
                     disabled={updating}
-                    className="px-3 py-1.5 bg-rose-50 text-rose-700 border border-rose-200 rounded-lg text-xs font-bold hover:bg-rose-100 transition-colors disabled:opacity-50 cursor-pointer"
+                    className="px-3 py-1.5 bg-rose-600 text-white rounded-lg text-xs font-bold hover:bg-rose-700 transition-colors shadow-sm cursor-pointer disabled:opacity-50"
                   >
-                    Reject All
+                    Reject Selected
                   </button>
                   <button
                     onClick={handleBulkDelete}
                     disabled={deleting}
-                    className="px-3 py-1.5 bg-red-50 text-red-700 border border-red-200 rounded-lg text-xs font-bold hover:bg-red-100 transition-colors disabled:opacity-50 cursor-pointer"
+                    className="px-3 py-1.5 bg-slate-800 text-white rounded-lg text-xs font-bold hover:bg-slate-900 transition-colors shadow-sm cursor-pointer disabled:opacity-50"
                   >
                     Delete Selected
                   </button>
-                  <button
-                    onClick={() => setSelectedIds([])}
-                    className="px-3 py-1.5 text-slate-500 rounded-lg text-xs font-bold hover:bg-slate-100 transition-colors ml-auto cursor-pointer"
-                  >
-                    Clear Selection
-                  </button>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                </div>
+              </motion.div>
+            )}
           </div>
 
-          {/* ── Table & Cards Content ── */}
-          <div className="bg-white/80 backdrop-blur-md rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
-            {loading ? (
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-slate-50/90 border-b border-slate-200">
-                    <tr>
-                      <th className="px-4 py-3.5 text-center">
-                        <div className="h-4 w-4 bg-slate-200 rounded"></div>
-                      </th>
-                      <th className="px-4 py-3.5">
-                        <div className="h-4 w-10 bg-slate-200 rounded"></div>
-                      </th>
-                      <th className="px-4 py-3.5">
-                        <div className="h-4 w-32 bg-slate-200 rounded"></div>
-                      </th>
-                      <th className="px-4 py-3.5 hidden lg:table-cell">
-                        <div className="h-4 w-24 bg-slate-200 rounded"></div>
-                      </th>
-                      <th className="px-4 py-3.5 hidden xl:table-cell">
-                        <div className="h-4 w-20 bg-slate-200 rounded"></div>
-                      </th>
-                      <th className="px-4 py-3.5">
-                        <div className="h-4 w-16 bg-slate-200 rounded"></div>
-                      </th>
-                      <th className="px-4 py-3.5 hidden lg:table-cell">
-                        <div className="h-4 w-24 bg-slate-200 rounded"></div>
-                      </th>
-                      <th className="px-4 py-3.5 text-center">
-                        <div className="h-8 w-8 bg-slate-200 rounded-full mx-auto"></div>
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {Array.from({ length: ITEMS_PER_PAGE }).map((_, i) => (
+          {/* ── Table Container ── */}
+          <div className="bg-white/80 backdrop-blur-md rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden mb-6">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-slate-50/80 border-b border-slate-200/80">
+                    <th className="px-4 py-3.5 w-10">
+                      <input
+                        type="checkbox"
+                        checked={
+                          applications.length > 0 &&
+                          selectedIds.length === applications.length
+                        }
+                        onChange={handleSelectAll}
+                        className="rounded border-slate-300 text-[#0956fc] focus:ring-[#0956fc] cursor-pointer"
+                      />
+                    </th>
+                    <SortableTh
+                      label="App ID"
+                      field="app_id"
+                      sortField={sortField}
+                      sortOrder={sortOrder}
+                      onSort={handleSort}
+                    />
+                    <SortableTh
+                      label="Applicant"
+                      field="full_name"
+                      sortField={sortField}
+                      sortOrder={sortOrder}
+                      onSort={handleSort}
+                    />
+                    <th className="px-4 py-3.5 text-xs font-bold text-slate-400 uppercase tracking-wider hidden lg:table-cell">
+                      Courses
+                    </th>
+                    <SortableTh
+                      label="Program"
+                      field="program_type"
+                      sortField={sortField}
+                      sortOrder={sortOrder}
+                      onSort={handleSort}
+                      className="hidden xl:table-cell"
+                    />
+                    <SortableTh
+                      label="Status"
+                      field="status"
+                      sortField={sortField}
+                      sortOrder={sortOrder}
+                      onSort={handleSort}
+                    />
+                    <SortableTh
+                      label="Submitted"
+                      field="created_at"
+                      sortField={sortField}
+                      sortOrder={sortOrder}
+                      onSort={handleSort}
+                      className="hidden lg:table-cell"
+                    />
+                    <th className="px-4 py-3.5 text-xs font-bold text-slate-400 uppercase tracking-wider text-center">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {loading ? (
+                    Array.from({ length: 5 }).map((_, i) => (
                       <SkeletonRow key={i} />
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : applications.length === 0 ? (
-              <div className="text-center py-20 px-4">
-                <Users className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                <p className="text-slate-700 font-bold text-base">
-                  No Applications Found
-                </p>
-                <p className="text-slate-400 text-xs mt-1">
-                  Try adjusting your search criteria or status filters.
-                </p>
-                {(search || filterStatus !== "all") && (
-                  <button
-                    onClick={() => {
-                      setSearch("");
-                      setFilterStatus("all");
-                    }}
-                    className="mt-4 px-4 py-2 text-xs font-bold bg-blue-50 text-[#0956fc] rounded-xl hover:bg-blue-100 transition-all cursor-pointer"
-                  >
-                    Reset Filters
-                  </button>
-                )}
-              </div>
-            ) : (
-              <>
-                {/* Desktop Table */}
-                <div className="overflow-x-auto hidden md:block">
-                  <table className="w-full">
-                    <thead className="bg-slate-50/90 border-b border-slate-200">
-                      <tr>
-                        <th className="px-4 py-3.5 text-center">
-                          <button
-                            onClick={handleSelectAll}
-                            className="text-slate-400 hover:text-slate-600 cursor-pointer"
-                          >
-                            {selectedIds.length === applications.length &&
-                            applications.length > 0 ? (
-                              <CheckSquare className="w-4 h-4 text-[#0956fc]" />
-                            ) : (
-                              <Square className="w-4 h-4" />
-                            )}
-                          </button>
-                        </th>
-                        <th className="text-left px-4 py-3.5 text-xs font-bold text-slate-400 uppercase tracking-wider">
-                          ID
-                        </th>
-                        <SortableTh
-                          label="Student Info"
-                          field="full_name"
-                          sortField={sortField}
-                          sortOrder={sortOrder}
-                          onSort={handleSort}
-                        />
-                        <th className="text-left px-4 py-3.5 text-xs font-bold text-slate-400 uppercase tracking-wider hidden lg:table-cell">
-                          Contact
-                        </th>
-                        <th className="text-left px-4 py-3.5 text-xs font-bold text-slate-400 uppercase tracking-wider hidden xl:table-cell">
-                          Course
-                        </th>
-                        <SortableTh
-                          label="Status"
-                          field="status"
-                          sortField={sortField}
-                          sortOrder={sortOrder}
-                          onSort={handleSort}
-                        />
-                        <SortableTh
-                          label="Submitted At"
-                          field="created_at"
-                          sortField={sortField}
-                          sortOrder={sortOrder}
-                          onSort={handleSort}
-                          className="hidden lg:table-cell"
-                        />
-                        <th className="text-center px-4 py-3.5 text-xs font-bold text-slate-400 uppercase tracking-wider">
-                          Actions
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
-                      {applications.map((app) => (
-                        <motion.tr
+                    ))
+                  ) : applications.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan={8}
+                        className="text-center py-12 text-slate-400 font-medium text-sm"
+                      >
+                        No applications found matching your criteria.
+                      </td>
+                    </tr>
+                  ) : (
+                    applications.map((app) => {
+                      const isSelected = selectedIds.includes(app.id);
+                      return (
+                        <tr
                           key={app.id}
-                          initial={{ opacity: 0, y: 5 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.15 }}
-                          className="hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-indigo-50/50 transition-colors group"
+                          className={`hover:bg-blue-50/30 transition-colors ${isSelected ? "bg-blue-50/40" : ""}`}
                         >
-                          <td className="px-4 py-3.5 text-center">
-                            <button
-                              onClick={() => handleSelectOne(app.id)}
-                              className="text-slate-400 hover:text-slate-600 cursor-pointer"
-                            >
-                              {selectedIds.includes(app.id) ? (
-                                <CheckSquare className="w-4 h-4 text-[#0956fc]" />
-                              ) : (
-                                <Square className="w-4 h-4" />
-                              )}
-                            </button>
-                          </td>
                           <td className="px-4 py-3.5">
+                            <input
+                              type="checkbox"
+                              checked={isSelected}
+                              onChange={() => handleSelectOne(app.id)}
+                              className="rounded border-slate-300 text-[#0956fc] focus:ring-[#0956fc] cursor-pointer"
+                            />
+                          </td>
+                          <td className="px-4 py-3.5 whitespace-nowrap">
                             <CopyableId id={app.app_id || "N/A"} />
                           </td>
                           <td className="px-4 py-3.5">
@@ -1047,376 +1211,277 @@ export function AdminDashboard() {
                               {app.photo_url ? (
                                 <img
                                   src={app.photo_url}
-                                  alt={app.full_name}
-                                  className="w-9 h-9 rounded-full object-cover border border-slate-200/80 shadow-sm"
+                                  alt=""
+                                  className="w-9 h-9 rounded-full object-cover border border-slate-200"
                                 />
                               ) : (
-                                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 text-slate-600 flex items-center justify-center font-bold text-xs border border-slate-200">
-                                  {app.full_name?.charAt(0) || "?"}
+                                <div className="w-9 h-9 rounded-full bg-blue-100 text-[#0956fc] flex items-center justify-center font-bold text-sm">
+                                  {app.full_name?.charAt(0) || "S"}
                                 </div>
                               )}
                               <div>
-                                <p className="text-sm font-bold text-slate-800">
+                                <p className="font-bold text-slate-900 text-sm">
                                   {app.full_name}
                                 </p>
-                                <p className="text-xs text-slate-400 font-medium">
-                                  {app.father_name}
+                                <p className="text-xs text-slate-400">
+                                  {app.email}
                                 </p>
                               </div>
                             </div>
                           </td>
-                          <td className="px-4 py-3.5 hidden lg:table-cell">
-                            <p className="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
-                              <Mail className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />{" "}
-                              {app.email}
-                            </p>
-                            <p className="text-xs font-semibold text-slate-500 flex items-center gap-1.5 mt-0.5">
-                              <Phone className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />{" "}
-                              {app.phone}
+                          <td className="px-4 py-3.5 hidden lg:table-cell max-w-xs">
+                            <p className="text-xs font-medium text-slate-700 truncate">
+                              {(app.courses || []).join(", ") || "N/A"}
                             </p>
                           </td>
-                          <td className="px-4 py-3.5 hidden xl:table-cell">
-                            <span className="text-xs font-bold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-lg border border-slate-200/60 inline-block truncate max-w-[150px]">
-                              {app.courses?.[0] || "N/A"}
-                            </span>
+                          <td className="px-4 py-3.5 hidden xl:table-cell whitespace-nowrap">
+                            <ProgramTypeBadge type={app.program_type} />
                           </td>
-                          <td className="px-4 py-3.5">
-                            <StatusBadge status={app.status || "pending"} />
+                          <td className="px-4 py-3.5 whitespace-nowrap">
+                            <StatusBadge status={app.status} />
                           </td>
-                          <td className="px-4 py-3.5 hidden lg:table-cell">
-                            <div className="flex flex-col">
-                              <span className="text-xs font-bold text-slate-700 flex items-center gap-1">
-                                <Calendar className="w-3 h-3 text-slate-400" />{" "}
-                                {formatDate(app.created_at)}
-                              </span>
-                              <span className="text-[11px] font-semibold text-slate-400 flex items-center gap-1 mt-0.5">
-                                <Clock className="w-3 h-3 text-[#0956fc]" />{" "}
-                                {formatTime(app.created_at)}
-                              </span>
-                            </div>
+                          <td className="px-4 py-3.5 hidden lg:table-cell whitespace-nowrap text-xs text-slate-500 font-medium">
+                            {formatDate(app.created_at)}
                           </td>
-                          <td className="px-4 py-3.5 text-center">
+                          <td className="px-4 py-3.5 whitespace-nowrap text-center">
                             <div className="flex items-center justify-center gap-1">
                               <button
                                 onClick={() => setSelectedApp(app)}
-                                className="p-2 text-[#0956fc] hover:bg-blue-50 rounded-xl transition-colors cursor-pointer"
+                                className="p-1.5 text-slate-400 hover:text-[#0956fc] hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
                                 title="View Details"
                               >
                                 <Eye className="w-4 h-4" />
                               </button>
                               <button
                                 onClick={() => handleEdit(app)}
-                                className="p-2 text-amber-600 hover:bg-amber-50 rounded-xl transition-colors cursor-pointer"
+                                className="p-1.5 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors cursor-pointer"
                                 title="Edit"
                               >
                                 <Edit className="w-4 h-4" />
                               </button>
                               <button
                                 onClick={() => openAdmitCard(app)}
-                                className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-xl transition-colors cursor-pointer"
-                                title="Admit Card"
+                                className="p-1.5 text-slate-400 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors cursor-pointer"
+                                title="Print Admit Card"
                               >
-                                <CreditCard className="w-4 h-4" />
+                                <Printer className="w-4 h-4" />
                               </button>
                               <button
                                 onClick={() => handleDelete(app.id)}
-                                disabled={deleting}
-                                className="p-2 text-rose-600 hover:bg-rose-50 rounded-xl transition-colors disabled:opacity-50 cursor-pointer"
+                                className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
                                 title="Delete"
                               >
                                 <Trash2 className="w-4 h-4" />
                               </button>
                             </div>
                           </td>
-                        </motion.tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
 
-                {/* Mobile View Cards */}
-                <div className="md:hidden divide-y divide-slate-100">
-                  {applications.map((app) => (
-                    <div key={app.id} className="p-4 flex flex-col gap-3">
-                      <div className="flex items-start gap-3">
-                        <button
-                          onClick={() => handleSelectOne(app.id)}
-                          className="text-slate-400 hover:text-slate-600 mt-1 flex-shrink-0 cursor-pointer"
-                        >
-                          {selectedIds.includes(app.id) ? (
-                            <CheckSquare className="w-4 h-4 text-[#0956fc]" />
-                          ) : (
-                            <Square className="w-4 h-4" />
-                          )}
-                        </button>
-                        {app.photo_url ? (
-                          <img
-                            src={app.photo_url}
-                            alt={app.full_name}
-                            className="w-11 h-11 rounded-full object-cover border border-slate-200 flex-shrink-0"
-                          />
-                        ) : (
-                          <div className="w-11 h-11 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold text-sm flex-shrink-0 border border-slate-200">
-                            {app.full_name?.charAt(0) || "?"}
-                          </div>
-                        )}
-                        <div className="min-w-0 flex-1">
-                          <p className="text-sm font-extrabold text-slate-900 truncate">
-                            {app.full_name}
-                          </p>
-                          <CopyableId id={app.app_id || "N/A"} />
-                        </div>
-                        <StatusBadge status={app.status || "pending"} />
-                      </div>
-                      <div className="grid grid-cols-1 gap-1 text-xs text-slate-600 pl-[26px]">
-                        <p className="flex items-center gap-1.5 truncate">
-                          <Mail className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />{" "}
-                          {app.email}
-                        </p>
-                        <p className="flex items-center gap-1.5">
-                          <Phone className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />{" "}
-                          {app.phone}
-                        </p>
-                        <p className="flex items-center gap-1.5">
-                          <BookOpen className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />{" "}
-                          {app.courses?.[0] || "N/A"}
-                        </p>
-                        <p className="flex items-center gap-1.5 font-semibold text-slate-700">
-                          <Clock className="w-3.5 h-3.5 text-[#0956fc] flex-shrink-0" />
-                          {formatDate(app.created_at)} at{" "}
-                          {formatTime(app.created_at)}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-2 pl-[26px] pt-1">
-                        <button
-                          onClick={() => setSelectedApp(app)}
-                          className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-bold text-[#0956fc] bg-blue-50 rounded-xl cursor-pointer"
-                        >
-                          <Eye className="w-3.5 h-3.5" /> View
-                        </button>
-                        <button
-                          onClick={() => handleEdit(app)}
-                          className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-bold text-amber-600 bg-amber-50 rounded-xl cursor-pointer"
-                        >
-                          <Edit className="w-3.5 h-3.5" /> Edit
-                        </button>
-                        <button
-                          onClick={() => openAdmitCard(app)}
-                          className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-bold text-indigo-600 bg-indigo-50 rounded-xl cursor-pointer"
-                        >
-                          <CreditCard className="w-3.5 h-3.5" /> Card
-                        </button>
-                        <button
-                          onClick={() => handleDelete(app.id)}
-                          className="p-2 text-rose-600 bg-rose-50 rounded-xl cursor-pointer"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="px-6 py-4 border-t border-slate-100 flex items-center justify-between">
+                <p className="text-xs text-slate-500 font-medium">
+                  Showing{" "}
+                  <span className="font-bold">
+                    {(currentPage - 1) * ITEMS_PER_PAGE + 1}
+                  </span>{" "}
+                  to{" "}
+                  <span className="font-bold">
+                    {Math.min(currentPage * ITEMS_PER_PAGE, totalCount)}
+                  </span>{" "}
+                  of <span className="font-bold">{totalCount}</span> results
+                </p>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                    disabled={currentPage === 1}
+                    className="px-3 py-1.5 text-xs font-bold text-slate-600 border border-slate-200 rounded-lg disabled:opacity-40 hover:bg-slate-50 transition-colors cursor-pointer"
+                  >
+                    Previous
+                  </button>
+                  <span className="text-xs font-bold text-slate-700 px-2">
+                    {currentPage} / {totalPages}
+                  </span>
+                  <button
+                    onClick={() =>
+                      setCurrentPage((p) => Math.min(p + 1, totalPages))
+                    }
+                    disabled={currentPage === totalPages}
+                    className="px-3 py-1.5 text-xs font-bold text-slate-600 border border-slate-200 rounded-lg disabled:opacity-40 hover:bg-slate-50 transition-colors cursor-pointer"
+                  >
+                    Next
+                  </button>
                 </div>
-
-                {/* Pagination */}
-                <div className="px-6 py-4 border-t border-slate-100 bg-slate-50/60 flex flex-col sm:flex-row items-center justify-between gap-4 flex-wrap">
-                  <p className="text-xs text-slate-500 font-semibold">
-                    Showing{" "}
-                    <span className="font-bold text-slate-800">
-                      {Math.min(
-                        (currentPage - 1) * ITEMS_PER_PAGE + 1,
-                        totalCount,
-                      )}
-                    </span>{" "}
-                    to{" "}
-                    <span className="font-bold text-slate-800">
-                      {Math.min(currentPage * ITEMS_PER_PAGE, totalCount)}
-                    </span>{" "}
-                    of{" "}
-                    <span className="font-bold text-slate-800">
-                      {totalCount}
-                    </span>{" "}
-                    submissions
-                  </p>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-                      disabled={currentPage === 1}
-                      className="px-3.5 py-1.5 text-xs font-bold rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed shadow-sm"
-                    >
-                      Previous
-                    </button>
-                    <span className="text-xs font-black text-[#0956fc] px-2 bg-blue-50 py-1 rounded-lg border border-blue-100">
-                      Page {currentPage} of {totalPages || 1}
-                    </span>
-                    <button
-                      onClick={() =>
-                        setCurrentPage((p) => Math.min(p + 1, totalPages))
-                      }
-                      disabled={currentPage >= totalPages}
-                      className="px-3.5 py-1.5 text-xs font-bold rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed shadow-sm"
-                    >
-                      Next
-                    </button>
-                  </div>
-                </div>
-              </>
+              </div>
             )}
           </div>
         </div>
       </div>
 
-      {/* ─── MODALS ── (View, Edit, AdmitCard) ── */}
+      {/* ─── Detail Modal ────────────────────────────────────────────── */}
       <AnimatePresence>
         {selectedApp && !showAdmitModal && !showEditModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl relative my-8 border border-slate-100"
+              className="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 border border-slate-100 shadow-2xl overflow-hidden relative max-h-[90vh] flex flex-col"
             >
               <button
                 onClick={() => setSelectedApp(null)}
-                className="absolute right-5 top-5 text-slate-400 hover:text-slate-600 p-2 rounded-full hover:bg-slate-100 cursor-pointer transition-colors"
+                className="absolute top-6 right-6 p-2 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
+
               <div className="flex items-center gap-4 pb-6 border-b border-slate-100">
                 {selectedApp.photo_url ? (
                   <img
                     src={selectedApp.photo_url}
-                    alt={selectedApp.full_name}
-                    className="w-16 h-16 rounded-2xl object-cover border-2 border-[#0956fc] shadow-sm"
+                    alt=""
+                    className="w-16 h-16 rounded-2xl object-cover border-2 border-[#0956fc]"
                   />
                 ) : (
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 text-[#0956fc] flex items-center justify-center font-black text-2xl border border-blue-100">
-                    {selectedApp.full_name?.charAt(0)}
+                  <div className="w-16 h-16 rounded-2xl bg-blue-100 text-[#0956fc] flex items-center justify-center font-black text-2xl">
+                    {selectedApp.full_name?.charAt(0) || "S"}
                   </div>
                 )}
                 <div>
                   <h3 className="text-xl font-extrabold text-slate-900">
                     {selectedApp.full_name}
                   </h3>
-                  <CopyableId id={selectedApp.app_id || "N/A"} />
-                </div>
-                <div className="ml-auto">
-                  <StatusBadge status={selectedApp.status} />
+                  <div className="flex items-center gap-2 mt-1">
+                    <CopyableId id={selectedApp.app_id || "N/A"} />
+                    <ProgramTypeBadge type={selectedApp.program_type} />
+                    <StatusBadge status={selectedApp.status} />
+                  </div>
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-6 text-sm">
-                <div className="bg-slate-50/80 p-3 rounded-xl border border-slate-100">
-                  <span className="text-slate-400 block text-xs font-semibold uppercase">
-                    Father Name
-                  </span>
-                  <span className="font-bold text-slate-800">
-                    {selectedApp.father_name || "N/A"}
-                  </span>
+
+              <div className="overflow-y-auto flex-1 py-6 space-y-6 text-sm">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <span className="text-slate-400 font-bold text-xs uppercase block">
+                      Father Name
+                    </span>
+                    <span className="text-slate-800 font-semibold">
+                      {selectedApp.father_name || "N/A"}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-slate-400 font-bold text-xs uppercase block">
+                      Gender
+                    </span>
+                    <span className="text-slate-800 font-semibold capitalize">
+                      {selectedApp.gender || "N/A"}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-slate-400 font-bold text-xs uppercase block">
+                      Date of Birth
+                    </span>
+                    <span className="text-slate-800 font-semibold">
+                      {selectedApp.dob || "N/A"}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-slate-400 font-bold text-xs uppercase block">
+                      City
+                    </span>
+                    <span className="text-slate-800 font-semibold">
+                      {selectedApp.city || "N/A"}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-slate-400 font-bold text-xs uppercase block">
+                      Phone
+                    </span>
+                    <span className="text-slate-800 font-semibold">
+                      {selectedApp.phone || "N/A"}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-slate-400 font-bold text-xs uppercase block">
+                      Email
+                    </span>
+                    <span className="text-slate-800 font-semibold">
+                      {selectedApp.email || "N/A"}
+                    </span>
+                  </div>
                 </div>
-                <div className="bg-slate-50/80 p-3 rounded-xl border border-slate-100">
-                  <span className="text-slate-400 block text-xs font-semibold uppercase">
-                    Gender
-                  </span>
-                  <span className="font-bold text-slate-800">
-                    {selectedApp.gender || "N/A"}
-                  </span>
-                </div>
-                <div className="bg-slate-50/80 p-3 rounded-xl border border-slate-100">
-                  <span className="text-slate-400 block text-xs font-semibold uppercase">
-                    DOB
-                  </span>
-                  <span className="font-bold text-slate-800">
-                    {selectedApp.dob || "N/A"}
-                  </span>
-                </div>
-                <div className="bg-slate-50/80 p-3 rounded-xl border border-slate-100">
-                  <span className="text-slate-400 block text-xs font-semibold uppercase">
-                    Submission
-                  </span>
-                  <span className="font-bold text-[#0956fc]">
-                    {formatDate(selectedApp.created_at)} at{" "}
-                    {formatTime(selectedApp.created_at)}
-                  </span>
-                </div>
-                <div className="bg-slate-50/80 p-3 rounded-xl border border-slate-100">
-                  <span className="text-slate-400 block text-xs font-semibold uppercase">
-                    Email
-                  </span>
-                  <span className="font-bold text-slate-800 truncate block">
-                    {selectedApp.email || "N/A"}
-                  </span>
-                </div>
-                <div className="bg-slate-50/80 p-3 rounded-xl border border-slate-100">
-                  <span className="text-slate-400 block text-xs font-semibold uppercase">
-                    Phone
-                  </span>
-                  <span className="font-bold text-slate-800">
-                    {selectedApp.phone || "N/A"}
-                  </span>
-                </div>
-                <div className="bg-slate-50/80 p-3 rounded-xl border border-slate-100">
-                  <span className="text-slate-400 block text-xs font-semibold uppercase">
-                    Qualification
-                  </span>
-                  <span className="font-bold text-slate-800">
-                    {selectedApp.qualification || "N/A"}
-                  </span>
-                </div>
-                <div className="bg-slate-50/80 p-3 rounded-xl border border-slate-100">
-                  <span className="text-slate-400 block text-xs font-semibold uppercase">
-                    City
-                  </span>
-                  <span className="font-bold text-slate-800">
-                    {selectedApp.city || "N/A"}
-                  </span>
-                </div>
-                <div className="col-span-1 sm:col-span-2 bg-slate-50/80 p-3 rounded-xl border border-slate-100">
-                  <span className="text-slate-400 block text-xs font-semibold uppercase">
-                    Institute
-                  </span>
-                  <span className="font-bold text-slate-800">
-                    {selectedApp.institute || "N/A"}
-                  </span>
-                </div>
-                <div className="col-span-1 sm:col-span-2 bg-slate-50/80 p-3 rounded-xl border border-slate-100">
-                  <span className="text-slate-400 block text-xs font-semibold uppercase">
+
+                <div className="pt-4 border-t border-slate-100">
+                  <span className="text-slate-400 font-bold text-xs uppercase block mb-1">
                     Address
                   </span>
-                  <span className="font-bold text-slate-800">
+                  <p className="text-slate-800 font-medium">
                     {selectedApp.address || "N/A"}
-                  </span>
+                  </p>
                 </div>
-                <div className="col-span-1 sm:col-span-2">
-                  <span className="text-slate-400 block text-xs font-semibold uppercase mb-1.5">
+
+                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-100">
+                  <div>
+                    <span className="text-slate-400 font-bold text-xs uppercase block">
+                      Qualification
+                    </span>
+                    <span className="text-slate-800 font-semibold">
+                      {selectedApp.qualification || "N/A"}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-slate-400 font-bold text-xs uppercase block">
+                      Institute
+                    </span>
+                    <span className="text-slate-800 font-semibold">
+                      {selectedApp.institute || "N/A"}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-slate-100">
+                  <span className="text-slate-400 font-bold text-xs uppercase block mb-2">
                     Applied Courses
                   </span>
                   <div className="flex flex-wrap gap-2">
-                    {(selectedApp.courses || []).map((c, idx) => (
+                    {(selectedApp.courses || []).map((c, i) => (
                       <span
-                        key={idx}
-                        className="bg-blue-50 text-[#0956fc] border border-blue-100 px-3 py-1 rounded-xl text-xs font-bold"
+                        key={i}
+                        className="px-3 py-1 bg-blue-50 text-[#0956fc] border border-blue-100 rounded-lg font-bold text-xs"
                       >
                         {c}
                       </span>
                     ))}
                     {selectedApp.custom_course && (
-                      <span className="bg-purple-50 text-purple-700 border border-purple-100 px-3 py-1 rounded-xl text-xs font-bold">
-                        {selectedApp.custom_course}
+                      <span className="px-3 py-1 bg-purple-50 text-purple-700 border border-purple-100 rounded-lg font-bold text-xs">
+                        Custom: {selectedApp.custom_course}
                       </span>
                     )}
                   </div>
                 </div>
               </div>
-              <div className="border-t border-slate-100 pt-5 flex flex-wrap items-center justify-between gap-3">
+
+              {/* Status Action buttons inside Modal */}
+              <div className="pt-4 border-t border-slate-100 flex items-center justify-between gap-3">
+                <button
+                  onClick={() => openAdmitCard(selectedApp)}
+                  className="flex items-center gap-2 px-4 py-2 bg-purple-50 text-purple-700 border border-purple-200 rounded-xl font-bold text-xs hover:bg-purple-100 transition-colors cursor-pointer"
+                >
+                  <Printer className="w-4 h-4" /> Print Admit Card
+                </button>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-extrabold text-slate-500 uppercase">
-                    Set Status:
-                  </span>
                   <button
                     onClick={() =>
                       handleSingleStatusUpdate(selectedApp.id, "approved")
                     }
                     disabled={updating}
-                    className="px-3.5 py-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-xl text-xs font-bold hover:bg-emerald-100 transition-colors cursor-pointer"
+                    className="px-4 py-2 bg-emerald-600 text-white rounded-xl font-bold text-xs hover:bg-emerald-700 transition-colors disabled:opacity-50 cursor-pointer"
                   >
                     Approve
                   </button>
@@ -1425,55 +1490,40 @@ export function AdminDashboard() {
                       handleSingleStatusUpdate(selectedApp.id, "rejected")
                     }
                     disabled={updating}
-                    className="px-3.5 py-1.5 bg-rose-50 text-rose-700 border border-rose-200 rounded-xl text-xs font-bold hover:bg-rose-100 transition-colors cursor-pointer"
+                    className="px-4 py-2 bg-rose-600 text-white rounded-xl font-bold text-xs hover:bg-rose-700 transition-colors disabled:opacity-50 cursor-pointer"
                   >
                     Reject
                   </button>
-                  <button
-                    onClick={() =>
-                      handleSingleStatusUpdate(selectedApp.id, "pending")
-                    }
-                    disabled={updating}
-                    className="px-3.5 py-1.5 bg-amber-50 text-amber-700 border border-amber-200 rounded-xl text-xs font-bold hover:bg-amber-100 transition-colors cursor-pointer"
-                  >
-                    Pending
-                  </button>
                 </div>
-                <button
-                  onClick={() => openAdmitCard(selectedApp)}
-                  className="px-5 py-2.5 bg-[#0956fc] text-white rounded-xl text-xs font-bold hover:bg-blue-700 transition-all flex items-center gap-2 cursor-pointer shadow-md"
-                >
-                  {" "}
-                  <CreditCard className="w-4 h-4" /> Admit Card{" "}
-                </button>
               </div>
             </motion.div>
           </div>
         )}
       </AnimatePresence>
 
-      {/* Edit Modal */}
+      {/* ─── Edit Modal ─────────────────────────────────────────────── */}
       <AnimatePresence>
         {showEditModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-2xl relative my-8 border border-slate-100"
+              className="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-8 border border-slate-100 shadow-2xl relative max-h-[90vh] flex flex-col"
             >
               <button
                 onClick={() => setShowEditModal(false)}
-                className="absolute right-5 top-5 text-slate-400 hover:text-slate-600 p-2 rounded-full hover:bg-slate-100 cursor-pointer"
+                className="absolute top-6 right-6 p-2 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
-              <h3 className="text-lg font-extrabold text-slate-900 mb-5">
-                ✏️ Edit Application
+              <h3 className="text-xl font-extrabold text-slate-900 mb-4">
+                Edit Application
               </h3>
-              <div className="space-y-4 max-h-[65vh] overflow-y-auto pr-1">
+
+              <div className="overflow-y-auto flex-1 space-y-4 pr-1">
                 <div>
-                  <label className="text-xs font-bold text-slate-700">
+                  <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
                     Full Name
                   </label>
                   <input
@@ -1482,11 +1532,11 @@ export function AdminDashboard() {
                     onChange={(e) =>
                       setEditForm({ ...editForm, full_name: e.target.value })
                     }
-                    className="w-full mt-1.5 p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#0956fc]"
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-[#0956fc]/20 focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-slate-700">
+                  <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
                     Father Name
                   </label>
                   <input
@@ -1495,12 +1545,12 @@ export function AdminDashboard() {
                     onChange={(e) =>
                       setEditForm({ ...editForm, father_name: e.target.value })
                     }
-                    className="w-full mt-1.5 p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#0956fc]"
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-[#0956fc]/20 focus:outline-none"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-xs font-bold text-slate-700">
+                    <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
                       Email
                     </label>
                     <input
@@ -1509,11 +1559,11 @@ export function AdminDashboard() {
                       onChange={(e) =>
                         setEditForm({ ...editForm, email: e.target.value })
                       }
-                      className="w-full mt-1.5 p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#0956fc]"
+                      className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-[#0956fc]/20 focus:outline-none"
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-bold text-slate-700">
+                    <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
                       Phone
                     </label>
                     <input
@@ -1522,43 +1572,48 @@ export function AdminDashboard() {
                       onChange={(e) =>
                         setEditForm({ ...editForm, phone: e.target.value })
                       }
-                      className="w-full mt-1.5 p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#0956fc]"
+                      className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-[#0956fc]/20 focus:outline-none"
                     />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-xs font-bold text-slate-700">
-                      Qualification
+                    <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                      Program Type
                     </label>
-                    <input
-                      type="text"
-                      value={editForm.qualification || ""}
+                    <select
+                      value={editForm.program_type || "founding"}
                       onChange={(e) =>
                         setEditForm({
                           ...editForm,
-                          qualification: e.target.value,
+                          program_type: e.target.value,
                         })
                       }
-                      className="w-full mt-1.5 p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#0956fc]"
-                    />
+                      className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm font-bold focus:ring-2 focus:ring-[#0956fc]/20 focus:outline-none"
+                    >
+                      <option value="founding">Founding Batch</option>
+                      <option value="career">Career Program</option>
+                    </select>
                   </div>
                   <div>
-                    <label className="text-xs font-bold text-slate-700">
-                      City
+                    <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                      Status
                     </label>
-                    <input
-                      type="text"
-                      value={editForm.city || ""}
+                    <select
+                      value={editForm.status || "pending"}
                       onChange={(e) =>
-                        setEditForm({ ...editForm, city: e.target.value })
+                        setEditForm({ ...editForm, status: e.target.value })
                       }
-                      className="w-full mt-1.5 p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#0956fc]"
-                    />
+                      className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm font-bold focus:ring-2 focus:ring-[#0956fc]/20 focus:outline-none"
+                    >
+                      <option value="pending">Pending</option>
+                      <option value="approved">Approved</option>
+                      <option value="rejected">Rejected</option>
+                    </select>
                   </div>
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-slate-700">
+                  <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
                     Courses (comma separated)
                   </label>
                   <input
@@ -1571,40 +1626,24 @@ export function AdminDashboard() {
                     onChange={(e) =>
                       setEditForm({ ...editForm, courses: e.target.value })
                     }
-                    className="w-full mt-1.5 p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#0956fc]"
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-[#0956fc]/20 focus:outline-none"
                   />
                 </div>
-                <div>
-                  <label className="text-xs font-bold text-slate-700">
-                    Status
-                  </label>
-                  <select
-                    value={editForm.status || "pending"}
-                    onChange={(e) =>
-                      setEditForm({ ...editForm, status: e.target.value })
-                    }
-                    className="w-full mt-1.5 p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#0956fc]"
-                  >
-                    <option value="pending">Pending</option>
-                    <option value="approved">Approved</option>
-                    <option value="rejected">Rejected</option>
-                  </select>
-                </div>
               </div>
-              <div className="mt-6 flex justify-end gap-3 border-t border-slate-100 pt-5">
+
+              <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-end gap-3">
                 <button
                   onClick={() => setShowEditModal(false)}
-                  className="px-5 py-2.5 text-xs font-bold text-slate-600 hover:bg-slate-100 rounded-xl cursor-pointer"
+                  className="px-4 py-2 border border-slate-200 text-slate-600 rounded-xl text-xs font-bold hover:bg-slate-50 cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleUpdate}
                   disabled={updating}
-                  className="px-6 py-2.5 text-xs font-extrabold bg-[#0956fc] text-white rounded-xl hover:bg-blue-700 transition-all disabled:opacity-50 cursor-pointer flex items-center gap-2 shadow-md"
+                  className="px-4 py-2 bg-[#0956fc] text-white rounded-xl text-xs font-bold hover:bg-blue-700 disabled:opacity-50 cursor-pointer"
                 >
-                  {updating && <Loader className="w-4 h-4 animate-spin" />} Save
-                  Updates
+                  {updating ? "Saving..." : "Save Changes"}
                 </button>
               </div>
             </motion.div>
@@ -1612,35 +1651,37 @@ export function AdminDashboard() {
         )}
       </AnimatePresence>
 
-      {/* Admit Card Modal */}
+      {/* ─── Admit Card Modal ────────────────────────────────────────── */}
       <AnimatePresence>
         {showAdmitModal && selectedApp && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative my-8 border border-slate-100"
+              className="bg-white rounded-3xl max-w-lg w-full p-6 border border-slate-100 shadow-2xl relative"
             >
               <button
                 onClick={() => setShowAdmitModal(false)}
-                className="absolute right-5 top-5 text-slate-400 hover:text-slate-600 p-2 rounded-full hover:bg-slate-100 cursor-pointer print:hidden"
+                className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 print:hidden"
               >
                 <X className="w-5 h-5" />
               </button>
+
               <AdmitCardPreview app={selectedApp} />
-              <div className="mt-6 flex justify-end gap-3 print:hidden">
+
+              <div className="mt-6 flex items-center justify-end gap-3 print:hidden">
                 <button
                   onClick={() => setShowAdmitModal(false)}
-                  className="px-5 py-2.5 text-xs font-bold text-slate-600 hover:bg-slate-100 rounded-xl cursor-pointer"
+                  className="px-4 py-2 border border-slate-200 text-slate-600 rounded-xl text-xs font-bold hover:bg-slate-50 cursor-pointer"
                 >
                   Close
                 </button>
                 <button
                   onClick={() => window.print()}
-                  className="px-6 py-2.5 text-xs font-extrabold bg-[#0956fc] text-white rounded-xl hover:bg-blue-700 transition-all flex items-center gap-2 cursor-pointer shadow-md"
+                  className="px-5 py-2 bg-[#0956fc] text-white rounded-xl text-xs font-bold hover:bg-blue-700 transition-colors flex items-center gap-2 shadow-md cursor-pointer"
                 >
-                  <Printer className="w-4 h-4" /> Print
+                  <Printer className="w-4 h-4" /> Print Card
                 </button>
               </div>
             </motion.div>

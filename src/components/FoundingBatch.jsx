@@ -20,298 +20,219 @@ import {
   CheckCircle,
   Trophy,
   Flame,
+  Zap,
+  Video,
+  Target,
+  Gift,
+  Users,
+  Calendar,
+  Shield,
+  Star,
+  Award,
+  BadgeCheck,
 } from "lucide-react";
 
-const EASE = [0.22, 1, 0.36, 1]; // same "expo-out" curve used across the site's loader — keeps motion feeling like one system
+// ─── Brand Tokens ──────────────────────────────────────────────────────────
+const BRAND_COLOR = "#0956fc";
+const BRAND_GRADIENT = "from-[#0956fc] to-blue-600";
+const EASE = [0.22, 1, 0.36, 1];
 
 const LEVEL_STYLES = {
   Foundation: {
-    bg: "bg-emerald-50 border border-emerald-200/60",
+    bg: "bg-emerald-50/80 border-emerald-200/60",
     text: "text-emerald-700",
     dot: "bg-emerald-500",
+    gradient: "from-emerald-500 to-emerald-600",
   },
   Beginner: {
-    bg: "bg-blue-50 border border-blue-200/60",
+    bg: "bg-blue-50/80 border-blue-200/60",
     text: "text-blue-700",
     dot: "bg-[#0956fc]",
+    gradient: "from-blue-500 to-blue-600",
   },
   Intermediate: {
-    bg: "bg-amber-50 border border-amber-200/60",
+    bg: "bg-amber-50/80 border-amber-200/60",
     text: "text-amber-700",
     dot: "bg-amber-500",
+    gradient: "from-amber-500 to-amber-600",
   },
   "Advanced Diploma": {
-    bg: "bg-purple-50 border border-purple-200/60",
+    bg: "bg-purple-50/80 border-purple-200/60",
     text: "text-purple-700",
     dot: "bg-purple-500",
+    gradient: "from-purple-500 to-purple-600",
+  },
+  Professional: {
+    bg: "bg-indigo-50/80 border-indigo-200/60",
+    text: "text-indigo-700",
+    dot: "bg-indigo-600",
+    gradient: "from-indigo-500 to-indigo-600",
   },
 };
 
-// All LIVE_COURSES except 'ai-productivity'
 const FOUNDING_COURSES = [
-  // {
-  //   id: "cit",
-  //   title: "Computer & IT Fundamentals (CIT)",
-  //   level: "Foundation",
-  //   duration: "2 Months",
-  //   mode: "Onsite",
-  //   admissionFee: "Rs. 999",
-  //   monthlyFee: "Rs. 0,000/mo",
-  //   image:
-  //     "https://ik.imagekit.io/swcurh0si/Certificate%20in%20Information%20Technology.png",
-  //   imageAlt: "Computer fundamentals and IT skills",
-  //   curriculum: [
-  //     "What is a Computer? — Parts & Functions",
-  //     "Input & Output Devices",
-  //     "Operating Systems — Windows 10/11 Basics",
-  //     "File Management & Folder Organization",
-  //     "MS Word — Typing, Formatting & Printing",
-  //     "MS Excel — Basic Formulas & Spreadsheets",
-  //     "MS PowerPoint — Slide Creation & Design",
-  //     "Internet Browsing & Safe Usage",
-  //     "Email Writing & Gmail Basics",
-  //     "Typing Speed & Accuracy Practice",
-  //     "Basic Networking & Wi-Fi Setup",
-  //     "Introduction to Programming Logic",
-  //     "Cyber Safety & Password Management",
-  //     "Basic Hardware Troubleshooting",
-  //     "Final Project & Presentation",
-  //   ],
-  // },
   {
     id: "ai-everyone",
     title: "AI for Everyone",
+    subtitle: "Python for AI, Data & Automation",
+    targetAudience: "For Beginners",
+    description:
+      "Understand AI, explore modern tools, and learn how Artificial Intelligence is transforming everyday life and work.",
     level: "Beginner",
     duration: "2 Months",
     mode: "Onsite",
-    admissionFee: "Rs. 999",
-    monthlyFee: "Rs. 0,000/mo",
+    admissionFee: "Rs. 1,999",
+    monthlyFee: "Rs. 0 (Free Tuition)",
     image: "https://ik.imagekit.io/swcurh0si/AI%20for%20Everyone.png",
-    imageAlt: "Artificial Intelligence for everyone",
+    imageAlt: "Artificial Intelligence for Everyone",
     curriculum: [
-      "What is Artificial Intelligence?",
-      "History of AI — From Turing to Today",
-      "Types of AI — Narrow, General & Super",
+      "What is Artificial Intelligence? (Core Concepts)",
+      "History of AI — From Turing to Generative AI",
+      "Types of AI — Narrow, General & Super Intelligence",
       "How Machine Learning Works (Simply Explained)",
-      "Introduction to Neural Networks",
-      "AI in Everyday Life — Phones, Netflix & More",
-      "Using ChatGPT, Gemini & Claude",
-      "AI for Image Generation — MidJourney & DALL-E",
-      "AI for Writing & Content Creation",
-      "AI Ethics — Bias, Privacy & Responsibility",
-      "Hands-on AI Tools Practice",
+      "Introduction to Python Logic for AI & Data",
+      "AI in Everyday Life — Search, Streaming & Automation",
+      "Hands-on with ChatGPT, Gemini & Claude",
+      "AI Image Generation — MidJourney & DALL-E Basics",
+      "Ethical AI — Bias, Data Privacy & Responsibility",
       "Career Paths in AI & Data Science",
       "Final Project: AI Solution Prototype",
     ],
   },
-
-  // {
-  //   id: "full-stack-web",
-  //   title: "Full Stack Web Development",
-  //   level: "Advanced Diploma",
-  //   duration: "2 Months",
-  //   mode: "Onsite",
-  //   admissionFee: "Rs. 999",
-  //   monthlyFee: "Rs. 0,000/mo",
-  //   image:
-  //     "https://ik.imagekit.io/swcurh0si/Full%20Stack%20Web%20Development.png",
-  //   imageAlt: "Full stack web development",
-  //   curriculum: [
-  //     "HTML5 — Structure, Semantic Tags & Forms",
-  //     "CSS3 — Box Model, Flexbox & Grid",
-  //     "Responsive Web Design & Media Queries",
-  //     "JavaScript Basics — Data Types & Control Flow",
-  //     "JavaScript ES6+ — Classes, Modules & Promises",
-  //     "React.js — Components, State & Props",
-  //     "React Hooks & Custom Hooks",
-  //     "Node.js Basics & NPM",
-  //     "Express.js — Routes, Middleware & Controllers",
-  //     "MongoDB & SQL Database Basics",
-  //     "REST API Design & Testing (Postman)",
-  //     "User Authentication — JWT & Sessions",
-  //     "Git & GitHub — Branching & Collaboration",
-  //     "Deployment — Vercel, Netlify & Railway",
-  //     "Capstone: Full-Stack Web Application",
-  //   ],
-  // },
   {
     id: "robotics-ai",
     title: "Robotics & AI Automation",
+    subtitle: "Hardware Meets Smart Intelligence",
+    targetAudience: "For Tech Enthusiasts & Engineers",
+    description:
+      "Build smart physical systems, microcontrollers, and autonomous robots powered by AI logic.",
     level: "Intermediate",
     duration: "2 Months",
     mode: "Onsite",
-    admissionFee: "Rs. 999",
-    monthlyFee: "Rs. 0,000/mo",
+    admissionFee: "Rs. 1,999",
+    monthlyFee: "Rs. 0 (Free Tuition)",
     image:
       "https://ik.imagekit.io/swcurh0si/Robotics,%20AI%20&%20Smart%20Systems.png",
-    imageAlt: "Robotics and AI automation",
+    imageAlt: "Robotics and AI Automation Training",
+    reelUrl: "https://youtube.com/shorts/ZE7Wi9R1ILs?si=PHOmk0QdiQ93qvke",
+    featuredBadge: "Trending Hands-On",
     curriculum: [
       "Introduction to Robotics — History & Types",
-      "Basic Electronics — Voltage, Current & Resistance",
-      "Breadboard & Circuit Building",
-      "Arduino Uno — Setup & First Program",
-      "Digital & Analog Input/Output",
-      "LED, Buzzer & Motor Control",
-      "Ultrasonic, IR & Temperature Sensors",
-      "Python Programming Basics for Automation",
-      "Robotic Process Automation (RPA) — UiPath Basics",
-      "IoT — Connecting Devices to the Internet",
-      "AI Integration in Physical Systems",
-      "Line Follower & Obstacle Avoidance Robots",
-      "Building Autonomous Systems",
-      "Capstone: Robotics Automation Project",
+      "Basic Electronics — Voltage, Current & Circuit Design",
+      "Arduino Uno Hardware & C/C++ Programming",
+      "Sensors Integration — Ultrasonic, IR, Temperature & Motion",
+      "Motor Controls — Servo, Stepper & DC Motors",
+      "Python Programming Basics for Hardware Automation",
+      "Robotic Process Automation (RPA) Concepts",
+      "IoT Protocols — Connecting Robots to the Web",
+      "Integrating AI & Computer Vision Models",
+      "Building Autonomous Line Follower & Obstacle Avoidance Bots",
+      "Capstone Project: Fully Functional Smart Autonomous System",
     ],
   },
   {
     id: "digital-marketing",
     title: "AI-Powered Digital Marketing",
+    subtitle: "Modern Brand Growth Strategies",
+    targetAudience: "For Marketers & Business Owners",
+    description:
+      "Scale marketing campaigns using AI tools, SEO, paid ads, content generation, and social strategies.",
     level: "Intermediate",
     duration: "2 Months",
     mode: "Onsite",
-    admissionFee: "Rs. 999",
-    monthlyFee: "Rs. 0,000/mo",
+    admissionFee: "Rs. 1,999",
+    monthlyFee: "Rs. 0 (Free Tuition)",
     image:
       "https://ik.imagekit.io/swcurh0si/AI-Powered%20Digital%20Marketing.png",
-    imageAlt: "Digital marketing and personal branding",
+    imageAlt: "AI-Powered Digital Marketing",
     curriculum: [
-      "What is Digital Marketing?",
       "Marketing Fundamentals & Buyer Psychology",
-      "SEO Basics — Keywords, On-Page & Off-Page",
-      "Google Search Console & Analytics",
-      "Facebook & Instagram Marketing",
-      "TikTok & YouTube Marketing",
-      "Content Writing & Copywriting",
-      "Canva for Social Media Graphics",
-      "Google Ads — Search & Display Campaigns",
-      "Facebook Ads Manager — Setup & Targeting",
-      "Email Marketing with Mailchimp",
-      "WhatsApp Marketing Basics",
-      "Building a Personal Brand on LinkedIn",
-      "Fiverr & Upwork Profile for Marketers",
-      "Final Project: Full Digital Campaign",
+      "SEO Basics — Keywords, On-Page & Technical SEO",
+      "AI Content Generation & Copywriting Strategies",
+      "Facebook & Instagram Ads — Setup, Pixel & Retargeting",
+      "Google Search & Video Ad Campaigns",
+      "Canva & AI Graphics for Social Media",
+      "Email & WhatsApp Marketing Automation",
+      "LinkedIn Personal Branding & Client Outreach",
+      "Freelancing Profiles (Fiverr & Upwork Setup)",
+      "Final Project: Complete Digital Campaign",
     ],
   },
   {
     id: "mern",
     title: "Modern MERN Stack Engineering",
+    subtitle: "Full-Stack Web Application Development",
+    targetAudience: "For Aspiring Web Developers",
+    description:
+      "Master MongoDB, Express.js, React.js, and Node.js to build scalable, production-ready web apps.",
     level: "Advanced Diploma",
     duration: "2 Months",
     mode: "Onsite",
-    admissionFee: "Rs. 999",
-    monthlyFee: "Rs. 0,000/mo",
+    admissionFee: "Rs. 1,999",
+    monthlyFee: "Rs. 0 (Free Tuition)",
     image: "https://ik.imagekit.io/swcurh0si/MERN%20Stack.png",
-    imageAlt: "MERN stack web development",
+    imageAlt: "MERN Stack Engineering",
     curriculum: [
-      "HTML5 Basics — Tags, Elements & Structure",
-      "CSS3 — Styling, Flexbox & Grid",
-      "Responsive Design & Bootstrap",
-      "JavaScript Basics — Variables, Loops & Functions",
-      "JavaScript ES6+ — Arrow Functions, Async/Await",
-      "DOM Manipulation & Events",
-      "React.js — JSX, Components & Props",
-      "React Hooks — useState, useEffect & useContext",
-      "React Router & Navigation",
-      "Node.js — Modules, File System & HTTP",
-      "Express.js — REST API Development",
-      "MongoDB — Collections, Queries & Aggregation",
-      "Mongoose ODM & Schema Design",
-      "JWT Authentication & Security",
-      "Git, GitHub & Version Control",
-      "Deployment on Vercel & Render",
-      "Capstone: Full-Stack MERN Application",
+      "HTML5, Modern CSS3, Flexbox & CSS Grid",
+      "JavaScript ES6+ Concepts & DOM Manipulation",
+      "React.js — Components, JSX, Props & State",
+      "React Hooks (useState, useEffect, useContext)",
+      "Node.js Core Architecture & Express.js APIs",
+      "MongoDB Database Design & Mongoose ODM",
+      "JWT Authentication, Security & REST APIs",
+      "Git, GitHub Version Control & Deployment",
+      "Capstone: Full-Stack MERN Web Application",
     ],
   },
   {
     id: "ms-office",
     title: "Microsoft Office Professional",
+    subtitle: "Essential Workplace Productivity",
+    targetAudience: "For Students & Office Professionals",
+    description:
+      "Master Excel formulas, professional Word documentation, and powerful PowerPoint presentations.",
     level: "Foundation",
     duration: "2 Months",
     mode: "Onsite",
-    admissionFee: "Rs. 999",
-    monthlyFee: "Rs. 0,000/mo",
+    admissionFee: "Rs. 1,999",
+    monthlyFee: "Rs. 0 (Free Tuition)",
     image:
       "https://ik.imagekit.io/swcurh0si/ChatGPT%20Image%20Aug%2012,%202026,%2007_13_18%20PM.png",
-    imageAlt: "Microsoft Office professional training",
+    imageAlt: "Microsoft Office Professional Training",
     curriculum: [
-      "MS Word — Typing, Formatting & Page Layout",
-      "MS Word — Tables, Headers & Mail Merge",
-      "MS Excel — Worksheets, Rows & Columns",
-      "MS Excel — Formulas (SUM, IF, VLOOKUP)",
-      "MS Excel — Charts, Graphs & Conditional Formatting",
-      "MS Excel — Pivot Tables & Data Analysis",
-      "MS PowerPoint — Slide Design & Themes",
-      "MS PowerPoint — Animations & Transitions",
-      "MS Outlook — Email, Calendar & Contacts",
-      "MS Teams — Meetings & Collaboration",
-      "Office Keyboard Shortcuts & Productivity Tips",
-      "Creating Professional Reports & Proposals",
-      "Final Project & Certification Assessment",
+      "MS Word — Formatting, Page Layouts & Mail Merge",
+      "MS Excel — Spreadsheets, Functions (SUM, IF, VLOOKUP)",
+      "MS Excel — Pivot Tables, Charts & Data Analysis",
+      "MS PowerPoint — Slide Design, Animations & Storytelling",
+      "MS Outlook & Teams for Enterprise Collaboration",
+      "Productivity Shortcuts & Document Automation",
+      "Final Assessment & Practical Workstation Test",
     ],
   },
   {
     id: "graphic-design-live",
-    title: "Graphic Designing & Visual Communication",
+    title: "Graphic Design & Visual Communication",
+    subtitle: "Creative Branding & Visual Media",
+    targetAudience: "For Designers & Visual Artists",
+    description:
+      "Learn Adobe Photoshop, Illustrator, color theory, typography, and brand identity design.",
     level: "Intermediate",
     duration: "2 Months",
     mode: "Onsite",
-    admissionFee: "Rs. 999",
-    monthlyFee: "Rs. 0,000/mo",
+    admissionFee: "Rs. 1,999",
+    monthlyFee: "Rs. 0 (Free Tuition)",
     image: "https://ik.imagekit.io/swcurh0si/Graphic%20Designing.png",
-    imageAlt: "Graphic designing and visual communication",
+    imageAlt: "Graphic Design and Visual Communication",
     curriculum: [
-      "Design Principles — Balance, Contrast & Alignment",
-      "Color Theory — Color Wheel, Palettes & Psychology",
-      "Typography — Fonts, Hierarchy & Readability",
-      "Adobe Photoshop — Interface & Basic Tools",
-      "Photoshop — Photo Editing & Retouching",
-      "Photoshop — Masking, Layers & Blending",
-      "Adobe Illustrator — Vector Graphics Basics",
-      "Illustrator — Shapes, Paths & Pen Tool",
-      "Logo Design — Concepts & Process",
-      "Brand Identity — Business Cards & Letterheads",
-      "Social Media Post & Story Design",
-      "Poster & Flyer Design",
-      "Print Design — Brochures & Packaging Basics",
-      "Canva for Quick Designs",
-      "Portfolio Development & Presentation",
-      "Final Design Project",
+      "Design Principles — Balance, Contrast, Alignment",
+      "Color Theory & Professional Typography",
+      "Adobe Photoshop — Editing, Masking & Layers",
+      "Adobe Illustrator — Vector Graphics & Pen Tool",
+      "Logo Design & Brand Identity Systems",
+      "Social Media Graphics, Flyers & Banner Design",
+      "Portfolio Building & Client Presentation",
     ],
   },
-  // {
-  //   id: "pro-english",
-  //   title: "Professional English for Career & Freelancing",
-  //   level: "Beginner",
-  //   duration: "2 Months",
-  //   mode: "Onsite",
-  //   admissionFee: "Rs. 999",
-  //   monthlyFee: "Rs. 0,000/mo",
-  //   image:
-  //     "https://images.unsplash.com/photo-1521791136064-7986c2920216?w=600&q=80&fit=crop",
-  //   imageAlt: "Professional English communication",
-  //   curriculum: [
-  //     "— Phase 1: Foundation (Month 1–4) —",
-  //     "English Alphabet, Pronunciation & Sounds",
-  //     "Basic Grammar — Tenses, Nouns & Verbs",
-  //     "Everyday Vocabulary Building",
-  //     "Simple Sentence Formation",
-  //     "Listening Skills & Comprehension",
-  //     "Basic Conversation Practice",
-  //     "— Phase 2: Intermediate (Month 5–8) —",
-  //     "Advanced Grammar — Conditionals & Passive Voice",
-  //     "Professional Email Writing",
-  //     "Business Communication & Formal Language",
-  //     "Public Speaking Basics",
-  //     "Interview Preparation & Mock Sessions",
-  //     "Group Discussion & Presentation Skills",
-  //     "— Phase 3: Professional (Month 9–12) —",
-  //     "Client Communication for Freelancers",
-  //     "Fiverr & Upwork Proposal Writing",
-  //     "Negotiation & Persuasion in English",
-  //     "Workplace English & Meeting Etiquette",
-  //     "Confidence Building & Fluency Practice",
-  //     "Final Presentation & Certification Assessment",
-  //   ],
-  // },
 ];
 
 const container = {
@@ -329,7 +250,7 @@ const cardAnim = {
   },
 };
 
-// ── Count-up number (fires once, when scrolled into view) ──────────────────
+// ─── CountUp ──────────────────────────────────────────────────────────────
 function CountUp({ value, suffix = "", duration = 1.4 }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-40px" });
@@ -354,7 +275,7 @@ function CountUp({ value, suffix = "", duration = 1.4 }) {
   );
 }
 
-// ── Soft "alive" status dot — smooth scale+fade instead of the harsh default ping ──
+// ─── PulseDot ─────────────────────────────────────────────────────────────
 function PulseDot({ className = "" }) {
   const reduceMotion = useReducedMotion();
   return (
@@ -371,7 +292,7 @@ function PulseDot({ className = "" }) {
   );
 }
 
-// ── Curriculum Modal ─────────────────────────────────────────────────────
+// ─── Curriculum Modal ─────────────────────────────────────────────────────
 function CurriculumModal({ course, onClose, onApply }) {
   const reduceMotion = useReducedMotion();
 
@@ -392,17 +313,7 @@ function CurriculumModal({ course, onClose, onApply }) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.25, ease: EASE }}
-          style={{
-            position: "fixed",
-            inset: 0,
-            zIndex: 99999,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "1rem",
-            background: "rgba(15, 23, 42, 0.65)",
-            backdropFilter: "blur(8px)",
-          }}
+          className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-md"
           onClick={onClose}
         >
           <motion.div
@@ -412,10 +323,10 @@ function CurriculumModal({ course, onClose, onApply }) {
             exit={{ opacity: 0, scale: 0.96, y: 10 }}
             transition={{ duration: reduceMotion ? 0.15 : 0.35, ease: EASE }}
             onClick={(e) => e.stopPropagation()}
-            className="relative bg-white rounded-2xl shadow-2xl border border-slate-200/80 max-w-lg w-full max-h-[85vh] overflow-hidden flex flex-col"
+            className="relative bg-white rounded-2xl shadow-2xl shadow-blue-950/30 border border-slate-200/80 max-w-lg w-full max-h-[85vh] overflow-hidden flex flex-col"
           >
-            {/* Header */}
-            <div className="relative flex-shrink-0 bg-[#0956fc] px-6 py-5 overflow-hidden">
+            {/* Header with Brand Gradient */}
+            <div className="relative flex-shrink-0 bg-gradient-to-r from-[#0956fc] to-blue-600 px-6 py-5 overflow-hidden">
               <motion.div
                 aria-hidden
                 className="absolute -right-8 -top-10 w-40 h-40 rounded-full bg-white/10 blur-2xl pointer-events-none"
@@ -428,10 +339,13 @@ function CurriculumModal({ course, onClose, onApply }) {
               />
               <div className="relative flex items-center justify-between gap-4">
                 <div>
+                  <span className="inline-block text-[10px] uppercase font-extrabold tracking-wider bg-white/20 text-white px-2.5 py-0.5 rounded-full mb-1.5">
+                    {course.targetAudience}
+                  </span>
                   <h3 className="font-space font-extrabold text-white text-lg leading-snug">
                     {course.title}
                   </h3>
-                  <p className="text-blue-100 text-xs font-semibold mt-1">
+                  <p className="text-blue-100 text-xs font-semibold mt-0.5">
                     {course.level} &bull; {course.duration}
                   </p>
                 </div>
@@ -444,35 +358,57 @@ function CurriculumModal({ course, onClose, onApply }) {
               </div>
             </div>
 
-            {/* Curriculum List */}
-            <div className="p-6 overflow-y-auto flex-1 min-h-0 bg-white">
-              <p className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-4">
-                Course Curriculum
-              </p>
-              <ul className="list-none p-0 m-0 flex flex-col gap-3">
-                {course.curriculum?.map((item, i) => (
-                  <motion.li
-                    key={i}
-                    initial={{ opacity: 0, x: -8 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{
-                      delay: reduceMotion ? 0 : Math.min(i * 0.025, 0.5),
-                      duration: 0.3,
-                      ease: EASE,
-                    }}
-                    className="flex items-start gap-3"
-                  >
-                    <CheckCircle className="w-4 h-4 text-[#0956fc] mt-0.5 flex-shrink-0" />
-                    <span className="text-slate-700 text-sm font-medium leading-snug">
-                      {item}
-                    </span>
-                  </motion.li>
-                ))}
-              </ul>
+            {/* Body */}
+            <div className="p-6 overflow-y-auto flex-1 min-h-0 bg-white space-y-4">
+              <div className="bg-blue-50/80 border border-blue-100 rounded-xl p-3 text-xs text-slate-700 leading-relaxed">
+                <span className="font-bold text-[#0956fc] block mb-0.5">
+                  Course Overview
+                </span>
+                {course.description}
+              </div>
+
+              {course.reelUrl && (
+                <a
+                  href={course.reelUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 bg-red-50 hover:bg-red-100 border border-red-200/80 rounded-xl p-3 text-xs font-bold text-red-600 transition-colors group"
+                >
+                  <Video className="w-4 h-4 text-red-600 flex-shrink-0" />
+                  <span>Watch Course Teaser Reel on YouTube</span>
+                  <ArrowRight className="w-3.5 h-3.5 ml-auto text-red-600 group-hover:translate-x-1 transition-transform" />
+                </a>
+              )}
+
+              <div>
+                <p className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-3">
+                  Course Curriculum
+                </p>
+                <ul className="list-none p-0 m-0 flex flex-col gap-2.5">
+                  {course.curriculum?.map((item, i) => (
+                    <motion.li
+                      key={i}
+                      initial={{ opacity: 0, x: -8 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{
+                        delay: reduceMotion ? 0 : Math.min(i * 0.025, 0.5),
+                        duration: 0.3,
+                        ease: EASE,
+                      }}
+                      className="flex items-start gap-2.5"
+                    >
+                      <CheckCircle className="w-4 h-4 text-[#0956fc] mt-0.5 flex-shrink-0" />
+                      <span className="text-slate-700 text-sm font-medium leading-snug">
+                        {item}
+                      </span>
+                    </motion.li>
+                  ))}
+                </ul>
+              </div>
             </div>
 
             {/* Footer */}
-            <div className="flex-shrink-0 border-t border-slate-200 px-6 py-4 flex gap-3 bg-slate-50">
+            <div className="flex-shrink-0 border-t border-slate-200 px-6 py-4 flex gap-3 bg-slate-50/80">
               <button
                 onClick={onClose}
                 className="flex-1 bg-white hover:bg-slate-100 text-slate-700 font-bold text-sm py-2.5 px-4 rounded-xl border border-slate-300 transition-colors cursor-pointer"
@@ -484,7 +420,7 @@ function CurriculumModal({ course, onClose, onApply }) {
                   onClose();
                   if (onApply) onApply();
                 }}
-                className="flex-1 bg-[#0956fc] hover:bg-blue-700 text-white font-bold text-sm py-2.5 px-4 rounded-xl border-none cursor-pointer flex items-center justify-center gap-2 shadow-md shadow-blue-500/20 transition-all"
+                className="flex-1 bg-[#0956fc] hover:bg-blue-700 text-white font-bold text-sm py-2.5 px-4 rounded-xl border-none cursor-pointer flex items-center justify-center gap-2 shadow-md shadow-blue-500/25 hover:shadow-blue-500/40 transition-all"
               >
                 Enroll Now <ArrowRight className="w-4 h-4" />
               </button>
@@ -497,12 +433,13 @@ function CurriculumModal({ course, onClose, onApply }) {
   );
 }
 
-// ── Course Card ──────────────────────────────────────────────────────────
+// ─── Course Card ──────────────────────────────────────────────────────────
 function CourseCard({ course, onViewCurriculum, onApply }) {
   const levelStyle = LEVEL_STYLES[course.level] || {
     bg: "bg-slate-100 border border-slate-200",
     text: "text-slate-700",
     dot: "bg-slate-500",
+    gradient: "from-slate-500 to-slate-600",
   };
 
   return (
@@ -510,12 +447,30 @@ function CourseCard({ course, onViewCurriculum, onApply }) {
       variants={cardAnim}
       whileHover={{ y: -8 }}
       transition={{ type: "spring", stiffness: 300, damping: 24 }}
-      className="group relative bg-white rounded-2xl border border-slate-200/80 hover:border-[#0956fc] overflow-hidden flex flex-col shadow-sm hover:shadow-xl hover:shadow-blue-500/10 transition-[box-shadow,border-color] duration-300"
+      className="group relative bg-white/80 backdrop-blur-xl rounded-2xl border border-white/30 hover:border-[#0956fc]/40 overflow-hidden flex flex-col shadow-lg shadow-slate-200/30 hover:shadow-2xl hover:shadow-blue-500/20 transition-all duration-300"
     >
-      {/* Admissions Open badge */}
-      <div className="absolute top-3 right-3 z-10 flex items-center gap-1.5 bg-emerald-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-md">
-        <PulseDot />
-        Admissions Open
+      {/* Animated Gradient Border Glow */}
+      <div
+        className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"
+        style={{
+          background: `radial-gradient(circle at 50% 0%, rgba(9,86,252,0.15), transparent 70%)`,
+        }}
+      />
+
+      {/* Shimmer Sweep */}
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out pointer-events-none rounded-2xl" />
+
+      {/* Badges */}
+      <div className="absolute top-3 right-3 z-10 flex flex-col items-end gap-1.5">
+        <div className="flex items-center gap-1.5 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-lg shadow-emerald-500/30">
+          <PulseDot />
+          Admissions Open
+        </div>
+        {course.featuredBadge && (
+          <div className="bg-gradient-to-r from-amber-400 to-amber-500 text-white text-[9px] font-extrabold uppercase px-2.5 py-0.5 rounded-full shadow-lg shadow-amber-500/20">
+            {course.featuredBadge}
+          </div>
+        )}
       </div>
 
       {/* Image */}
@@ -526,39 +481,61 @@ function CourseCard({ course, onViewCurriculum, onApply }) {
           className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
           loading="lazy"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-slate-950/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300" />
+
+        {/* Bottom Overlay */}
+        <div className="absolute bottom-2.5 left-3 right-3 flex items-center justify-between text-white">
+          <span className="text-[10px] font-bold bg-black/50 backdrop-blur-md px-2.5 py-0.5 rounded-full flex items-center gap-1.5 border border-white/10">
+            <Target className="w-3 h-3 text-blue-400" />
+            {course.targetAudience}
+          </span>
+
+          {course.reelUrl && (
+            <a
+              href={course.reelUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="text-[10px] font-bold bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-2.5 py-0.5 rounded-full flex items-center gap-1 transition-colors shadow-sm border border-white/10"
+            >
+              <Video className="w-3 h-3" />
+              Watch Reel
+            </a>
+          )}
+        </div>
       </div>
 
       {/* Content */}
-      <div className="p-5 flex flex-col flex-1 gap-3.5">
-        {/* Level + Title */}
+      <div className="p-5 flex flex-col flex-1 gap-3 relative z-10">
         <div>
-          <span
-            className={`${levelStyle.bg} ${levelStyle.text} text-[10px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap inline-flex items-center gap-1.5 mb-2`}
-          >
-            <span className={`w-1.5 h-1.5 rounded-full ${levelStyle.dot}`} />
-            {course.level}
-          </span>
+          <div className="flex items-center justify-between gap-2 mb-2">
+            <span
+              className={`${levelStyle.bg} ${levelStyle.text} text-[10px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap inline-flex items-center gap-1.5 border`}
+            >
+              <span className={`w-1.5 h-1.5 rounded-full ${levelStyle.dot}`} />
+              {course.level}
+            </span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider bg-slate-100 px-2 py-0.5 rounded-full">
+              {course.duration}
+            </span>
+          </div>
+
           <h3 className="text-slate-900 font-space font-extrabold text-lg leading-snug group-hover:text-[#0956fc] transition-colors">
             {course.title}
           </h3>
+          <p className="text-slate-500 text-xs font-semibold mt-0.5">
+            {course.subtitle}
+          </p>
         </div>
-        {/* Info Grid */}
-        <div className="grid grid-cols-2 gap-2">
-          <div className="flex items-center gap-2 bg-slate-50 border border-slate-100 rounded-xl px-2.5 py-2">
-            <Clock className="w-3.5 h-3.5 text-[#0956fc] flex-shrink-0" />
-            <div>
-              <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">
-                Duration
-              </p>
-              <p className="text-xs font-extrabold text-slate-800">
-                {course.duration}
-              </p>
-            </div>
-          </div>
 
-          <div className="flex items-center gap-2 bg-slate-50 border border-slate-100 rounded-xl px-2.5 py-2">
-            <Monitor className="w-3.5 h-3.5 text-[#0956fc] flex-shrink-0" />
+        <p className="text-slate-600 text-xs leading-relaxed line-clamp-2">
+          {course.description}
+        </p>
+
+        {/* Info Grid */}
+        <div className="grid grid-cols-2 gap-2 pt-1">
+          <div className="flex items-center gap-2 bg-slate-50/80 backdrop-blur-sm border border-slate-100 rounded-xl px-2.5 py-2 group-hover:border-blue-100 transition-colors">
+            <Clock className="w-3.5 h-3.5 text-[#0956fc] flex-shrink-0" />
             <div>
               <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">
                 Mode
@@ -569,40 +546,48 @@ function CourseCard({ course, onViewCurriculum, onApply }) {
             </div>
           </div>
 
-          <div className="flex items-center gap-2 bg-amber-50 border border-amber-200/60 rounded-xl px-2.5 py-2">
+          <div className="flex items-center gap-2 bg-slate-50/80 backdrop-blur-sm border border-slate-100 rounded-xl px-2.5 py-2 group-hover:border-blue-100 transition-colors">
+            <Monitor className="w-3.5 h-3.5 text-[#0956fc] flex-shrink-0" />
+            <div>
+              <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">
+                Classes
+              </p>
+              <p className="text-xs font-extrabold text-slate-800">3x / Week</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 bg-amber-50/80 backdrop-blur-sm border border-amber-200/60 rounded-xl px-2.5 py-2 group-hover:border-amber-300 transition-colors">
             <Sparkles className="w-3.5 h-3.5 text-amber-600 flex-shrink-0" />
             <div>
               <p className="text-[9px] text-amber-600/80 font-bold uppercase tracking-wider">
                 Reg. Fee
               </p>
-              <p className="text-xs font-extrabold text-amber-800">
-                PKR 1,999 ONLY
-              </p>
+              <p className="text-xs font-extrabold text-amber-800">PKR 1,999</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 bg-slate-50 border border-slate-100 rounded-xl px-2.5 py-2">
-            <DollarSign className="w-3.5 h-3.5 text-[#0956fc] flex-shrink-0" />
+          <div className="flex items-center gap-2 bg-emerald-50/80 backdrop-blur-sm border border-emerald-200/60 rounded-xl px-2.5 py-2 group-hover:border-emerald-300 transition-colors">
+            <Gift className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
             <div>
-              <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">
-                Monthly Fee
+              <p className="text-[9px] text-emerald-600/80 font-bold uppercase tracking-wider">
+                Tuition
               </p>
-              <p className="text-xs font-extrabold text-slate-800">
-                {course.monthlyFee}
+              <p className="text-xs font-extrabold text-emerald-700">
+                100% FREE
               </p>
             </div>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-2.5 pt-2 mt-auto relative z-20">
+        <div className="flex items-center gap-2.5 pt-2 mt-auto">
           <button
             type="button"
             onClick={(e) => {
               e.stopPropagation();
               onViewCurriculum(course);
             }}
-            className="flex-1 flex items-center justify-center gap-1.5 border border-slate-200 hover:border-[#0956fc] bg-white text-slate-700 hover:text-[#0956fc] font-bold text-xs py-2.5 rounded-xl hover:bg-blue-50/50 transition-all cursor-pointer"
+            className="flex-1 flex items-center justify-center gap-1.5 border border-slate-200 hover:border-[#0956fc] bg-white/50 backdrop-blur-sm text-slate-700 hover:text-[#0956fc] font-bold text-xs py-2.5 rounded-xl hover:bg-blue-50/50 transition-all cursor-pointer"
           >
             <BookOpen className="w-3.5 h-3.5 text-[#0956fc]" />
             Curriculum
@@ -613,7 +598,7 @@ function CourseCard({ course, onViewCurriculum, onApply }) {
               e.stopPropagation();
               if (onApply) onApply();
             }}
-            className="relative flex-1 flex items-center justify-center gap-1.5 bg-[#0956fc] hover:bg-blue-700 text-white font-bold text-xs py-2.5 rounded-xl shadow-sm shadow-blue-500/20 hover:shadow-md transition-all cursor-pointer overflow-hidden"
+            className="relative flex-1 flex items-center justify-center gap-1.5 bg-gradient-to-r from-[#0956fc] to-blue-600 hover:from-blue-700 hover:to-blue-700 text-white font-bold text-xs py-2.5 rounded-xl shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all cursor-pointer overflow-hidden"
           >
             <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out bg-gradient-to-r from-transparent via-white/25 to-transparent" />
             <span className="relative flex items-center gap-1.5">
@@ -626,7 +611,7 @@ function CourseCard({ course, onViewCurriculum, onApply }) {
   );
 }
 
-// ── Main Section ─────────────────────────────────────────────────────────
+// ─── Main Component ──────────────────────────────────────────────────────
 export default function FoundingBatch() {
   const [selectedCourse, setSelectedCourse] = useState(null);
   const navigate = useNavigate();
@@ -636,10 +621,14 @@ export default function FoundingBatch() {
 
   return (
     <section
-      className="relative py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-slate-50 border-b border-slate-200/60 overflow-hidden"
+      className="relative py-20 sm:py-28 px-4 sm:px-6 lg:px-8 overflow-hidden"
+      style={{
+        background:
+          "linear-gradient(135deg, #f8faff 0%, #eef2ff 40%, #f5f3ff 100%)",
+      }}
       id="founding-batch"
     >
-      {/* Background ambient light blobs — soft breathing, matches the loader's motion language */}
+      {/* Decorative Orbs */}
       <motion.div
         aria-hidden
         className="absolute top-0 left-1/4 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl pointer-events-none"
@@ -657,6 +646,7 @@ export default function FoundingBatch() {
           delay: 0.8,
         }}
       />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-indigo-400/5 rounded-full blur-3xl pointer-events-none animate-pulse" />
 
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Header */}
@@ -665,16 +655,14 @@ export default function FoundingBatch() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
           transition={{ duration: 0.6, ease: EASE }}
-          className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12"
+          className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-14"
         >
           <div>
-            {/* Status Pill */}
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 border border-blue-200/80 text-[#0956fc] mb-3">
+            <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-extrabold bg-blue-50 border border-blue-200/80 text-[#0956fc] mb-3 shadow-sm">
               <Sparkles className="w-3.5 h-3.5 animate-pulse" />
-              Admissions Open · 2026
+              START YOUR JOURNEY — FOUNDING BATCH 2026
             </span>
 
-            {/* Main Heading */}
             <h2 className="font-space font-black text-3xl sm:text-4xl md:text-5xl text-slate-900 tracking-tight leading-[1.15]">
               Founding Batch —{" "}
               <span className="bg-gradient-to-r from-[#0956fc] to-blue-600 bg-clip-text text-transparent">
@@ -682,34 +670,31 @@ export default function FoundingBatch() {
               </span>
             </h2>
 
-            {/* Subtitle */}
-            <p className="text-slate-600 mt-3 max-w-xl text-sm sm:text-base leading-relaxed font-normal">
-              Kick-start your tech career with our inaugural cohort. Enroll in
-              industry-focused programs with{" "}
-              <span className="font-semibold text-slate-800">
-                FREE 2 Months Course
-              </span>{" "}
-              & Onsite learning.
+            <p className="text-slate-600 mt-3 max-w-2xl text-sm sm:text-base leading-relaxed font-normal">
+              Learn future-ready skills with{" "}
+              <span className="font-bold text-[#0956fc]">
+                100% free tuition for our first 2-month Founding Batch
+              </span>
+              . Only Rs. 1,999 one-time registration fee applies.
             </p>
           </div>
 
-          {/* Stats chips */}
-          <div className="flex flex-wrap gap-3 sm:flex-col sm:items-end">
-            <div className="flex items-center gap-2 bg-white border border-slate-200/80 text-[#0956fc] text-xs font-extrabold px-3.5 py-1.5 rounded-full shadow-sm">
+          <div className="flex flex-wrap lg:flex-col lg:items-end gap-2.5">
+            <div className="flex items-center gap-2 bg-white/80 backdrop-blur-md border border-slate-200/80 text-[#0956fc] text-xs font-extrabold px-4 py-1.5 rounded-full shadow-sm hover:shadow-md transition-shadow">
               <Trophy className="w-3.5 h-3.5 text-amber-500" />
               <CountUp
                 value={FOUNDING_COURSES.length}
-                suffix=" Programs Available"
+                suffix=" Specialized Programs"
               />
             </div>
-            <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200/60 text-emerald-800 text-xs font-extrabold px-3.5 py-1.5 rounded-full shadow-sm">
-              <Flame className="w-3.5 h-3.5 text-orange-500" />
-              Limited Seats — Apply Now
+            <div className="flex items-center gap-2 bg-emerald-50/80 backdrop-blur-sm border border-emerald-200/60 text-emerald-800 text-xs font-extrabold px-4 py-1.5 rounded-full shadow-sm">
+              <Flame className="w-3.5 h-3.5 text-orange-500" />1 Workshop + 3
+              Classes Weekly
             </div>
           </div>
         </motion.div>
 
-        {/* Course Grid */}
+        {/* Grid */}
         <motion.div
           variants={container}
           initial="hidden"
@@ -726,9 +711,36 @@ export default function FoundingBatch() {
             />
           ))}
         </motion.div>
+
+        {/* CTA Banner */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="mt-12 p-6 sm:p-8 bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 rounded-3xl text-white flex flex-col sm:flex-row items-center justify-between gap-6 shadow-2xl shadow-blue-950/30 border border-blue-900/40"
+        >
+          <div className="space-y-1 text-center sm:text-left">
+            <h4 className="font-space font-bold text-lg sm:text-xl flex items-center justify-center sm:justify-start gap-2">
+              <Zap className="w-5 h-5 text-amber-400 fill-amber-400" />
+              Ready to Lock Your Seat for 2026?
+            </h4>
+            <p className="text-slate-300 text-xs sm:text-sm">
+              Limited slots available for hands-on onsite batch. Apply before
+              seats fill up.
+            </p>
+          </div>
+          <button
+            onClick={handleApply}
+            className="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-[#0956fc] to-blue-600 hover:from-blue-700 hover:to-blue-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all flex items-center justify-center gap-2 cursor-pointer flex-shrink-0 group"
+          >
+            <span>Apply for Founding Batch</span>
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          </button>
+        </motion.div>
       </div>
 
-      {/* Curriculum Modal */}
+      {/* Modal */}
       <CurriculumModal
         course={selectedCourse}
         onClose={() => setSelectedCourse(null)}

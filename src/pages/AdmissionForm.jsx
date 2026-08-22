@@ -47,52 +47,129 @@ import {
   Cpu,
   FileSpreadsheet,
   Languages,
+  Zap,
+  Gift,
+  Rocket,
 } from "lucide-react";
 
-const COURSES = [
+// ─── FOUNDING BATCH COURSES (Free 2-Month) ────────────────
+const FOUNDING_COURSES = [
   {
     id: "ai-everyone",
     icon: Sparkles,
     title: "AI for Everyone",
     desc: "AI Basics, Machine Learning & Everyday AI Tools",
+    type: "founding",
   },
   {
     id: "robotics",
     icon: Cpu,
     title: "Robotics & AI Automation",
     desc: "Arduino, Sensors, RPA & Autonomous Systems",
+    type: "founding",
   },
   {
     id: "ai-digital-marketing",
     icon: Megaphone,
     title: "AI-Powered Digital Marketing",
     desc: "AI Tools, Digital Marketing, SEO & Social Media",
+    type: "founding",
   },
   {
     id: "mern",
     icon: Server,
     title: "Modern MERN Stack Engineering",
     desc: "MongoDB, Express.js, React.js & Node.js",
+    type: "founding",
   },
   {
     id: "ms-office",
     icon: FileSpreadsheet,
     title: "Microsoft Office Professional",
     desc: "Word, Excel, PowerPoint & Professional Office Skills",
+    type: "founding",
   },
   {
     id: "graphic-design",
     icon: PenTool,
     title: "Graphic Designing & Visual Communication",
     desc: "Photoshop, Illustrator, Branding & Typography",
+    type: "founding",
   },
 ];
 
+// ─── CAREER PROGRAMS (Professional Courses) ─────────────────
+const CAREER_PROGRAMS = [
+  {
+    id: "ai-everyone",
+    icon: Sparkles,
+    title: "Python for AI, Data & Automation",
+    desc: "Understand Artificial Intelligence from the ground up...",
+    type: "career",
+  },
+  {
+    id: "ai-productivity",
+    icon: Zap,
+    title: "AI Productivity & Prompt Engineering",
+    desc: "Master AI tools, prompt engineering & productivity workflows",
+    type: "career",
+  },
+  {
+    id: "digital-marketing",
+    icon: Megaphone,
+    title: "AI-Powered Digital Marketing",
+    desc: "AI Tools, Digital Marketing, SEO & Social Media",
+    type: "career",
+  },
+  {
+    id: "mern",
+    icon: Server,
+    title: "Modern MERN Stack Engineering",
+    desc: "MongoDB, Express.js, React.js & Node.js",
+    type: "career",
+  },
+  {
+    id: "full-stack-web",
+    icon: Globe,
+    title: "Full Stack Web Development",
+    desc: "Frontend, Backend, Database & Deployment",
+    type: "career",
+  },
+  {
+    id: "robotics-ai",
+    icon: Cpu,
+    title: "Robotics & AI Automation",
+    desc: "Arduino, Sensors, RPA & Autonomous Systems",
+    type: "career",
+  },
+  {
+    id: "graphic-design-live",
+    icon: PenTool,
+    title: "Graphic Designing & Visual Communication",
+    desc: "Photoshop, Illustrator, Branding & Typography",
+    type: "career",
+  },
+  {
+    id: "ms-office",
+    icon: FileSpreadsheet,
+    title: "Microsoft Office Professional",
+    desc: "Word, Excel, PowerPoint & Professional Office Skills",
+    type: "career",
+  },
+  {
+    id: "pro-english",
+    icon: Languages,
+    title: "Professional English for Career & Freelancing",
+    desc: "Spoken English, Communication & Interview Prep",
+    type: "career",
+  },
+];
+
+// ─── Helper Functions ──────────────────────────────────────────
 function generateAppId(courseId) {
   const prefix = "STA";
-  // Combine last 4 digits of timestamp + 2 random digits = 6-digit unique code
   const tsSlice = Date.now().toString().slice(-4);
-  const randSlice = Math.floor(10 + Math.random() * 90).toString(); // 2-digit random (10-99)
+  const randSlice = Math.floor(10 + Math.random() * 90).toString();
   const unique = tsSlice + randSlice;
   const suffixes = {
     cit: "CT",
@@ -112,7 +189,6 @@ function generateAppId(courseId) {
 }
 
 async function generateUniqueAppId(courseId) {
-  // Keep generating until a confirmed-unique ID is found in the database
   let candidate;
   let attempts = 0;
   do {
@@ -122,19 +198,17 @@ async function generateUniqueAppId(courseId) {
       .select("app_id")
       .eq("app_id", candidate)
       .maybeSingle();
-    if (!data) break; // ID does not exist in DB — it's unique!
+    if (!data) break;
     attempts++;
-  } while (attempts < 10); // Safety cap: after 10 tries, use last generated
+  } while (attempts < 10);
   return candidate;
 }
 
-/* ─── Premium Custom Floating Input ────────────────────────── */
+// ─── Floating Input ──────────────────────────────────────────
 function FloatingInput({ label, icon: Icon, error, type = "text", ...props }) {
   const [focused, setFocused] = useState(false);
   const hasValue = props.value && props.value.length > 0;
   const float = focused || hasValue;
-
-  // Specific check to avoid overlapping on Date Input
   const isDate = type === "date";
 
   return (
@@ -147,7 +221,6 @@ function FloatingInput({ label, icon: Icon, error, type = "text", ...props }) {
             }`}
           />
         )}
-
         <input
           type={type}
           {...props}
@@ -166,8 +239,6 @@ function FloatingInput({ label, icon: Icon, error, type = "text", ...props }) {
           `}
           placeholder={label}
         />
-
-        {/* Dynamic Label styling - For date inputs, it stays static at top */}
         <label
           className={`absolute pointer-events-none transition-all duration-200 text-xs select-none
             ${Icon ? "left-10" : "left-3"}
@@ -189,11 +260,10 @@ function FloatingInput({ label, icon: Icon, error, type = "text", ...props }) {
   );
 }
 
-/* ─── Premium Custom Dropdown Component ────────────────────── */
+// ─── Custom Dropdown ─────────────────────────────────────────
 function CustomDropdown({ label, options, value, onChange, error }) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
-
   const selectedOption = options.find((opt) => opt.value === value);
 
   useEffect(() => {
@@ -211,7 +281,6 @@ function CustomDropdown({ label, options, value, onChange, error }) {
       <label className="text-xs text-slate-400 font-medium uppercase tracking-wider ml-1">
         {label}
       </label>
-
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
@@ -227,7 +296,6 @@ function CustomDropdown({ label, options, value, onChange, error }) {
           className={`w-4 h-4 text-slate-400 transition-transform duration-300 ${isOpen ? "rotate-180 text-blue-500" : ""}`}
         />
       </button>
-
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -247,11 +315,7 @@ function CustomDropdown({ label, options, value, onChange, error }) {
                     setIsOpen(false);
                   }}
                   className={`w-full text-left px-4 py-3 text-sm transition-colors
-                    ${
-                      opt.value === value
-                        ? "bg-blue-50 text-blue-700 font-semibold"
-                        : "text-slate-700 hover:bg-slate-50"
-                    }
+                    ${opt.value === value ? "bg-blue-50 text-blue-700 font-semibold" : "text-slate-700 hover:bg-slate-50"}
                   `}
                 >
                   {opt.label}
@@ -266,26 +330,24 @@ function CustomDropdown({ label, options, value, onChange, error }) {
   );
 }
 
-/* ─── Premium Custom Date Picker Component ──────────────────── */
+// ─── Custom Date Picker ──────────────────────────────────────
 function CustomDatePicker({ label, icon: Icon, value, onChange, error }) {
   const [isOpen, setIsOpen] = useState(false);
   const [focused, setFocused] = useState(false);
   const pickerRef = useRef(null);
 
-  // Parse initial date
   const getInitialDate = () => {
     if (value) {
       const d = new Date(value);
       if (!isNaN(d.getTime())) return d;
     }
-    return new Date(); // default to today
+    return new Date();
   };
 
   const initialDate = getInitialDate();
   const [viewYear, setViewYear] = useState(initialDate.getFullYear());
   const [viewMonth, setViewMonth] = useState(initialDate.getMonth());
 
-  // Keep view in sync when value changes externally
   useEffect(() => {
     if (value) {
       const d = new Date(value);
@@ -322,7 +384,6 @@ function CustomDatePicker({ label, icon: Icon, value, onChange, error }) {
     "December",
   ];
 
-  // Generate Year options (100 years back to current year)
   const currentYear = new Date().getFullYear();
   const years = [];
   for (let y = currentYear; y >= currentYear - 100; y--) {
@@ -372,24 +433,20 @@ function CustomDatePicker({ label, icon: Icon, value, onChange, error }) {
     setFocused(false);
   };
 
-  // Calculate calendar days
   const firstDayIndex = new Date(viewYear, viewMonth, 1).getDay();
   const totalDays = new Date(viewYear, viewMonth + 1, 0).getDate();
 
   const daysArray = [];
-  // spacer days for start of month
   for (let i = 0; i < firstDayIndex; i++) {
     daysArray.push(null);
   }
-  // real days
   for (let i = 1; i <= totalDays; i++) {
     daysArray.push(i);
   }
 
-  // Format value for display in the input box (e.g. DD/MM/YYYY)
   const getDisplayValue = () => {
     if (!value) return "";
-    const parts = value.split("-"); // YYYY-MM-DD
+    const parts = value.split("-");
     if (parts.length === 3) {
       return `${parts[2]}/${parts[1]}/${parts[0]}`;
     }
@@ -400,7 +457,6 @@ function CustomDatePicker({ label, icon: Icon, value, onChange, error }) {
   const hasValue = displayValue.length > 0;
   const float = focused || hasValue || isOpen;
 
-  // Selected date components for highlighting in calendar
   let selectedYear = null;
   let selectedMonth = null;
   let selectedDay = null;
@@ -423,7 +479,6 @@ function CustomDatePicker({ label, icon: Icon, value, onChange, error }) {
             }`}
           />
         )}
-
         <button
           type="button"
           onClick={() => {
@@ -440,7 +495,6 @@ function CustomDatePicker({ label, icon: Icon, value, onChange, error }) {
             <span className="text-slate-400 opacity-0">placeholder</span>
           )}
         </button>
-
         <label
           className={`absolute pointer-events-none transition-all duration-200 text-xs select-none
             ${Icon ? "left-10" : "left-3"}
@@ -465,7 +519,6 @@ function CustomDatePicker({ label, icon: Icon, value, onChange, error }) {
             transition={{ duration: 0.15 }}
             className="absolute top-[105%] left-0 w-[290px] bg-white border border-slate-100 rounded-2xl shadow-xl z-[1050] p-4 flex flex-col gap-3 font-sans"
           >
-            {/* Header controls: month, year selectors and prev/next page */}
             <div className="flex items-center justify-between gap-1.5 border-b border-slate-100 pb-2">
               <button
                 type="button"
@@ -474,9 +527,7 @@ function CustomDatePicker({ label, icon: Icon, value, onChange, error }) {
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
-
               <div className="flex gap-1 items-center flex-1 justify-center">
-                {/* Month Dropdown */}
                 <select
                   value={viewMonth}
                   onChange={(e) => setViewMonth(parseInt(e.target.value))}
@@ -488,8 +539,6 @@ function CustomDatePicker({ label, icon: Icon, value, onChange, error }) {
                     </option>
                   ))}
                 </select>
-
-                {/* Year Dropdown */}
                 <select
                   value={viewYear}
                   onChange={(e) => setViewYear(parseInt(e.target.value))}
@@ -502,7 +551,6 @@ function CustomDatePicker({ label, icon: Icon, value, onChange, error }) {
                   ))}
                 </select>
               </div>
-
               <button
                 type="button"
                 onClick={handleNextMonth}
@@ -512,7 +560,6 @@ function CustomDatePicker({ label, icon: Icon, value, onChange, error }) {
               </button>
             </div>
 
-            {/* Week days header */}
             <div className="grid grid-cols-7 text-center gap-y-1">
               {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((d) => (
                 <span
@@ -524,12 +571,9 @@ function CustomDatePicker({ label, icon: Icon, value, onChange, error }) {
               ))}
             </div>
 
-            {/* Days grid */}
             <div className="grid grid-cols-7 text-center gap-y-1 gap-x-0.5">
               {daysArray.map((day, idx) => {
-                if (day === null) {
-                  return <div key={`empty-${idx}`} />;
-                }
+                if (day === null) return <div key={`empty-${idx}`} />;
                 const isSelected =
                   selectedDay === day &&
                   selectedMonth === viewMonth &&
@@ -540,11 +584,7 @@ function CustomDatePicker({ label, icon: Icon, value, onChange, error }) {
                     type="button"
                     onClick={() => handleSelectDay(day)}
                     className={`w-7 h-7 mx-auto rounded-full flex items-center justify-center text-xs font-medium transition-all
-                      ${
-                        isSelected
-                          ? "bg-blue-600 text-white font-bold shadow-md shadow-blue-500/20"
-                          : "text-slate-700 hover:bg-slate-100"
-                      }
+                      ${isSelected ? "bg-blue-600 text-white font-bold shadow-md shadow-blue-500/20" : "text-slate-700 hover:bg-slate-100"}
                     `}
                   >
                     {day}
@@ -553,7 +593,6 @@ function CustomDatePicker({ label, icon: Icon, value, onChange, error }) {
               })}
             </div>
 
-            {/* Footer Clear / Today buttons */}
             <div className="flex items-center justify-between border-t border-slate-100 pt-2 text-xs font-bold mt-1">
               <button
                 type="button"
@@ -578,6 +617,7 @@ function CustomDatePicker({ label, icon: Icon, value, onChange, error }) {
   );
 }
 
+// ─── Step Indicator ───────────────────────────────────────────
 function StepIndicator({ current, total }) {
   const percent = (current / (total - 1)) * 100;
   return (
@@ -606,14 +646,22 @@ function StepIndicator({ current, total }) {
   );
 }
 
-export default function AdmissionForm({ onBack }) {
+// ─── MAIN EXPORT ──────────────────────────────────────────────
+export default function AdmissionForm({
+  onBack,
+  preselectedCourse = null,
+  courseName = "",
+  programType = null,
+}) {
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
   const [appId, setAppId] = useState("");
   const [showFaceCrop, setShowFaceCrop] = useState(false);
   const [rawImageSrc, setRawImageSrc] = useState(null);
   const [genderOpen, setGenderOpen] = useState(false);
+  const [selectedProgramType, setSelectedProgramType] = useState(
+    programType || null,
+  );
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -632,16 +680,27 @@ export default function AdmissionForm({ onBack }) {
     city: "",
     qualification: "",
     institute: "",
-    courses: [],
+    courses: preselectedCourse ? [preselectedCourse] : [],
     customCourse: "",
     source: "",
     whatsappGroup: false,
     agreeTerms: false,
+    programType: programType || "",
   });
-  const fileInputRef = useRef(null);
 
+  const fileInputRef = useRef(null);
   const [errors, setErrors] = useState({});
 
+  // Get courses based on selected type
+  const getAvailableCourses = () => {
+    if (selectedProgramType === "founding") return FOUNDING_COURSES;
+    if (selectedProgramType === "career") return CAREER_PROGRAMS;
+    return [];
+  };
+
+  const availableCourses = getAvailableCourses();
+
+  // ─── Validation ──────────────────────────────────────────────
   const validateStep = (s) => {
     let err = {};
     if (s === 0) {
@@ -662,10 +721,15 @@ export default function AdmissionForm({ onBack }) {
       if (!form.institute.trim())
         err.institute = "School/College/University name is required";
     } else if (s === 2) {
-      if (form.courses.length === 0)
-        err.courses = "Please select at least one course";
-      if (form.courses.includes("other") && !form.customCourse.trim()) {
-        err.customCourse = "Please specify the course name";
+      // Skip course validation if preselected
+      if (!preselectedCourse) {
+        if (!selectedProgramType)
+          err.programType = "Please select a program type";
+        if (form.courses.length === 0)
+          err.courses = "Please select at least one course";
+        if (form.courses.includes("other") && !form.customCourse.trim()) {
+          err.customCourse = "Please specify the course name";
+        }
       }
     } else if (s === 3) {
       if (!form.source) err.source = "Please select an option";
@@ -674,6 +738,7 @@ export default function AdmissionForm({ onBack }) {
     return Object.keys(err).length === 0;
   };
 
+  // ─── Navigation ──────────────────────────────────────────────
   const nextStep = async () => {
     if (validateStep(step)) {
       if (step === 0) {
@@ -684,13 +749,10 @@ export default function AdmissionForm({ onBack }) {
             .select("email")
             .ilike("email", form.email.trim())
             .maybeSingle();
-
-          if (error) {
-            console.error("Error checking email uniqueness:", error);
-          }
-
+          if (error) console.error("Error checking email uniqueness:", error);
           if (data) {
             setErrors({ email: "Email address is already in use" });
+            setLoading(false);
             return;
           }
         } catch (err) {
@@ -703,13 +765,11 @@ export default function AdmissionForm({ onBack }) {
     }
   };
 
-  const prevStep = () => {
-    setStep((prev) => prev - 1);
-  };
+  const prevStep = () => setStep((prev) => prev - 1);
 
+  // ─── Course Selection ────────────────────────────────────────
   const handleSelectCourse = (id) => {
     setForm((prev) => {
-      // Single selection logic: toggle it off if already selected, otherwise select only this one.
       const isSelected = prev.courses.includes(id);
       return {
         ...prev,
@@ -718,16 +778,29 @@ export default function AdmissionForm({ onBack }) {
     });
   };
 
+  const handleSelectProgramType = (type) => {
+    setSelectedProgramType(type);
+    setForm((prev) => ({
+      ...prev,
+      programType: type,
+      courses: [], // Reset courses when type changes
+    }));
+    setErrors((prev) => ({ ...prev, programType: undefined }));
+  };
+
+  // ─── Submit ──────────────────────────────────────────────────
   const handleSubmit = async () => {
     if (!form.agreeTerms) return;
     setLoading(true);
 
     try {
-      // Guaranteed unique: checks DB before accepting the ID
-      const newId = await generateUniqueAppId(form.courses[0]);
+      const finalCourses = preselectedCourse
+        ? [preselectedCourse]
+        : form.courses;
+
+      const newId = await generateUniqueAppId(finalCourses[0]);
       let photoUrl = "";
 
-      // 1. Upload Photo to Supabase Storage if present
       if (form.photo) {
         const fileExt = form.photo.name.split(".").pop();
         const fileName = `${newId}.${fileExt}`;
@@ -737,20 +810,14 @@ export default function AdmissionForm({ onBack }) {
             cacheControl: "3600",
             upsert: true,
           });
-
-        if (uploadError) {
+        if (uploadError)
           throw new Error("Photo upload failed: " + uploadError.message);
-        }
-
-        // Get Public URL
         const { data: publicUrlData } = supabase.storage
           .from("student-photos")
           .getPublicUrl(fileName);
-
         photoUrl = publicUrlData?.publicUrl || "";
       }
 
-      // 2. Insert into Database Table 'admissions'
       const { error: dbError } = await supabase.from("admissions").insert([
         {
           app_id: newId,
@@ -764,20 +831,19 @@ export default function AdmissionForm({ onBack }) {
           city: form.city,
           qualification: form.qualification,
           institute: form.institute,
-          courses: form.courses,
+          courses: finalCourses,
           custom_course: form.customCourse,
           source: form.source,
           whatsapp_group: form.whatsappGroup,
           photo_url: photoUrl,
+          program_type: selectedProgramType || form.programType,
         },
       ]);
 
-      if (dbError) {
+      if (dbError)
         throw new Error("Database insertion failed: " + dbError.message);
-      }
 
       setAppId(newId);
-      // Close the form and pass success data up to App.jsx
       onBack(newId, form);
     } catch (err) {
       console.error(err);
@@ -787,6 +853,7 @@ export default function AdmissionForm({ onBack }) {
     }
   };
 
+  // ─── Photo Handlers ──────────────────────────────────────────
   const handlePhotoChange = (e) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -797,14 +864,13 @@ export default function AdmissionForm({ onBack }) {
       const reader = new FileReader();
       reader.onloadend = () => {
         setRawImageSrc(reader.result);
-        setShowFaceCrop(true); // Open face detect/crop modal
+        setShowFaceCrop(true);
       };
       reader.readAsDataURL(file);
     }
   };
 
   const handleCropComplete = (croppedDataUrl) => {
-    // Convert data URL to File blob for upload
     fetch(croppedDataUrl)
       .then((r) => r.blob())
       .then((blob) => {
@@ -834,6 +900,7 @@ export default function AdmissionForm({ onBack }) {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
+  // ─── Render Steps ────────────────────────────────────────────
   const renderStep = () => {
     switch (step) {
       case 0:
@@ -849,7 +916,7 @@ export default function AdmissionForm({ onBack }) {
               Personal Information
             </h3>
 
-            {/* Passport Size Student Photo Upload */}
+            {/* Photo Upload */}
             <div className="bg-slate-50/80 border border-slate-100 rounded-2xl p-4 flex flex-col sm:flex-row items-center gap-5">
               <input
                 ref={fileInputRef}
@@ -859,7 +926,6 @@ export default function AdmissionForm({ onBack }) {
                 className="hidden"
                 id="student-photo-input"
               />
-
               <div className="relative flex-shrink-0">
                 <div
                   onClick={() => fileInputRef.current?.click()}
@@ -886,7 +952,6 @@ export default function AdmissionForm({ onBack }) {
                     </>
                   )}
                 </div>
-
                 {form.photoPreview && (
                   <button
                     type="button"
@@ -897,7 +962,6 @@ export default function AdmissionForm({ onBack }) {
                   </button>
                 )}
               </div>
-
               <div className="flex-1 text-center sm:text-left">
                 <h4 className="font-bold text-slate-800 text-sm flex items-center justify-center sm:justify-start gap-1.5">
                   Student Passport Size Photo
@@ -941,7 +1005,7 @@ export default function AdmissionForm({ onBack }) {
               onChange={(e) => setForm({ ...form, fatherName: e.target.value })}
               error={errors.fatherName}
             />
-            {/* Gender Selector - Custom Dropdown */}
+            {/* Gender Dropdown */}
             <div className="relative">
               <div
                 onClick={() => setGenderOpen((prev) => !prev)}
@@ -984,8 +1048,6 @@ export default function AdmissionForm({ onBack }) {
                   className={`w-4 h-4 flex-shrink-0 transition-transform duration-200 ${genderOpen ? "rotate-180 text-blue-500" : "text-slate-400"}`}
                 />
               </div>
-
-              {/* Dropdown Panel */}
               {genderOpen && (
                 <div className="absolute left-0 right-0 top-full mt-1.5 bg-white border border-slate-200 rounded-2xl shadow-xl overflow-hidden z-50">
                   {[
@@ -1020,7 +1082,6 @@ export default function AdmissionForm({ onBack }) {
                   })}
                 </div>
               )}
-
               {errors.gender && (
                 <p className="text-red-500 text-xs mt-1.5 font-medium flex items-center gap-1">
                   <AlertCircle className="w-3.5 h-3.5" /> {errors.gender}
@@ -1073,6 +1134,7 @@ export default function AdmissionForm({ onBack }) {
             />
           </motion.div>
         );
+
       case 1:
         return (
           <motion.div
@@ -1107,7 +1169,43 @@ export default function AdmissionForm({ onBack }) {
             />
           </motion.div>
         );
+
       case 2:
+        // If preselectedCourse is provided, skip type selection
+        if (preselectedCourse) {
+          return (
+            <motion.div
+              key="step3-preselected"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="flex flex-col gap-5"
+            >
+              <div>
+                <h3 className="font-space font-extrabold text-slate-800 text-lg">
+                  Selected Program
+                </h3>
+                <p className="text-xs text-slate-400 mt-1">
+                  You are applying for: {courseName || preselectedCourse}
+                </p>
+              </div>
+              <div className="bg-blue-50 border-2 border-blue-300 rounded-xl p-4 flex items-center gap-4">
+                <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center">
+                  <CheckCircle className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="font-space font-bold text-blue-700 text-base">
+                    {courseName || preselectedCourse}
+                  </p>
+                  <p className="text-xs text-slate-500">
+                    This course will be added to your application.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          );
+        }
+
         return (
           <motion.div
             key="step3"
@@ -1118,70 +1216,139 @@ export default function AdmissionForm({ onBack }) {
           >
             <div>
               <h3 className="font-space font-extrabold text-slate-800 text-lg">
-                Select Program
+                Select Program Type
               </h3>
               <p className="text-xs text-slate-400 mt-1">
-                Select the program you wish to enroll in.
+                Choose whether you want to apply for Founding Batch or Career
+                Program.
               </p>
             </div>
 
-            <div className="flex flex-col gap-3">
-              {COURSES.map((c) => {
-                const Icon = c.icon;
-                const selected = form.courses.includes(c.id);
-                return (
-                  <button
-                    key={c.id}
-                    onClick={() => handleSelectCourse(c.id)}
-                    className={`flex items-start gap-4 p-4 rounded-xl border text-left transition-all duration-200 group
-                      ${selected ? "border-blue-500 bg-blue-50/50 shadow-sm" : "border-slate-100 bg-white hover:border-slate-200"}
-                    `}
-                  >
-                    <div
-                      className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors flex-shrink-0
-                      ${selected ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-500 group-hover:bg-slate-200"}
-                    `}
-                    >
-                      <Icon className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <p
-                        className={`font-space font-bold text-sm ${selected ? "text-blue-700" : "text-slate-800"}`}
-                      >
-                        {c.title}
-                      </p>
-                      <p className="text-slate-500 text-xs mt-0.5 leading-relaxed">
-                        {c.desc}
-                      </p>
-                    </div>
-                  </button>
-                );
-              })}
+            {/* Program Type Selection */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <button
+                type="button"
+                onClick={() => handleSelectProgramType("founding")}
+                className={`p-4 rounded-xl border-2 text-left transition-all ${
+                  selectedProgramType === "founding"
+                    ? "border-blue-500 bg-blue-50/50 shadow-md"
+                    : "border-slate-200 hover:border-blue-300 bg-white"
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                    <Gift className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="font-space font-bold text-slate-800">
+                      {" "}
+                      Founding Batch
+                    </p>
+                    <p className="text-xs text-slate-500">
+                      Free 2-Month Short Courses
+                    </p>
+                  </div>
+                  {selectedProgramType === "founding" && (
+                    <CheckCircle className="w-5 h-5 text-blue-500 ml-auto" />
+                  )}
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleSelectProgramType("career")}
+                className={`p-4 rounded-xl border-2 text-left transition-all ${
+                  selectedProgramType === "career"
+                    ? "border-blue-500 bg-blue-50/50 shadow-md"
+                    : "border-slate-200 hover:border-blue-300 bg-white"
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center">
+                    <Rocket className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="font-space font-bold text-slate-800">
+                      {" "}
+                      Career Program
+                    </p>
+                    <p className="text-xs text-slate-500">
+                      Professional Long-Term Courses
+                    </p>
+                  </div>
+                  {selectedProgramType === "career" && (
+                    <CheckCircle className="w-5 h-5 text-blue-500 ml-auto" />
+                  )}
+                </div>
+              </button>
             </div>
 
-            {form.courses.includes("other") && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                className="pt-2"
-              >
-                <FloatingInput
-                  label="Please specify the course name"
-                  icon={Star}
-                  value={form.customCourse}
-                  onChange={(e) =>
-                    setForm({ ...form, customCourse: e.target.value })
-                  }
-                  error={errors.customCourse}
-                />
-              </motion.div>
+            {errors.programType && (
+              <p className="text-red-500 text-[11px] ml-1">
+                {errors.programType}
+              </p>
             )}
 
-            {errors.courses && (
-              <p className="text-red-500 text-[11px] ml-1">{errors.courses}</p>
+            {/* Course Selection based on type */}
+            {selectedProgramType && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-2"
+              >
+                <p className="text-xs font-semibold text-slate-600 mb-3">
+                  Select your{" "}
+                  {selectedProgramType === "founding"
+                    ? "Founding Batch"
+                    : "Career Program"}{" "}
+                  Course:
+                </p>
+                <div className="flex flex-col gap-2 max-h-[300px] overflow-y-auto pr-1">
+                  {availableCourses.map((c) => {
+                    const Icon = c.icon;
+                    const selected = form.courses.includes(c.id);
+                    return (
+                      <button
+                        key={c.id}
+                        onClick={() => handleSelectCourse(c.id)}
+                        className={`flex items-start gap-4 p-3 rounded-xl border text-left transition-all duration-200 group
+                          ${selected ? "border-blue-500 bg-blue-50/50 shadow-sm" : "border-slate-100 bg-white hover:border-slate-200"}
+                        `}
+                      >
+                        <div
+                          className={`w-9 h-9 rounded-xl flex items-center justify-center transition-colors flex-shrink-0
+                          ${selected ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-500 group-hover:bg-slate-200"}
+                        `}
+                        >
+                          <Icon className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <p
+                            className={`font-space font-bold text-sm ${selected ? "text-blue-700" : "text-slate-800"}`}
+                          >
+                            {c.title}
+                          </p>
+                          <p className="text-slate-500 text-xs mt-0.5 leading-relaxed">
+                            {c.desc}
+                          </p>
+                        </div>
+                        {selected && (
+                          <CheckCircle className="w-4 h-4 text-blue-500 ml-auto flex-shrink-0" />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+                {errors.courses && (
+                  <p className="text-red-500 text-[11px] ml-1 mt-2">
+                    {errors.courses}
+                  </p>
+                )}
+              </motion.div>
             )}
           </motion.div>
         );
+
       case 3:
         return (
           <motion.div
@@ -1231,23 +1398,21 @@ export default function AdmissionForm({ onBack }) {
             </div>
           </motion.div>
         );
+
       case 4:
         const selectedNames = form.courses
-          .map((id) => COURSES.find((c) => c.id === id)?.title)
+          .map((id) => {
+            const allCourses = [...FOUNDING_COURSES, ...CAREER_PROGRAMS];
+            return allCourses.find((c) => c.id === id)?.title;
+          })
           .join(", ");
-        const detailRows = [
-          { label: "ID NUMBER", value: appId },
-          { label: "FATHER NAME", value: form.fatherName || "—" },
-          { label: "DEPARTMENT", value: "Technology" },
-          {
-            label: "EMAIL",
-            value:
-              form.email.length > 25
-                ? form.email.slice(0, 23) + ".."
-                : form.email,
-          },
-          { label: "PHONE", value: form.phone },
-        ];
+        const finalCourseDisplay = preselectedCourse
+          ? courseName || preselectedCourse
+          : selectedNames || form.customCourse || "N/A";
+        const typeLabel =
+          selectedProgramType === "founding"
+            ? "Founding Batch (Free 2-Month)"
+            : "Career Program";
         return (
           <motion.div
             key="step5"
@@ -1303,9 +1468,10 @@ export default function AdmissionForm({ onBack }) {
                   value: form.institute,
                   icon: BookOpen,
                 },
+                { label: "Program Type", value: typeLabel, icon: Briefcase },
                 {
                   label: "Selected Program(s)",
-                  value: selectedNames || form.customCourse,
+                  value: finalCourseDisplay,
                   icon: Code,
                 },
               ].map((item) => {
@@ -1350,6 +1516,7 @@ export default function AdmissionForm({ onBack }) {
             </div>
           </motion.div>
         );
+
       default:
         return null;
     }
@@ -1358,14 +1525,15 @@ export default function AdmissionForm({ onBack }) {
   const STEPS_LABELS = [
     "Personal Info",
     "Academic",
-    "Courses",
+    "Programs",
     "Additional",
     "Review",
   ];
 
+  // ─── RENDER ────────────────────────────────────────────────────
   return (
     <>
-      {/* Face Detect / Crop Modal */}
+      {/* Face Crop Modal */}
       <AnimatePresence>
         {showFaceCrop && rawImageSrc && (
           <FaceDetectCrop
@@ -1377,7 +1545,7 @@ export default function AdmissionForm({ onBack }) {
       </AnimatePresence>
 
       <div className="min-h-screen bg-transparent relative z-10 flex flex-col">
-        {/* Top bar (Glassmorphism layout) */}
+        {/* Top Bar */}
         <div className="sticky top-0 z-50 bg-white/40 backdrop-blur-md border-b border-slate-100/50">
           <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
             <button
@@ -1404,7 +1572,6 @@ export default function AdmissionForm({ onBack }) {
         </div>
 
         <div className="max-w-3xl mx-auto px-3 sm:px-4 py-6 sm:py-10 w-full flex-1 flex flex-col justify-center relative z-20">
-          {/* Progress */}
           <StepIndicator current={step} total={5} />
           <div className="flex justify-between mb-8">
             {STEPS_LABELS.map((l, i) => (
@@ -1417,7 +1584,6 @@ export default function AdmissionForm({ onBack }) {
             ))}
           </div>
 
-          {/* Premium Glass Card Form */}
           <div className="bg-white/90 backdrop-blur-md rounded-2xl sm:rounded-3xl shadow-2xl border border-white/60 p-4 sm:p-6 lg:p-10 hover:shadow-blue-500/5 transition-shadow duration-300">
             <AnimatePresence mode="wait">{renderStep()}</AnimatePresence>
 

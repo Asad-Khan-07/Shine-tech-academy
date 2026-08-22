@@ -14,6 +14,7 @@ import TermsAndConditions from "./pages/TermsAndConditions";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import ComingSoon from "./pages/ComingSoon";
 import { CreateAdminUser } from "./components/CreateAdminUser";
+import ProgramApply from "./pages/ProgramApply";
 
 // ── Admin Components ──
 import { AuthProvider } from "./context/AuthContext";
@@ -102,6 +103,7 @@ function MainApp() {
               />
             }
           />
+          <Route path="/apply-program" element={<ProgramApply />} />
 
           <Route
             path="/apply"
