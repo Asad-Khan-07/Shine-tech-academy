@@ -12,7 +12,6 @@ import { useNavigate } from "react-router-dom";
 import {
   Clock,
   Monitor,
-  DollarSign,
   BookOpen,
   ArrowRight,
   Sparkles,
@@ -24,12 +23,8 @@ import {
   Video,
   Target,
   Gift,
-  Users,
-  Calendar,
-  Shield,
-  Star,
-  Award,
-  BadgeCheck,
+  ShieldCheck,
+  Check,
 } from "lucide-react";
 
 // ─── Brand Tokens ──────────────────────────────────────────────────────────
@@ -81,8 +76,8 @@ const FOUNDING_COURSES = [
     level: "Beginner",
     duration: "2 Months",
     mode: "Onsite",
-    admissionFee: "Rs. 1,999",
-    monthlyFee: "Rs. 0 (Free Tuition)",
+    admissionFee: "Rs. 1,999 (One-Time Only)",
+    monthlyFee: "FREE (No Monthly Fee)",
     image: "https://ik.imagekit.io/swcurh0si/AI%20for%20Everyone.png",
     imageAlt: "Artificial Intelligence for Everyone",
     curriculum: [
@@ -109,8 +104,8 @@ const FOUNDING_COURSES = [
     level: "Intermediate",
     duration: "2 Months",
     mode: "Onsite",
-    admissionFee: "Rs. 1,999",
-    monthlyFee: "Rs. 0 (Free Tuition)",
+    admissionFee: "Rs. 1,999 (One-Time Only)",
+    monthlyFee: "FREE (No Monthly Fee)",
     image:
       "https://ik.imagekit.io/swcurh0si/Robotics,%20AI%20&%20Smart%20Systems.png",
     imageAlt: "Robotics and AI Automation Training",
@@ -140,8 +135,8 @@ const FOUNDING_COURSES = [
     level: "Intermediate",
     duration: "2 Months",
     mode: "Onsite",
-    admissionFee: "Rs. 1,999",
-    monthlyFee: "Rs. 0 (Free Tuition)",
+    admissionFee: "Rs. 1,999 (One-Time Only)",
+    monthlyFee: "FREE (No Monthly Fee)",
     image:
       "https://ik.imagekit.io/swcurh0si/AI-Powered%20Digital%20Marketing.png",
     imageAlt: "AI-Powered Digital Marketing",
@@ -168,8 +163,8 @@ const FOUNDING_COURSES = [
     level: "Advanced Diploma",
     duration: "2 Months",
     mode: "Onsite",
-    admissionFee: "Rs. 1,999",
-    monthlyFee: "Rs. 0 (Free Tuition)",
+    admissionFee: "Rs. 1,999 (One-Time Only)",
+    monthlyFee: "FREE (No Monthly Fee)",
     image: "https://ik.imagekit.io/swcurh0si/MERN%20Stack.png",
     imageAlt: "MERN Stack Engineering",
     curriculum: [
@@ -194,8 +189,8 @@ const FOUNDING_COURSES = [
     level: "Foundation",
     duration: "2 Months",
     mode: "Onsite",
-    admissionFee: "Rs. 1,999",
-    monthlyFee: "Rs. 0 (Free Tuition)",
+    admissionFee: "Rs. 1,999 (One-Time Only)",
+    monthlyFee: "FREE (No Monthly Fee)",
     image:
       "https://ik.imagekit.io/swcurh0si/ChatGPT%20Image%20Aug%2012,%202026,%2007_13_18%20PM.png",
     imageAlt: "Microsoft Office Professional Training",
@@ -219,8 +214,8 @@ const FOUNDING_COURSES = [
     level: "Intermediate",
     duration: "2 Months",
     mode: "Onsite",
-    admissionFee: "Rs. 1,999",
-    monthlyFee: "Rs. 0 (Free Tuition)",
+    admissionFee: "Rs. 1,999 (One-Time Only)",
+    monthlyFee: "FREE (No Monthly Fee)",
     image: "https://ik.imagekit.io/swcurh0si/Graphic%20Designing.png",
     imageAlt: "Graphic Design and Visual Communication",
     curriculum: [
@@ -339,8 +334,8 @@ function CurriculumModal({ course, onClose, onApply }) {
               />
               <div className="relative flex items-center justify-between gap-4">
                 <div>
-                  <span className="inline-block text-[10px] uppercase font-extrabold tracking-wider bg-white/20 text-white px-2.5 py-0.5 rounded-full mb-1.5">
-                    {course.targetAudience}
+                  <span className="inline-block text-[10px] uppercase font-extrabold tracking-wider bg-emerald-400 text-slate-950 px-2.5 py-0.5 rounded-full mb-1.5 shadow-sm">
+                    100% Free Course
                   </span>
                   <h3 className="font-space font-extrabold text-white text-lg leading-snug">
                     {course.title}
@@ -360,6 +355,16 @@ function CurriculumModal({ course, onClose, onApply }) {
 
             {/* Body */}
             <div className="p-6 overflow-y-auto flex-1 min-h-0 bg-white space-y-4">
+              <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-xs text-emerald-950 font-medium leading-relaxed flex items-center justify-between">
+                <div>
+                  <span className="font-extrabold text-emerald-700 block">
+                    Zero Monthly Fee Guarantee
+                  </span>
+                  Pay PKR 1,999 One-Time Reg Fee & Get 2 Months Complete Course
+                  FREE!
+                </div>
+              </div>
+
               <div className="bg-blue-50/80 border border-blue-100 rounded-xl p-3 text-xs text-slate-700 leading-relaxed">
                 <span className="font-bold text-[#0956fc] block mb-0.5">
                   Course Overview
@@ -422,7 +427,7 @@ function CurriculumModal({ course, onClose, onApply }) {
                 }}
                 className="flex-1 bg-[#0956fc] hover:bg-blue-700 text-white font-bold text-sm py-2.5 px-4 rounded-xl border-none cursor-pointer flex items-center justify-center gap-2 shadow-md shadow-blue-500/25 hover:shadow-blue-500/40 transition-all"
               >
-                Enroll Now <ArrowRight className="w-4 h-4" />
+                Get Free Admission <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           </motion.div>
@@ -471,6 +476,13 @@ function CourseCard({ course, onViewCurriculum, onApply }) {
             {course.featuredBadge}
           </div>
         )}
+      </div>
+
+      {/* Free Tag Banner on Image */}
+      <div className="absolute top-3 left-3 z-10">
+        <span className="bg-emerald-500 text-white font-extrabold text-[10px] uppercase px-2.5 py-1 rounded-md shadow-md tracking-wider flex items-center gap-1">
+          <Gift className="w-3 h-3" /> 100% Free Course
+        </span>
       </div>
 
       {/* Image */}
@@ -532,7 +544,7 @@ function CourseCard({ course, onViewCurriculum, onApply }) {
           {course.description}
         </p>
 
-        {/* Info Grid */}
+        {/* Info Grid - Clear Pricing Layout */}
         <div className="grid grid-cols-2 gap-2 pt-1">
           <div className="flex items-center gap-2 bg-slate-50/80 backdrop-blur-sm border border-slate-100 rounded-xl px-2.5 py-2 group-hover:border-blue-100 transition-colors">
             <Clock className="w-3.5 h-3.5 text-[#0956fc] flex-shrink-0" />
@@ -556,25 +568,25 @@ function CourseCard({ course, onViewCurriculum, onApply }) {
             </div>
           </div>
 
-          <div className="flex items-center gap-2 bg-amber-50/80 backdrop-blur-sm border border-amber-200/60 rounded-xl px-2.5 py-2 group-hover:border-amber-300 transition-colors">
-            <Sparkles className="w-3.5 h-3.5 text-amber-600 flex-shrink-0" />
+          {/* Pricing Box 1: One-Time Registration Fee */}
+          <div className="flex items-center gap-2 bg-slate-50/80 backdrop-blur-sm border border-slate-200/80 rounded-xl px-2.5 py-2 transition-colors">
+            <ShieldCheck className="w-3.5 h-3.5 text-slate-600 flex-shrink-0" />
             <div>
-              <p className="text-[9px] text-amber-600/80 font-bold uppercase tracking-wider">
-                Reg. Fee
+              <p className="text-[9px] text-slate-500 font-bold uppercase tracking-wider">
+                One-Time Reg. Fee
               </p>
-              <p className="text-xs font-extrabold text-amber-800">PKR 1,999</p>
+              <p className="text-xs font-extrabold text-slate-800">PKR 1,999</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 bg-emerald-50/80 backdrop-blur-sm border border-emerald-200/60 rounded-xl px-2.5 py-2 group-hover:border-emerald-300 transition-colors">
-            <Gift className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+          {/* Pricing Box 2: Complete Tuition Free */}
+          <div className="flex items-center gap-2 bg-emerald-50 backdrop-blur-sm border border-emerald-200 rounded-xl px-2.5 py-2 transition-colors">
+            <Check className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
             <div>
-              <p className="text-[9px] text-emerald-600/80 font-bold uppercase tracking-wider">
-                Tuition
+              <p className="text-[9px] text-emerald-700 font-extrabold uppercase tracking-wider">
+                Course Fee
               </p>
-              <p className="text-xs font-extrabold text-emerald-700">
-                100% FREE
-              </p>
+              <p className="text-xs font-black text-emerald-600">100% FREE</p>
             </div>
           </div>
         </div>
@@ -602,7 +614,7 @@ function CourseCard({ course, onViewCurriculum, onApply }) {
           >
             <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out bg-gradient-to-r from-transparent via-white/25 to-transparent" />
             <span className="relative flex items-center gap-1.5">
-              Enroll Now <ArrowRight className="w-3.5 h-3.5" />
+              Enroll Free <ArrowRight className="w-3.5 h-3.5" />
             </span>
           </button>
         </div>
@@ -658,24 +670,24 @@ export default function FoundingBatch() {
           className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-14"
         >
           <div>
-            <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-extrabold bg-blue-50 border border-blue-200/80 text-[#0956fc] mb-3 shadow-sm">
-              <Sparkles className="w-3.5 h-3.5 animate-pulse" />
-              START YOUR JOURNEY — FOUNDING BATCH 2026
+            <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-extrabold bg-emerald-100 border border-emerald-300 text-emerald-800 mb-3 shadow-sm">
+              <Sparkles className="w-3.5 h-3.5 text-emerald-600 animate-pulse" />
+              SPECIAL OFFER — FOUNDING BATCH 2026
             </span>
 
             <h2 className="font-space font-black text-3xl sm:text-4xl md:text-5xl text-slate-900 tracking-tight leading-[1.15]">
-              Founding Batch —{" "}
+              Complete Courses —{" "}
               <span className="bg-gradient-to-r from-[#0956fc] to-blue-600 bg-clip-text text-transparent">
-                Shape The Future
+                100% Free Tuition
               </span>
             </h2>
 
-            <p className="text-slate-600 mt-3 max-w-2xl text-sm sm:text-base leading-relaxed font-normal">
-              Learn future-ready skills with{" "}
-              <span className="font-bold text-[#0956fc]">
-                100% free tuition for our first 2-month Founding Batch
+            <p className="text-slate-700 mt-3 max-w-2xl text-sm sm:text-base leading-relaxed font-medium">
+              Join our 2-month hands-on programs with{" "}
+              <span className="font-extrabold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                0 Monthly Fee (100% Free Tuition)
               </span>
-              . Only Rs. 1,999 one-time registration fee applies.
+              . Pay only a one-time seat registration fee of Rs. 1,999.
             </p>
           </div>
 
@@ -723,18 +735,18 @@ export default function FoundingBatch() {
           <div className="space-y-1 text-center sm:text-left">
             <h4 className="font-space font-bold text-lg sm:text-xl flex items-center justify-center sm:justify-start gap-2">
               <Zap className="w-5 h-5 text-amber-400 fill-amber-400" />
-              Ready to Lock Your Seat for 2026?
+              Claim Your Free Seat Before Batch Fills Up!
             </h4>
             <p className="text-slate-300 text-xs sm:text-sm">
-              Limited slots available for hands-on onsite batch. Apply before
-              seats fill up.
+              Limited seats available for Onsite Practical Training. No hidden
+              charges.
             </p>
           </div>
           <button
             onClick={handleApply}
-            className="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-[#0956fc] to-blue-600 hover:from-blue-700 hover:to-blue-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all flex items-center justify-center gap-2 cursor-pointer flex-shrink-0 group"
+            className="w-full sm:w-auto px-6 py-3.5 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-extrabold text-sm rounded-xl shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 transition-all flex items-center justify-center gap-2 cursor-pointer flex-shrink-0 group"
           >
-            <span>Apply for Founding Batch</span>
+            <span>Apply Now (100% Free Tuition)</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </button>
         </motion.div>

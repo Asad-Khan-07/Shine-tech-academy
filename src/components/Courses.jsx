@@ -62,10 +62,10 @@ const CAREER_PROGRAMS = [
     title: "Python for AI, Data & Automation", // ← Changed
     tag: "Beginner",
     description:
-      "Understand Artificial Intelligence from the ground up and learn how modern AI tools are transforming education, business, productivity, and everyday work.",
-    duration: "3 Months",
+      "Understand Python for AI, Data & Automation from the ground up and learn how modern AI tools are transforming education, business, productivity, and everyday work.",
+    duration: "6 Months",
     schedule: "5 Days / Week",
-    fee: "Rs. 4,000 / Month", // Doubled from 2,000
+    fee: "Rs. 5,000 / Month", // Doubled from 2,000
     discount: "50% OFF",
     mode: "On-Campus",
     image:
@@ -90,9 +90,9 @@ const CAREER_PROGRAMS = [
     tag: "Professional",
     description:
       "Master AI tools, prompt engineering, productivity workflows, research, content creation, and practical AI-powered workflows.",
-    duration: "4 Months",
+    duration: "6 Months",
     schedule: "5 Days / Week",
-    fee: "Rs. 5,000 / Month", // Doubled from 2,500
+    fee: "Rs. 6,000 / Month", // Doubled from 2,500
     discount: "50% OFF",
     mode: "On-Campus",
     image:
@@ -117,9 +117,9 @@ const CAREER_PROGRAMS = [
     tag: "Professional",
     description:
       "Learn modern digital marketing with AI-powered content creation, social media strategy, SEO, advertising, analytics, and automation.",
-    duration: "3 Months",
+    duration: "4 Months",
     schedule: "5 Days / Week",
-    fee: "Rs. 4,000 / Month", // Doubled from 2,000
+    fee: "Rs. 5,000 / Month", // Doubled from 2,000
     discount: "50% OFF",
     mode: "On-Campus ",
     image:
@@ -147,7 +147,7 @@ const CAREER_PROGRAMS = [
       "Become a modern software engineer by building production-ready web applications using MongoDB, Express.js, React, Node.js, APIs, authentication, and deployment.",
     duration: "8 Months",
     schedule: "5 Days / Week",
-    fee: "Rs. 7,000 / Month", // Doubled from 3,500
+    fee: "Rs. 6,000 / Month", // Doubled from 3,500
     discount: "50% OFF",
     mode: "On-Campus ",
     image:
@@ -174,7 +174,7 @@ const CAREER_PROGRAMS = [
       "Learn to design, develop, and deploy modern websites and full-stack web applications through practical, project-based learning.",
     duration: "6 Months",
     schedule: "5 Days / Week",
-    fee: "Rs. 6,000 / Month", // Doubled from 3,000
+    fee: "Rs. 5,000 / Month", // Doubled from 3,000
     discount: "50% OFF",
     mode: "On-Campus ",
     image:
@@ -194,12 +194,12 @@ const CAREER_PROGRAMS = [
   },
   {
     id: "robotics-ai",
-    number: "06",
+    number: "04",
     title: "Robotics & AI Automation",
     tag: "Advanced",
     description:
       "Explore robotics, automation, sensors, intelligent systems, and AI-powered solutions through hands-on practical projects.",
-    duration: "3 Months",
+    duration: "6 Months",
     schedule: "5 Days / Week",
     fee: "Rs. 4,000 / Month", // Doubled from 2,000
     discount: "50% OFF",
@@ -279,9 +279,9 @@ const CAREER_PROGRAMS = [
     tag: "Professional",
     description:
       "Develop confident spoken English and professional communication skills for interviews, workplaces, freelancing, presentations, and international clients.",
-    duration: "12 Months",
+    duration: "6 Months",
     schedule: "5 Days / Week",
-    fee: "Rs. 4,000 / Month", // Doubled from 2,000
+    fee: "Rs. 3,000 / Month", // Doubled from 2,000
     discount: "50% OFF",
     mode: "On-Campus ",
     image:

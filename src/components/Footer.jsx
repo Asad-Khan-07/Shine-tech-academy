@@ -121,7 +121,7 @@ export default function Footer() {
               />
             </div>
             <p className="text-slate-500 text-sm leading-relaxed">
-              Empowering youth with in-demand skills and preparing them for a
+              Enable youth with in-demand skills and preparing them for a
               successful future in tech.
             </p>
 

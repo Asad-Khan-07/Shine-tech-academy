@@ -60,18 +60,24 @@ const PARTNERS = [
   },
 ];
 
-const MARQUEE_ITEMS = [...PARTNERS, ...PARTNERS];
-
 function PartnerCard({ partner }) {
+  const brandColor = partner.color || "#0956fc";
+
   return (
     <div className="group relative bg-white rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md hover:border-blue-300 transition-all duration-300 flex flex-col gap-4 px-6 py-6 w-[260px] sm:w-[300px] flex-shrink-0">
       {/* Top row: logo mark + partnership tag */}
       <div className="flex items-center justify-between gap-3">
-        <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white font-space font-extrabold text-base shadow-sm transition-transform duration-300 group-hover:scale-105 flex-shrink-0 bg-[#0956fc]">
+        <div
+          style={{ backgroundColor: brandColor }}
+          className="w-12 h-12 rounded-xl flex items-center justify-center text-white font-space font-extrabold text-base shadow-sm transition-transform duration-300 group-hover:scale-105 flex-shrink-0"
+        >
           {partner.mark}
         </div>
-        <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full bg-blue-50 text-[#0956fc] border border-blue-100 whitespace-nowrap">
-          <BadgeCheck className="w-3 h-3 text-[#0956fc]" />
+        <span
+          style={{ color: brandColor }}
+          className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full bg-blue-50/80 border border-blue-100 whitespace-nowrap"
+        >
+          <BadgeCheck style={{ color: brandColor }} className="w-3.5 h-3.5" />
           {partner.tag}
         </span>
       </div>
@@ -110,7 +116,16 @@ export default function Partners() {
           mask-image: linear-gradient(90deg, transparent 0%, #000 6%, #000 94%, transparent 100%);
         }
         @media (prefers-reduced-motion: reduce) {
-          .partners-marquee-track { animation: none; }
+          .partners-marquee-mask {
+            -webkit-mask-image: none;
+            mask-image: none;
+          }
+          .partners-marquee-track {
+            animation: none;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+          }
         }
       `}</style>
 
@@ -146,8 +161,18 @@ export default function Partners() {
           className="partners-marquee-mask -mx-4 sm:-mx-6 lg:-mx-8"
         >
           <div className="partners-marquee-track flex gap-5 sm:gap-6 w-max px-4 sm:px-6 lg:px-8 pt-4 pb-4">
-            {MARQUEE_ITEMS.map((partner, i) => (
-              <PartnerCard key={`${partner.name}-${i}`} partner={partner} />
+            {/* Primary List */}
+            {PARTNERS.map((partner, i) => (
+              <PartnerCard
+                key={`partner-orig-${partner.name}-${i}`}
+                partner={partner}
+              />
+            ))}
+            {/* Duplicate List for Continuous Infinite Loop */}
+            {PARTNERS.map((partner, i) => (
+              <div key={`partner-dup-${partner.name}-${i}`} aria-hidden="true">
+                <PartnerCard partner={partner} />
+              </div>
             ))}
           </div>
         </motion.div>
