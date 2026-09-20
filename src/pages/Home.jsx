@@ -20,14 +20,13 @@ export default function Home({ onOpenApply, onOpenAdmitCard }) {
     <>
       {/* ─── SEO ─────────────────────────────────────────────── */}
       <Seo
-        title="Home"
-        description="Join Shine Tech Academy's Founding Batch 2026 – free tuition, hands-on projects, and career guidance. Pakistan's most practical tech institute."
-        keywords="Shine Tech Academy, STA, tech courses Pakistan, web development, AI courses, freelancing, computer courses, online learning Pakistan"
-        url="https://shinetechacademy.com"
-        image="https://shinetechacademy.com/og-image.jpg"
+        title="AI, Web Development & Tech Courses in Hyderabad"
+        description="Shine Tech Academy Hyderabad offers practical AI, Web Development, Computer, Digital Marketing, Robotics and professional technology courses with physical and online learning."
+        keywords="Shine Tech Academy, Shine Tech Academy Hyderabad, computer courses Hyderabad, AI courses Hyderabad, web development courses Hyderabad, digital marketing courses Hyderabad, robotics courses Hyderabad, graphic designing courses Hyderabad, Python courses Hyderabad, Microsoft Office course Hyderabad"
+        url="https://shinetechacademy.com/"
+        image="https://shinetechacademy.com/STA-logo.png"
         type="website"
       />
-
       {/* ─── JSON-LD Structured Data ────────────────────────── */}
       <script type="application/ld+json">
         {JSON.stringify({

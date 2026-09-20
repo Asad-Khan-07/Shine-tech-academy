@@ -1,5 +1,6 @@
 import { useSearchParams, useNavigate } from "react-router-dom";
 import AdmissionForm from "../pages/AdmissionForm";
+import Seo from "../components/Seo";
 
 // Course names mapping
 const COURSE_NAMES = {
